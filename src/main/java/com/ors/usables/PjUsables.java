@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import main.java.com.ors.services.BodyTypeService;
 import main.java.com.ors.services.ComunAlmacen;
 import main.java.com.ors.services.ItemService;
-import main.java.com.ors.services.PjUtil;
+import main.java.com.ors.services.PjService;
 import main.java.com.ors.utiles.EnumsDeItems.Distance;
 import main.java.com.ors.utiles.Habilidad;
 import main.java.com.ors.vo.BodyType;
@@ -208,8 +208,8 @@ public class PjUsables {
 	////////////////////////////////////////////////////// Dados
 
 	public int diceLooby(PJ pj, String type) { // devuelve el max dado
-		new PjUtil();
-		int statLv = PjUtil.getStat(type, pj);
+		new PjService();
+		int statLv = PjService.getStat(type, pj);
 		if (statLv <= 5) {
 			return 2;
 		} else if (statLv > 5 && statLv <= 15) {
@@ -248,7 +248,7 @@ public class PjUsables {
 			BodyType b = BodyTypeService.obtenerPorId(bb);
 			if (!tempo.getBodyTypes().contains(b)) {
 				tempo.getBodyTypes().add(b);
-				PjUtil.update(tempo);
+				PjService.update(tempo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

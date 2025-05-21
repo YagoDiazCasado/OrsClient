@@ -18,11 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import main.java.com.ors.services.AdventureService;
 import main.java.com.ors.services.ComunAlmacen;
+import main.java.com.ors.services.StartService;
 import main.java.com.ors.services.StyleAndEffectService;
 import main.java.com.ors.utiles.GestorFicheroConfiguracion;
 import main.java.com.ors.vo.Adventure;
-
 
 public class LauncherController implements Initializable {
 
@@ -69,15 +70,9 @@ public class LauncherController implements Initializable {
 	@FXML
 	private Button iniciarJuegoBotton;
 	@FXML
-	private TextField paswordField;
-	@FXML
-	private TextField ipField;
-	@FXML
 	private TextField ipSField;
 	@FXML
 	private TextField portField;
-	@FXML
-	private TextField userField;
 	@FXML
 	private Button addAdventureBtn;
 	@FXML
@@ -96,10 +91,7 @@ public class LauncherController implements Initializable {
 			System.out.println("No hay musica");
 		}
 
-		StyleAndEffectService.pointElement(paswordField, 0.05, 0.2, "blue", "black");
-		StyleAndEffectService.pointElement(ipField, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(portField, 0.05, 0.2, "blue", "black");
-		StyleAndEffectService.pointElement(userField, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(playerOption, 0.05, 0.2, "green", "black");
 		StyleAndEffectService.pointElement(dmOption, 0.05, 0.2, "red", "black");
 		StyleAndEffectService.pointElement(pasword, 0.05, 0.2, "blue", "black");
@@ -107,13 +99,9 @@ public class LauncherController implements Initializable {
 		StyleAndEffectService.pointElement(iniciarJuegoBotton, 0.03, 0.3, "blue", "black");
 		iniciarJuegoBotton.setOnMouseClicked(event -> {
 			try {
-				GestorFicheroConfiguracion.actualizarValor("user", userField.getText());
-				GestorFicheroConfiguracion.actualizarValor("ipBBDD", ipField.getText());
 				GestorFicheroConfiguracion.actualizarValor("puertoSockets", portField.getText());
-				GestorFicheroConfiguracion.actualizarValor("pasword", paswordField.getText());
 				GestorFicheroConfiguracion.actualizarValor("ipServer", ipSField.getText());
-				GestorJpa.restart();
-				List<Adventure> todas = ComunAlmacen.advDao.obtenerTodos();
+				List<Adventure> todas = AdventureService.getAll();
 				adventures.getItems().addAll(todas);
 				iniciarCampaing();
 				setupAdventureCreation();
@@ -130,11 +118,11 @@ public class LauncherController implements Initializable {
 	private void reCrearBaseDatos() {
 		StyleAndEffectService.pointElement(cargarBaseBtn, 0.3, 0.3, "blue", "black");
 		cargarBaseBtn.setOnAction(event -> {
-			Temporal.crearBase();
+			StartService.CrearBase();
 			cargarBaseBtn.setVisible(false);
 			List<Adventure> todas;
 			try {
-				todas = ComunAlmacen.advDao.obtenerTodos();
+				todas = AdventureService.getAll();
 				adventures.getItems().addAll(todas);
 				iniciarCampaing();
 				setupAdventureCreation();
@@ -176,7 +164,7 @@ public class LauncherController implements Initializable {
 					if (!nombre.isEmpty()) {
 						try {
 							Adventure nueva = new Adventure(nombre, pass);
-							ComunAlmacen.advDao.insertar(nueva);
+							AdventureService.create(nueva);
 							adventures.getItems().add(nueva);
 							adventures.setValue(nueva);
 							adventure = nueva;
@@ -195,10 +183,7 @@ public class LauncherController implements Initializable {
 	}
 
 	private void mostrarCuadroDePrompts() {
-		ipField.setText(GestorFicheroConfiguracion.devolverCredencial("ipBBDD"));
 		portField.setText(GestorFicheroConfiguracion.devolverCredencial("puertoSockets"));
-		userField.setText(GestorFicheroConfiguracion.devolverCredencial("user"));
-		paswordField.setText(GestorFicheroConfiguracion.devolverCredencial("pasword"));
 		ipSField.setText(GestorFicheroConfiguracion.devolverCredencial("ipServer"));
 		ser.efectoEntrar(volumenEfectos);
 	}
@@ -213,7 +198,7 @@ public class LauncherController implements Initializable {
 		StyleAndEffectService.pointElement(go, 0.3, 0.3, "blue", "black");
 		go.setOnMouseClicked(event -> {
 			try {
-				adventure = (Adventure) ComunAlmacen.advDao.obtenerPorId(adventures.getValue().getName());
+				adventure = (Adventure) AdventureService.getById(adventures.getValue().getName());
 				if (!(pasword.getText().equals(""))) {
 					if (pasword.getText().equals(adventure.getPasword())) {
 						GestorFicheroConfiguracion.actualizarValor(adventure.getName(), adventure.getPasword());

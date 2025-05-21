@@ -33,9 +33,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import main.java.com.ors.services.AdventureService;
 import main.java.com.ors.services.BodyTypeService;
 import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.services.PjUtil;
+import main.java.com.ors.services.PjService;
 import main.java.com.ors.services.RaceService;
 import main.java.com.ors.services.StyleAndEffectService;
 import main.java.com.ors.utiles.EnumsDeItems.CharacterTypes;
@@ -213,7 +214,7 @@ public class LobbyController implements Initializable {
 		goToPosition.setImage(new Image(getClass().getResource("/com/ors/images/lupa.png").toExternalForm()));
 		try {
 			System.out.println(adventure);
-			pjs = PjUtil.getCompletePJs(adventure, dm);
+			pjs = PjService.getCompletePJs(adventure, dm);
 			System.out.println(pjs.toString());
 			setDropInImagePane();
 			floor.toBack();
@@ -262,7 +263,7 @@ public class LobbyController implements Initializable {
 				boolean puede = true;
 				PJ tempo = new PJ(newNameText.getText());
 				tempo.setAdventure(adventure);
-				List<PJ> todos = PjUtil.obtenerTodos();
+				List<PJ> todos = PjService.getAll();
 				if (todos.contains(tempo)) {
 					puede = false;
 				}
@@ -277,18 +278,18 @@ public class LobbyController implements Initializable {
 					tempo.setEnd((int) endSlider.getValue());
 					tempo.setMin((int) minSlider.getValue());
 					tempo.setDex((int) dexSlider.getValue());
-					tempo.setRace((Race) RaceService.obtenerPorId((raceOptions.getValue().toString())));
+					tempo.setRace((Race) RaceService.getById((raceOptions.getValue().toString())));
 					tempo.setGlimmers(Double.parseDouble(glimmersText.getText()));
 					tempo.setPower(powerOptions.getValue().toString());
-					PjUtil.update(tempo);
+					PjService.update(tempo);
 					ComunAlmacen.pU.agregarBT(tempo, btOptions.getValue().toString()); // Esto falla
 					tempo.setAble(true);
 					System.out.println(tempo.toString());
-					PjUtil.update(tempo);
+					PjService.update(tempo);
 					tempo.setActions(tempo.getMaxActions());
 					tempo.setHp(tempo.getMaxHp());
 					tempo.setKcal(tempo.getMaxKcal());
-					PjUtil.update(tempo);
+					PjService.update(tempo);
 
 					pjs.add(tempo);
 					panelAjustes.setVisible(true);
@@ -515,12 +516,12 @@ public class LobbyController implements Initializable {
 		pjs.get(posicion).setDex((int) dexSlider.getValue());
 		pjs.get(posicion).setAble(true);
 		pjs.get(posicion).setName(newNameText.getText());
-		pjs.get(posicion).setRace((Race) RaceService.obtenerPorId(raceOptions.getValue().toString()));
+		pjs.get(posicion).setRace((Race) RaceService.getById(raceOptions.getValue().toString()));
 		pjs.get(posicion).setGlimmers(Double.parseDouble(glimmersText.getText()));
-		pjs.get(posicion).setAdventure((Adventure) AdventureService.obtenerPorId(adventure.toString()));
+		pjs.get(posicion).setAdventure((Adventure) AdventureService.getById(adventure.toString()));
 		pjs.get(posicion).setPower(powerOptions.getValue().toString());
 		ComunAlmacen.pU.agregarBT(pjs.get(posicion), btOptions.getValue().toString());
-		PjUtil.update(pjs.get(posicion));
+		PjService.update(pjs.get(posicion));
 	}
 
 	@FXML
@@ -745,7 +746,7 @@ public class LobbyController implements Initializable {
 
 	@FXML
 	private void erase() throws Exception {
-		PjUtil.eliminar(pjs.get(posicion));
+		PjService.delete(pjs.get(posicion));
 		pjs.remove(posicion);
 		updateCharacterView();
 	}
@@ -754,7 +755,7 @@ public class LobbyController implements Initializable {
 	private void move() throws Exception {
 		ser.efectoClick(volumenEfectos);
 
-		List<Adventure> aventurasDisponibles = AdventureService.obtenerTodos();
+		List<Adventure> aventurasDisponibles = AdventureService.getAll();
 		if (aventurasDisponibles.isEmpty())
 			return;
 
@@ -786,8 +787,8 @@ public class LobbyController implements Initializable {
 					PJ pj = pjs.get(posicion);
 					pj.setAdventure(comboAventuras.getValue());
 					pj.setCharacterType(comboTipo.getValue());
-					PjUtil.update(pj);
-					pjs = PjUtil.getCompletePJs(adventure, dm);
+					PjService.update(pj);
+					pjs = PjService.getCompletePJs(adventure, dm);
 					posicion = 0;
 					updateCharacterView();
 					ser.efectoEleccion(volumenEfectos);
@@ -969,7 +970,7 @@ public class LobbyController implements Initializable {
 		ComunAlmacen.mediaPlayer.setVolume(volumenFondo);
 		personajesSel.getItems().clear();
 		try {
-			pjs = PjUtil.getCompletePJs(adventure, dm);
+			pjs = PjService.getCompletePJs(adventure, dm);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -993,14 +994,14 @@ public class LobbyController implements Initializable {
 	private void setOptions() throws Exception {
 		newNameText.setStyle("-fx-text-fill: black;");
 		btOptions.getItems().clear();
-		List<BodyType> bts = BodyTypeService.obtenerTodos();
+		List<BodyType> bts = BodyTypeService.getAll();
 		for (BodyType b : bts) {
 			b.fillMods();
 		}
 		btOptions.getItems().addAll(bts.stream().map(obj -> ((BodyType) obj).getName()).toList());
 
 		raceOptions.getItems().clear();
-		raceOptions.getItems().addAll(RaceService.obtenerTodos().stream().map(obj -> ((Race) obj).getName()).toList());
+		raceOptions.getItems().addAll(RaceService.getAll().stream().map(obj -> ((Race) obj).getName()).toList());
 		String[] talentos = { "REGULAR", "JANO", "BUNRAKU", "LEIRZA" };
 		powerOptions.getItems().clear();
 		powerOptions.getItems().addAll(talentos);

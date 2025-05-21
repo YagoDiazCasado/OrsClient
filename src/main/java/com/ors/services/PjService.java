@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import main.java.com.ors.vo.Adventure;
 import main.java.com.ors.vo.PJ;
 
-public class PjUtil { // Esta clase es la que piden para la creacion y actualizacion, no el dao
+public class PjService {
 
 	private static final String API_BASE_URL = "http://localhost:8080/api/pj";
 	private static final ObjectMapper mapper = new ObjectMapper();

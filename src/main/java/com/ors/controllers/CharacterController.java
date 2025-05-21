@@ -58,7 +58,7 @@ import main.java.com.ors.services.ComunAlmacen;
 import main.java.com.ors.services.EquipmentService;
 import main.java.com.ors.services.InventoryService;
 import main.java.com.ors.services.ItemService;
-import main.java.com.ors.services.PjUtil;
+import main.java.com.ors.services.PjService;
 import main.java.com.ors.services.RaceService;
 import main.java.com.ors.services.SkillService;
 import main.java.com.ors.services.StyleAndEffectService;
@@ -523,7 +523,7 @@ public class CharacterController implements Initializable {
 			System.out.println("El programa se está cerrando...");
 			try {
 				selected.setAble(true);
-				PjUtil.update(selected);
+				PjService.update(selected);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -583,7 +583,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	public void loadResume() {
 		try {
-			PjUtil.update(selected);
+			PjService.update(selected);
 			Tooltip.install(fotito, new Tooltip(selected.showInfo()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1403,7 +1403,7 @@ public class CharacterController implements Initializable {
 			throw new Exception();
 		}
 		selected.setInspirationPoints(selected.getInspirationPoints() + numero);
-		PjUtil.update(selected);
+		PjService.update(selected);
 		loadShop();
 	}
 
@@ -1624,7 +1624,7 @@ public class CharacterController implements Initializable {
 					try {
 						if (!tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
 							selected.setWeapon(tipo);
-							PjUtil.update(selected);
+							PjService.update(selected);
 						} else {
 							// Si no va , es new Equipment(selected) para obtener ID
 							Equipment equipo = (Equipment) EquipmentService.getById(selected);
@@ -1658,7 +1658,7 @@ public class CharacterController implements Initializable {
 								}
 							}
 							selected.setEquipment(equipo);
-							PjUtil.update(selected);
+							PjService.update(selected);
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -1872,13 +1872,13 @@ public class CharacterController implements Initializable {
 	@FXML
 	private void save() throws Exception {
 
-		PjUtil.update(selected);
+		PjService.update(selected);
 
 	}
 
 	@FXML
 	private void escribirMensaje() throws Exception {
-		PjUtil.update(selected);
+		PjService.update(selected);
 	}
 
 	@FXML
@@ -1913,7 +1913,7 @@ public class CharacterController implements Initializable {
 			File e = fileChooser.showOpenDialog(null);
 			selected.setProfile(ImagenesUtil.fileToByte(e));
 			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));
-			PjUtil.update(selected);
+			PjService.update(selected);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2042,7 +2042,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	public void returnToMain() throws Exception {
 		selected.setAble(true);
-		PjUtil.update(selected);
+		PjService.update(selected);
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/LoobyVista.fxml"));
 			Parent root = loader.load();
