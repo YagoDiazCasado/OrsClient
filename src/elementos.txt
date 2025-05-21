@@ -1,0 +1,6 @@
+
+btnCrearItem
+
+crearItemPane
+
+selectorTipo ccb

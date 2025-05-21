@@ -1,0 +1,15 @@
+
+-Borrado de bodyTypes
+
+-Los ajustes no cargan bien
+
+-Poner bonito el inventario y la tienda
+
+-Manejo de errores mejorado
+
+-Quitar supressWarnings 
+
+-Apartado de notas
+
+-Creacion de habilidades
+

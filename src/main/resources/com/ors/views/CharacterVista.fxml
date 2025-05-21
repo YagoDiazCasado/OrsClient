@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.BoxBlur?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="absolutePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.ors.controllers.CharacterController">
+   <children>
+      <Pane fx:id="totalPanel" layoutX="-19.0" layoutY="-13.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="648.0" prefWidth="1010.0">
+         <children>
+            <ImageView id="fotoFondo" fx:id="backImage" fitHeight="656.0" fitWidth="1034.0" layoutX="-12.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true" />
+             <Pane fx:id="loadingOverlay" prefHeight="648.0" prefWidth="1010.0" style="-fx-background-color: rgba(0,0,0,0.6);" visible="false">
+    <children>
+        <Label layoutX="450.0" layoutY="300.0" text="Cargando..." textFill="white">
+            <font>
+                <Font name="Impact" size="24.0" />
+            </font>
+        </Label>
+    </children>
+</Pane>
+            <Pane id="panelPreview" fx:id="hotBarPanel" layoutX="37.0" layoutY="19.0" prefHeight="55.0" prefWidth="936.0">
+               <children>
+                  <Button id="botonStandar" fx:id="btnInventory" layoutX="660.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#loadInventory" prefHeight="28.0" prefWidth="76.0" text="Inventario">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button id="botonStandar" fx:id="btrResume" layoutX="568.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#loadResume" prefHeight="28.0" prefWidth="76.0" text="Resumen">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button id="botonStandar" fx:id="btnShop" layoutX="843.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#loadShop" prefHeight="28.0" prefWidth="76.0" text="Tienda">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button id="botonStandar" fx:id="btnVolver" layoutX="116.0" layoutY="14.0" mnemonicParsing="false" onAction="#returnToMain" prefHeight="28.0" prefWidth="87.0" text="Lobby">
+                     <font>
+                        <Font name="Impact" size="12.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button id="botonStandar" fx:id="btnAjustes" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#loadAjustes" prefHeight="28.0" prefWidth="87.0" text="Opciones">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button id="botonStandar" fx:id="btnCrearItem" layoutX="752.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#loadTaller" prefHeight="28.0" prefWidth="76.0" text="Taller">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </Pane>
+            <Pane id="panelPreview" fx:id="contenedor" layoutX="36.0" layoutY="79.0" prefHeight="544.0" prefWidth="927.0">
+               <children>
+                  <Pane id="panelPreview" fx:id="resumePanel" prefHeight="544.0" prefWidth="927.0" visible="false">
+                     <children>
+                        <Pane id="panelPreview" fx:id="resumenStats" layoutX="15.0" layoutY="8.0" prefHeight="186.0" prefWidth="268.0">
+                           <children>
+                              <ProgressBar layoutX="80.0" layoutY="7.0" onMouseClicked="#dadoAtl" prefHeight="14.0" prefWidth="162.0" progress="0.0" fx:id="xpAtlBar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="atlLbl" layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="52.0" text="ATL" />
+                              <ProgressBar layoutX="80.0" layoutY="24.0" onMouseClicked="#dadoStr" prefHeight="14.0" prefWidth="162.0" progress="0.0" fx:id="xpStrBar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="strLbl" layoutX="14.0" layoutY="23.0" prefHeight="17.0" prefWidth="52.0" text="STR" />
+                              <ProgressBar layoutX="80.0" layoutY="41.0" onMouseClicked="#dadoEnd" prefHeight="14.0" prefWidth="162.0" progress="0.0" fx:id="xpEndBar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="endLBL" layoutX="14.0" layoutY="40.0" prefHeight="17.0" prefWidth="52.0" text="END" />
+                              <ProgressBar layoutX="80.0" layoutY="58.0" onMouseClicked="#dadoMin" prefHeight="14.0" prefWidth="162.0" progress="0.0" fx:id="xpMinBar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="minLbl" layoutX="14.0" layoutY="57.0" prefHeight="17.0" prefWidth="52.0" text="MIN" />
+                              <ProgressBar layoutX="80.0" layoutY="75.0" onMouseClicked="#dadoDex" prefHeight="14.0" prefWidth="162.0" progress="0.0" fx:id="xpDexBar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="dexLbl" layoutX="14.0" layoutY="74.0" prefHeight="17.0" prefWidth="52.0" text="DEX" />
+                              <Label fx:id="speedLbl" layoutX="14.0" layoutY="108.0" prefHeight="17.0" prefWidth="226.0" text="SPEED" />
+                              <Label fx:id="weightLbl" layoutX="14.0" layoutY="125.0" prefHeight="17.0" prefWidth="226.0" text="WEIGHT" />
+                              <Label fx:id="freeForceLbl" layoutX="14.0" layoutY="142.0" prefHeight="17.0" prefWidth="226.0" text="FREE FORCE" />
+                              <Label fx:id="glimmersLbl" layoutX="14.0" layoutY="160.0" onMouseClicked="#adminGlimmers" prefHeight="17.0" prefWidth="226.0" text="GLIMMERS" />
+                              <Label fx:id="vasteLbl" layoutX="14.0" layoutY="93.0" prefHeight="17.0" prefWidth="226.0" text="VASTE" />
+                           </children>
+                        </Pane>
+                        <Pane id="panelPreview" fx:id="resumenUtiles" layoutX="639.0" layoutY="9.0" prefHeight="523.0" prefWidth="274.0">
+                           <children>
+                              <Button id="panelPreviewMasOpaco" fx:id="runBtn" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#sprintMenu" prefHeight="38.0" prefWidth="250.0" text="SPRINT">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button id="panelPreviewMasOpaco" fx:id="saveBtn" layoutX="13.0" layoutY="51.0" mnemonicParsing="false" onAction="#save" prefHeight="38.0" prefWidth="250.0" text="SAVE">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button id="panelPreviewMasOpaco" fx:id="sleepBtn" layoutX="14.0" layoutY="94.0" mnemonicParsing="false" onAction="#rest" prefHeight="38.0" prefWidth="250.0" text="REST">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button id="panelPreviewMasOpaco" fx:id="sleepBtn1" layoutX="14.0" layoutY="137.0" mnemonicParsing="false" onAction="#longRest" prefHeight="38.0" prefWidth="250.0" text="LONG REST">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Pane id="panelPreviewMasOpaco" fx:id="dadosPanel" layoutX="14.0" layoutY="226.0" prefHeight="287.0" prefWidth="250.0">
+                                 <children>
+                                    <Button id="botonMasMasOpaco" fx:id="d20" layoutX="21.0" layoutY="38.0" mnemonicParsing="false" onMouseClicked="#tirarD20" text="D 20">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d16" layoutX="21.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#tirarD16" text="D 16">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d12" layoutX="21.0" layoutY="99.0" mnemonicParsing="false" onMouseClicked="#tirarD12" text="D 12">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d10" layoutX="21.0" layoutY="130.0" mnemonicParsing="false" onMouseClicked="#tirarD10" text="D 10">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d8" layoutX="21.0" layoutY="161.0" mnemonicParsing="false" onMouseClicked="#tirarD8" prefHeight="25.0" prefWidth="41.0" text="D 8">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d6" layoutX="21.0" layoutY="193.0" mnemonicParsing="false" onMouseClicked="#tirarD6" prefHeight="25.0" prefWidth="41.0" text="D 6">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="d4" layoutX="21.0" layoutY="224.0" mnemonicParsing="false" onMouseClicked="#tirarD4" prefHeight="25.0" prefWidth="41.0" text="D 4">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="acrobaciasDado" layoutX="80.0" layoutY="7.0" mnemonicParsing="false" onMouseClicked="#dadoAcro" prefHeight="25.0" prefWidth="162.0" text="ACROBATYCS">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="carismaDado" layoutX="80.0" layoutY="37.0" mnemonicParsing="false" onMouseClicked="#dadoCari" prefHeight="25.0" prefWidth="162.0" text="CHARISMA">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="percepcionDado" layoutX="80.0" layoutY="68.0" mnemonicParsing="false" onMouseClicked="#dadoPerc" prefHeight="25.0" prefWidth="162.0" text="PERCEPTION">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="vasteDado" layoutX="80.0" layoutY="99.0" mnemonicParsing="false" onMouseClicked="#dadoVast" prefHeight="25.0" prefWidth="162.0" text="VASTE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="atlDado" layoutX="80.0" layoutY="130.0" mnemonicParsing="false" onMouseClicked="#dadoAtl" prefHeight="25.0" prefWidth="162.0" text="ATHLETICS">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="strDado" layoutX="80.0" layoutY="161.0" mnemonicParsing="false" onMouseClicked="#dadoStr" prefHeight="25.0" prefWidth="162.0" text="STRENGTH">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="endDado" layoutX="80.0" layoutY="192.0" mnemonicParsing="false" onMouseClicked="#dadoEnd" prefHeight="25.0" prefWidth="162.0" text="ENDURANCE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="minDado" layoutX="80.0" layoutY="223.0" mnemonicParsing="false" onMouseClicked="#dadoMin" prefHeight="25.0" prefWidth="162.0" text="MIND">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <Button id="botonMasMasOpaco" fx:id="dexDado" layoutX="80.0" layoutY="254.0" mnemonicParsing="false" onMouseClicked="#dadoDex" prefHeight="25.0" prefWidth="162.0" text="DESXTRESITY">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Button>
+                                    <CheckBox fx:id="ventaja" layoutX="21.0" layoutY="11.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="52.0" text="V" />
+                                 </children></Pane>
+                              <Button id="botonStandar" fx:id="btnUtiles" layoutX="13.0" layoutY="181.0" mnemonicParsing="false" onMousePressed="#loadAction" prefHeight="38.0" prefWidth="250.0" text="ACTION">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children></Pane>
+                        <Pane id="panelPreview" fx:id="equippedWeaponPanel" layoutX="16.0" layoutY="201.0" prefHeight="61.0" prefWidth="268.0">
+                           <children>
+                              <Label fx:id="equippedNameLbl" layoutX="14.0" layoutY="11.0" onMouseClicked="#vanillaAttack" prefHeight="38.0" prefWidth="134.0" text="Arma" />
+                              <Button id="botonStandar" fx:id="envainarBtn" layoutX="170.0" layoutY="12.0" mnemonicParsing="false" onAction="#envainar" prefHeight="38.0" prefWidth="40.0" text="X">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button id="botonStandar" fx:id="fistsBtn" layoutX="217.0" layoutY="12.0" mnemonicParsing="false" onAction="#fistAttack" prefHeight="38.0" prefWidth="40.0" text="P">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                           </children></Pane>
+                        <Pane id="panelPreview" fx:id="livingResumen" layoutX="300.0" layoutY="442.0" prefHeight="84.0" prefWidth="325.0">
+                           <children>
+                              <ProgressBar id="lvSliders" fx:id="barraHp" layoutX="14.0" layoutY="14.0" onMouseClicked="#modifyHp" prefHeight="18.0" prefWidth="296.0" progress="0.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <ProgressBar id="lvSliders" fx:id="barraAcc" layoutX="14.0" layoutY="33.0" onMouseClicked="#modifyAcc" prefHeight="18.0" prefWidth="296.0" progress="0.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <ProgressBar id="lvSliders" fx:id="barraKcal" layoutX="14.0" layoutY="52.0" onMouseClicked="#modifyKcal" prefHeight="18.0" prefWidth="296.0" progress="0.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ProgressBar>
+                              <Label fx:id="hpInfo" layoutX="148.0" layoutY="15.0" text="Label" />
+                              <Label fx:id="accInfo" layoutX="148.0" layoutY="34.0" text="Label" />
+                              <Label fx:id="kcalInfo" layoutX="148.0" layoutY="53.0" text="Label" />
+                           </children></Pane>
+                        <ImageView id="foto" fx:id="fotito" fitHeight="417.0" fitWidth="274.0" layoutX="324.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">            
+                           <effect>
+                              <BoxBlur />
+                           </effect>
+                        </ImageView>
+                        <Pane fx:id="equipmentSummaryPanel" layoutX="610.0" layoutY="25.0" prefHeight="417.0" visible="false">
+    <children>
+        <VBox fx:id="equipmentBox" layoutX="3.0" layoutY="10.0" spacing="10.0" />
+    </children>
+</Pane>
+                        <Pane id="panelPreview" fx:id="modsPane" layoutX="311.0" layoutY="388.0" prefHeight="47.0" prefWidth="296.0" />
+                     </children>
+                  </Pane>
+                  <Pane id="panelPreview" fx:id="shopPanel" prefHeight="544.0" prefWidth="927.0" visible="false">
+                     <children>
+                        <TabPane id="panelPreview" fx:id="tiendasTabPanel" layoutX="298.0" layoutY="23.0" prefHeight="509.0" prefWidth="607.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab fx:id="tabGeneral" text="GENERAL">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TilePane id="panelPreview" fx:id="tiendaGeneral" hgap="10.0" layoutX="7.0" layoutY="7.0" prefHeight="465.0" prefWidth="593.0" vgap="10.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <Label fx:id="puntosInspiracionLbl" layoutX="17.0" layoutY="8.0" prefHeight="62.0" prefWidth="268.0" text="Inspiraciones: 0">
+                           <font>
+                              <Font name="Impact" size="38.0" />
+                           </font>
+                        </Label>
+                        <Button id="botonStandar" fx:id="subirNvBtn" layoutX="15.0" layoutY="84.0" mnemonicParsing="false" onAction="#subirNivel" prefHeight="38.0" prefWidth="268.0" text="Subir Niveles: 2" />
+                        <Button id="botonStandar" fx:id="ltbHabBtn" layoutX="15.0" layoutY="128.0" mnemonicParsing="false" onAction="#ltbHabilidades" prefHeight="38.0" prefWidth="268.0" text="LootBox Habilidades: 3" />
+                        <Button id="botonStandar" fx:id="ltbArmBtn" layoutX="15.0" layoutY="172.0" mnemonicParsing="false" onAction="#ltbArmas" prefHeight="38.0" prefWidth="268.0" text="LootBox Armas: 4" />
+                        <Button id="botonStandar" fx:id="ltbTalBtn" layoutX="15.0" layoutY="216.0" mnemonicParsing="false" onAction="#ltbTalentos" prefHeight="38.0" prefWidth="268.0" text="Despertar de Talento (lootBox): 6" />
+                     </children></Pane>
+                  <Pane id="panelPreview" fx:id="petPanel" prefHeight="544.0" prefWidth="927.0" visible="false">
+                     <children>
+                        <TilePane fx:id="tiendaOpcionesPanel" layoutX="148.0" layoutY="15.0" prefHeight="517.0" prefWidth="758.0" />
+                     </children></Pane>
+                  <Pane id="panelPreview" fx:id="lootBoxPanel" prefHeight="544.0" prefWidth="927.0" visible="false" />
+                  <Pane id="panelPreview" fx:id="inventaryPanel" prefHeight="544.0" prefWidth="927.0">
+                     <children>
+                        <TabPane id="panelPreview" fx:id="inventarioPersonalPanel" layoutX="14.0" layoutY="40.0" prefHeight="417.0" prefWidth="358.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab id="botonMasOpaco" fx:id="todosInvTab" text="All">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosInvPanel" prefHeight="382.0" prefWidth="349.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                            </Tab>
+                              <Tab id="botonMasOpaco" fx:id="weaponsInvTab" text="Weapons">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="edibleInvTab" text="Edibles">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="itemsInvTab" text="Items">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="equipmentInvTab" text="Equip">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                        <Label fx:id="pesoLbl" alignment="CENTER" layoutX="14.0" layoutY="8.0" prefHeight="28.0" prefWidth="358.0" text="Label">
+                           <font>
+                              <Font name="Impact" size="18.0" />
+                           </font>
+                        </Label>
+                        <TabPane id="panelPreview" fx:id="escaparatePanel" layoutX="548.0" layoutY="36.0" prefHeight="417.0" prefWidth="358.0" tabClosingPolicy="UNAVAILABLE">
+                           <tabs>
+                              <Tab id="botonMasOpaco" fx:id="todosEscTab" text="All">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                      <content>
+                                        <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosEscPanel" prefHeight="382.0" prefTileHeight="1.0" prefTileWidth="1.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="weaponsEscTab" text="Weapons">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="edibleEscTab" text="Edibles">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="itemsEscTab" text="Items">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab id="botonMasOpaco" fx:id="equipmentEscTab" text="Equip">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
+                                             <children>
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </TilePane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
+                        <Label fx:id="pesoLbl1" alignment="CENTER" layoutX="548.0" layoutY="4.0" prefHeight="28.0" prefWidth="358.0" text="MUNDO DE LAS IDEA">
+                           <font>
+                              <Font name="Impact" size="18.0" />
+                           </font>
+                        </Label>
+                        <Pane id="panelPreview" fx:id="ammoPanel" layoutX="235.0" layoutY="470.0" prefHeight="67.0" prefWidth="458.0">
+                           <children>
+                              <Button fx:id="bowAmoBtn" layoutX="25.0" layoutY="21.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="87.0" text="Bow Ammo" />
+                              <Button fx:id="crossBowAmoBtn" layoutX="120.0" layoutY="21.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="114.0" text="CrossBow Ammo" />
+                              <Button fx:id="canonAmoBtn" layoutX="242.0" layoutY="21.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="97.0" text="Canon Ammo" />
+                              <Button fx:id="bulletAmoBtn" layoutX="346.0" layoutY="21.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="87.0" text="Bullets" />
+                           </children>
+                        </Pane>
+                        <ProgressBar id="lvSliders" fx:id="barraHpI" layoutX="388.0" layoutY="425.0" onMouseClicked="#modifyHp" prefHeight="18.0" prefWidth="147.0" progress="0.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ProgressBar>
+                        <ProgressBar id="lvSliders" fx:id="barraAccI" layoutX="388.0" layoutY="390.0" onMouseClicked="#modifyAcc" prefHeight="18.0" prefWidth="147.0" progress="0.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ProgressBar>
+                        <ProgressBar id="lvSliders" fx:id="barraKcalI" layoutX="388.0" layoutY="355.0" onMouseClicked="#modifyKcal" prefHeight="18.0" prefWidth="147.0" progress="0.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ProgressBar>
+                     </children></Pane>
+                  <Pane id="panelPreview" fx:id="panelAjustes" prefHeight="544.0" prefWidth="543.0" visible="false">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <children>
+                        <Button id="botonStandar" fx:id="botonAjustes" layoutX="83.0" layoutY="224.0" mnemonicParsing="false" onAction="#guardarAjustes" prefHeight="28.0" prefWidth="123.0" text="GUARDAR">
+                           <font>
+                              <Font name="Impact" size="15.0" />
+                           </font>
+                        </Button>
+                        <Slider id="lvSliders" fx:id="muSlider" layoutX="74.0" layoutY="56.0" />
+                        <Slider id="lvSliders" fx:id="efSlider" layoutX="74.0" layoutY="106.0" />
+                        <CheckBox fx:id="animChek" layoutX="91.0" layoutY="135.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="123.0" text="Animaciones" textFill="WHITE">
+                           <font>
+                              <Font name="Impact" size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label fx:id="volMuLabel" layoutX="100.0" layoutY="21.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Musica" textFill="WHITE">
+                           <font>
+                              <Font name="Impact" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="volEfLabel" layoutX="92.0" layoutY="78.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Efectos" textFill="WHITE">
+                           <font>
+                              <Font name="Impact" size="14.0" />
+                           </font>
+                        </Label>
+                        <Button id="botonStandar" fx:id="botonFoto" layoutX="82.0" layoutY="176.0" mnemonicParsing="false" onAction="#saveFotito" prefHeight="28.0" prefWidth="123.0" text="FOTO">
+                           <font>
+                              <Font name="Impact" size="15.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="285.0" layoutY="19.0" prefHeight="28.0" prefWidth="226.0" text="LINKS" textAlignment="CENTER">
+                           <font>
+                              <Font name="Impact" size="27.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="linkW" layoutX="271.0" layoutY="78.0" prefHeight="17.0" prefWidth="226.0" text="Watchtogether" textAlignment="CENTER">
+                           <font>
+                              <Font size="16.0" />
+                           </font></Label>
+                        <Label fx:id="linkR" layoutX="271.0" layoutY="118.0" prefHeight="17.0" prefWidth="226.0" text="Roll20" textAlignment="CENTER">
+                           <font>
+                              <Font size="16.0" />
+                           </font></Label>
+                     </children>
+                  </Pane>
+                  <Pane id="panelPreview" fx:id="crearItemPane" prefHeight="544.0" prefWidth="927.0" visible="false">
+                     <children>
+                        <ComboBox fx:id="selectorTipo" layoutX="30.0" layoutY="22.0" onAction="#cargarCreador" prefHeight="25.0" prefWidth="250.0" />
+                        <VBox fx:id="itemFormBox" layoutX="343.0" layoutY="24.0" prefHeight="417.0" prefWidth="543.0" />
+                        <Button fx:id="guardarItemBtn" layoutX="342.0" layoutY="458.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="543.0" text="Guardar" />
+                     </children></Pane>
+               </children>
+            </Pane>
+            <Pane id="panelPreview" fx:id="messagePanel" layoutX="50.0" layoutY="348.0" prefHeight="263.0" prefWidth="268.0" visible="false">
+               <children>
+                  <TextArea id="camposDeTexto" fx:id="messageText" layoutX="9.0" layoutY="9.0" onMouseClicked="#escribirMensaje" prefHeight="243.0" prefWidth="250.0" />
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+   </children>
+</Pane>
