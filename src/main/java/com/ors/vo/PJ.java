@@ -7,10 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import main.java.com.ors.utiles.EnumsDeItems.BasicHitter;
@@ -24,7 +22,6 @@ public class PJ implements Serializable {
 	@JsonProperty("nombre") // Puedes dejarlo como "name" si prefieres el original
 	private String name;
 
-	@JsonManagedReference // Si Race tiene @JsonBackReference en su List<PJ>
 	private Race race;
 
 	@JsonProperty("poder")
@@ -33,10 +30,9 @@ public class PJ implements Serializable {
 	@JsonProperty("tipo_personaje")
 	private CharacterTypes characterType;
 
-	@JsonBackReference // Evita recursión infinita si Adventure tiene List<PJ>
-	private Adventure adventure;
+	@JsonProperty("adventureName")
+	private String adventureName;
 
-	@JsonManagedReference // Si Item tiene @JsonBackReference (por ejemplo en Equipment)
 	private Item weapon;
 
 	@JsonProperty("tipos_corporales")
@@ -45,10 +41,8 @@ public class PJ implements Serializable {
 	@JsonProperty("habilidades")
 	private Set<Skill> skills = new HashSet<>();
 
-	@JsonManagedReference // Si Inventory tiene @JsonBackReference a PJ
 	private List<Inventory> inventario = new ArrayList<>();
 
-	@JsonManagedReference // Si Equipment tiene @JsonBackReference
 	private Equipment equipment;
 
 	@JsonProperty("ataque_basico")
@@ -85,7 +79,7 @@ public class PJ implements Serializable {
 
 	@JsonProperty("modificadores")
 	public List<Double> getAllMods() {
-		return List.of(modA, modS, modE, modM, modD);
+		return new ArrayList<>(List.of(modA, modS, modE, modM, modD));
 	}
 
 	@JsonProperty("xp_atlético")
@@ -106,7 +100,7 @@ public class PJ implements Serializable {
 	@JsonProperty("glimmers")
 	private double glimmers = 0;
 
-	@JsonIgnore
+	@JsonProperty("peso")
 	private double weight;
 
 	@JsonProperty("carga_max")
@@ -146,7 +140,7 @@ public class PJ implements Serializable {
 		this.power = power;
 		this.profile = profile;
 		this.characterType = characterType;
-		this.adventure = adventure;
+		this.adventureName = adventure.getAdventureName();
 		this.able = able;
 		this.atl = atl;
 		this.str = str;
@@ -163,12 +157,12 @@ public class PJ implements Serializable {
 
 	public String showInfo() {
 		return "\n--------------------------------------------------\nPJ name=" + name + ", race=" + race.getName()
-				+ ", power=" + power + ", \ncharacterType=" + characterType + ", adventure=" + adventure + ", weapon="
-				+ weapon + ", \nbodyTypes=" + bodyTypes.toString() + ", \ninspirationPoints=" + inspirationPoints
-				+ ", able=" + able + ", \natl=" + atl + ", \nstr=" + str + ", \nend=" + end + ", \nmin=" + min
-				+ ", \ndex=" + dex + ", \nmodA=" + modA + ", modS=" + modS + ", modE=" + modE + ", modM=" + modM
-				+ ", modD=" + modD + ", \nxpA=" + xpA + ", xpS=" + xpS + ", xpE=" + xpE + ", xpM=" + xpM + ", xpD="
-				+ xpD + ", \nglimmers=" + glimmers + ", weight=" + weight + ", \nmaxCarry=" + maxCarry
+				+ ", power=" + power + ", \ncharacterType=" + characterType + ", adventure=" + adventureName
+				+ ", weapon=" + weapon + ", \nbodyTypes=" + bodyTypes.toString() + ", \ninspirationPoints="
+				+ inspirationPoints + ", able=" + able + ", \natl=" + atl + ", \nstr=" + str + ", \nend=" + end
+				+ ", \nmin=" + min + ", \ndex=" + dex + ", \nmodA=" + modA + ", modS=" + modS + ", modE=" + modE
+				+ ", modM=" + modM + ", modD=" + modD + ", \nxpA=" + xpA + ", xpS=" + xpS + ", xpE=" + xpE + ", xpM="
+				+ xpM + ", xpD=" + xpD + ", \nglimmers=" + glimmers + ", weight=" + weight + ", \nmaxCarry=" + maxCarry
 				+ ", currentCarry=" + currentCarry + ", weightLose=" + weightLose + ", \nmaxHp=" + maxHp
 				+ ", maxActions=" + maxActions + ", maxKcal=" + maxKcal + ", \nhp=" + hp + ", actions=" + actions
 				+ ", kcal=" + kcal + ", \ndices=" + Arrays.toString(dices) + ", \nleftStrong=" + leftStrong
@@ -393,16 +387,16 @@ public class PJ implements Serializable {
 		this.characterType = characterType;
 	}
 
-	public Adventure getAdventure() {
-		return adventure;
-	}
-
-	public void setAdventure(Adventure adventure) {
-		this.adventure = adventure;
-	}
-
 	public Item getWeapon() {
 		return weapon;
+	}
+
+	public String getAdventureName() {
+		return adventureName;
+	}
+
+	public void setAdventureName(String name) {
+		this.adventureName = name;
 	}
 
 	public void setWeapon(Item weapon) {

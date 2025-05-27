@@ -245,10 +245,11 @@ public class PjUsables {
 
 	public void agregarBT(PJ tempo, String bb) {
 		try {
+			System.out.println("/////////////////////1/////////////El nombre del bb es= " + bb);
 			BodyType b = BodyTypeService.obtenerPorId(bb);
+			tempo.getBodyTypes().add(b);
 			if (!tempo.getBodyTypes().contains(b)) {
-				tempo.getBodyTypes().add(b);
-				PjService.update(tempo);
+				PjService.AddBodyType(b, tempo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

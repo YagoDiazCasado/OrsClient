@@ -16,7 +16,7 @@ import main.java.com.ors.vo.BodyType;
 
 public class BodyTypeService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/bodytypes";
+	private static final String API_BASE_URL = ComunAlmacen.urlBase + "/api/bodytypes";
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -35,15 +35,17 @@ public class BodyTypeService {
 	}
 
 	public static BodyType obtenerPorId(String id) throws Exception {
-		String url = API_BASE_URL + URLEncoder.encode(id, StandardCharsets.UTF_8);
+		String url = API_BASE_URL + "/" + URLEncoder.encode(id, StandardCharsets.UTF_8);
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().header("Accept", "application/json")
 				.build();
 
 		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		System.out.println(response.body().toString());
 
 		if (response.statusCode() == 200 && response.body() != null && !response.body().isEmpty()) {
 			ObjectMapper mapper = new ObjectMapper();
+			System.out.println("TEngo ya el " + response.body().toString());
 			return mapper.readValue(response.body(), BodyType.class);
 		} else if (response.statusCode() == 404) {
 			return null;

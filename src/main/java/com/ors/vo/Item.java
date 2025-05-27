@@ -32,6 +32,7 @@ public class Item implements Serializable {
 	private Distance distance;
 	private String consumEffect;
 	private String descripcion;
+	private String imagenUrl;
 
 	public Item() {
 	}
@@ -136,6 +137,18 @@ public class Item implements Serializable {
 
 	public void setId_O(Long id_O) {
 		this.id_O = id_O;
+	}
+
+	public String getImagenUrl() {
+		return imagenUrl;
+	}
+
+	public void setImagenUrl(String imagenUrl) {
+		this.imagenUrl = imagenUrl;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	public String getName() {

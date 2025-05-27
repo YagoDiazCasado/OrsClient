@@ -69,7 +69,7 @@ public class LobbyController implements Initializable {
 	private List<PJ> pjs = new ArrayList<PJ>();
 	private int posicion = 0;
 	private boolean mirar;
-	public File temporal;
+	public File imagenDePerfilPosible;
 	public static ImageView backF;
 
 	@FXML
@@ -215,7 +215,6 @@ public class LobbyController implements Initializable {
 		try {
 			System.out.println(adventure);
 			pjs = PjService.getCompletePJs(adventure, dm);
-			System.out.println(pjs.toString());
 			setDropInImagePane();
 			floor.toBack();
 			fotito.toFront();
@@ -236,7 +235,6 @@ public class LobbyController implements Initializable {
 
 	private void setInitialCharacter() throws Exception {
 		StyleAndEffectService.fadeIn(totalPanel, posicion);
-		System.out.println("Creacion");
 		setOptions();
 		altSlider.setMin(1);
 		altSlider.setMax(60);
@@ -256,22 +254,25 @@ public class LobbyController implements Initializable {
 		newNameText.clear();
 		newNameText.setPromptText("NUEVO PERSONAJE");
 		glimmersText.setPromptText("0");
+		raceOptions.setValue("HUMANO");
+		powerOptions.setValue("REGULAR");
+		btOptions.setValue("STRONG");
 		adjustTexts();
 		defaultViewLobby(false);
 		listoBtn.setOnAction(event -> {
 			try {
 				boolean puede = true;
 				PJ tempo = new PJ(newNameText.getText());
-				tempo.setAdventure(adventure);
+				tempo.setAdventureName(adventure.getAdventureName());
 				List<PJ> todos = PjService.getAll();
 				if (todos.contains(tempo)) {
 					puede = false;
 				}
 				if (puede) {
 					ser.efectoPasar(volumenEfectos);
-					tempo.setProfile((temporal != null)
-							? ImagenesUtil.convertImageToBytes(new Image(temporal.toURI().toString()))
-							: null);
+					tempo.setProfile((imagenDePerfilPosible != null)
+							? ImagenesUtil.convertImageToBytes(new Image(imagenDePerfilPosible.toURI().toString()))
+							: ImagenesUtil.convertImageToBytes(new Image(new File(defaultImage).toURI().toString())));
 					tempo.setCharacterType((!dm) ? CharacterTypes.PARTY : CharacterTypes.NPC); // Meter mejor un botón
 					tempo.setAtl((int) altSlider.getValue());
 					tempo.setStr((int) strSlider.getValue());
@@ -279,13 +280,12 @@ public class LobbyController implements Initializable {
 					tempo.setMin((int) minSlider.getValue());
 					tempo.setDex((int) dexSlider.getValue());
 					tempo.setRace((Race) RaceService.getById((raceOptions.getValue().toString())));
-					tempo.setGlimmers(Double.parseDouble(glimmersText.getText()));
+					tempo.setGlimmers(
+							glimmersText.getText().isEmpty() ? 0.0 : Double.parseDouble(glimmersText.getText()));
 					tempo.setPower(powerOptions.getValue().toString());
-					PjService.update(tempo);
-					ComunAlmacen.pU.agregarBT(tempo, btOptions.getValue().toString()); // Esto falla
 					tempo.setAble(true);
-					System.out.println(tempo.toString());
-					PjService.update(tempo);
+					PjService.create(tempo);
+					ComunAlmacen.pU.agregarBT(tempo, btOptions.getValue().toString());
 					tempo.setActions(tempo.getMaxActions());
 					tempo.setHp(tempo.getMaxHp());
 					tempo.setKcal(tempo.getMaxKcal());
@@ -362,18 +362,17 @@ public class LobbyController implements Initializable {
 	private void updateCharacterView() throws Exception {
 		if (pjs.size() == 0) {
 			setInitialCharacter();
+		} else {
+			personajesSel.getItems().clear();
+			for (PJ pj : pjs) {
+				personajesSel.getItems().add(pj.getName());
+			}
+			ComunAlmacen.selected = pjs.get(posicion);
+			updateMapView(); // la vista de arriba
+			setStyles(ComunAlmacen.selected);
+			defaultViewLobby(true); // Desactivar el modo edit
+			StyleAndEffectService.fadeIn(totalPanel, 1f);
 		}
-		personajesSel.getItems().clear();
-		for (PJ pj : pjs) {
-			personajesSel.getItems().add(pj.getName());
-		}
-		System.out.println("Personaje de posicion = " + posicion);
-		PJ actual = pjs.get(posicion);
-		ComunAlmacen.selected = actual;
-		updateMapView(); // la vista de arriba
-		setStyles(actual);
-		defaultViewLobby(true); // Desactivar el modo edit
-		StyleAndEffectService.fadeIn(totalPanel, 1f);
 	}
 
 	private void updateMapView() throws SQLException, Exception {
@@ -487,7 +486,7 @@ public class LobbyController implements Initializable {
 		}
 
 		Image foto = ImagenesUtil.byteArrayToImage(pj.getProfile());
-		if (foto != null) {
+		if (foto != null && foto.getWidth() != 0) {
 			fotito.setImage(foto);
 			pj.setProfile(ImagenesUtil.convertImageToBytes(foto));
 		} else {
@@ -518,7 +517,7 @@ public class LobbyController implements Initializable {
 		pjs.get(posicion).setName(newNameText.getText());
 		pjs.get(posicion).setRace((Race) RaceService.getById(raceOptions.getValue().toString()));
 		pjs.get(posicion).setGlimmers(Double.parseDouble(glimmersText.getText()));
-		pjs.get(posicion).setAdventure((Adventure) AdventureService.getById(adventure.toString()));
+		pjs.get(posicion).setAdventureName(adventure.getAdventureName());
 		pjs.get(posicion).setPower(powerOptions.getValue().toString());
 		ComunAlmacen.pU.agregarBT(pjs.get(posicion), btOptions.getValue().toString());
 		PjService.update(pjs.get(posicion));
@@ -532,8 +531,8 @@ public class LobbyController implements Initializable {
 		if (dm) {
 			listoBtn.setOnAction(event -> {
 				try {
-					if (temporal != null) {
-						pjs.get(posicion).setProfile(ImagenesUtil.fileToByte(temporal));
+					if (imagenDePerfilPosible != null) {
+						pjs.get(posicion).setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible));
 					}
 					enviar();
 				} catch (Exception e) {
@@ -716,10 +715,10 @@ public class LobbyController implements Initializable {
 		selectImagePanel.setOnDragDropped(event -> {
 			List<File> archivos = event.getDragboard().getFiles();
 			if (!archivos.isEmpty()) {
-				temporal = archivos.get(0);
-				if (temporal.length() > 2147483647) {
+				imagenDePerfilPosible = archivos.get(0);
+				if (imagenDePerfilPosible.length() > 2147483647) {
 					dropLabel.setText("TOO HEAVY");
-					temporal = null;
+					imagenDePerfilPosible = new File(defaultImage);
 				} else {
 					dropLabel.setText("SAVED");
 				}
@@ -733,11 +732,11 @@ public class LobbyController implements Initializable {
 	private void guardarImagen() throws Exception {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		temporal = fileChooser.showOpenDialog(null);
-		if (temporal != null) {
-			if (temporal.length() > 2147483647) {
+		imagenDePerfilPosible = fileChooser.showOpenDialog(null);
+		if (imagenDePerfilPosible != null) {
+			if (imagenDePerfilPosible.length() > 2147483647) {
 				dropLabel.setText("TOO HEAVY");
-				temporal = null;
+				imagenDePerfilPosible = new File(defaultImage);
 			} else {
 				dropLabel.setText("SAVED");
 			}
@@ -785,7 +784,7 @@ public class LobbyController implements Initializable {
 			if (button.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
 				try {
 					PJ pj = pjs.get(posicion);
-					pj.setAdventure(comboAventuras.getValue());
+					pj.setAdventureName(comboAventuras.getValue().getAdventureName());
 					pj.setCharacterType(comboTipo.getValue());
 					PjService.update(pj);
 					pjs = PjService.getCompletePJs(adventure, dm);
@@ -987,6 +986,7 @@ public class LobbyController implements Initializable {
 		try {
 			updateCharacterView();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("La primera creación ha fallado");
 		}
 	}

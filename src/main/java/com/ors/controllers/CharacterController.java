@@ -46,6 +46,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
@@ -1453,6 +1454,7 @@ public class CharacterController implements Initializable {
 			ventanita.setContentText("Selecciona una opción:");
 			ButtonType verInfo = new ButtonType("Informacion");
 			ButtonType coger = new ButtonType("Coger");
+			ButtonType addImage = new ButtonType("FOtito Nueva");
 			ButtonType eliminar = new ButtonType("Eliminar");
 			if (dm) {
 				ventanita.getButtonTypes().setAll(verInfo, coger, eliminar);
@@ -1464,6 +1466,16 @@ public class CharacterController implements Initializable {
 				case "Informacion":
 					Alert infoVtn = new Alert(AlertType.INFORMATION);
 					infoVtn.setContentText(tipo.showInfo());
+					if (tipo.getImagenUrl() != null) {
+						Image image = new Image(tipo.getImagenUrl(), true);
+						ImageView imageView = new ImageView(image);
+						imageView.setFitWidth(300);
+						imageView.setPreserveRatio(true);
+
+						VBox contenido = new VBox(imageView);
+						contenido.setSpacing(10);
+						infoVtn.getDialogPane().setContent(contenido);
+					}
 					infoVtn.show();
 					break;
 				case "Coger":
@@ -1485,6 +1497,21 @@ public class CharacterController implements Initializable {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					break;
+				case "FOtito Nueva":
+					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
+					dialog.setTitle("Meter imagen nueva");
+					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
+					dialog.setContentText("URL:");
+
+					dialog.showAndWait().ifPresent(url -> {
+						tipo.setImagenUrl(url);
+						try {
+							ItemService.update(tipo);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
 					break;
 				}
 			});
@@ -1566,6 +1593,16 @@ public class CharacterController implements Initializable {
 				case "Informacion":
 					Alert infoVtn = new Alert(AlertType.INFORMATION);
 					infoVtn.setContentText(tipo.showInfo());
+					if (tipo.getImagenUrl() != null) {
+						Image image = new Image(tipo.getImagenUrl(), true);
+						ImageView imageView = new ImageView(image);
+						imageView.setFitWidth(300);
+						imageView.setPreserveRatio(true);
+
+						VBox contenido = new VBox(imageView);
+						contenido.setSpacing(10);
+						infoVtn.getDialogPane().setContent(contenido);
+					}
 					infoVtn.show();
 					break;
 				case "Consumir":

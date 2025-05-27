@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Adventure {
 
-	@JsonProperty("nombre")
+	@JsonProperty("name")
 	private String adventureName;
 
 	private String pasword;
@@ -21,11 +21,11 @@ public class Adventure {
 		this.pasword = p;
 	}
 
-	public String getName() {
+	public String getAdventureName() {
 		return adventureName;
 	}
 
-	public void setName(String name) {
+	public void setAdventureName(String name) {
 		this.adventureName = name;
 	}
 
@@ -56,4 +56,5 @@ public class Adventure {
 		Adventure other = (Adventure) obj;
 		return Objects.equals(adventureName, other.adventureName);
 	}
+	
 }

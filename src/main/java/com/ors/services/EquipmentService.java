@@ -2,7 +2,9 @@ package main.java.com.ors.services;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import main.java.com.ors.vo.PJ;
 
 public class EquipmentService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/equipments";
+	private static final String API_BASE_URL =ComunAlmacen.urlBase +"/api/equipments";
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 

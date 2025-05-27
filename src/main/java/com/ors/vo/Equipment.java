@@ -8,8 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonInclude(JsonInclude.Include.NON_NULL) // No incluir nulos en JSON
+@JsonInclude(JsonInclude.Include.NON_NULL) 
 public class Equipment {
+	
+	@JsonProperty("ownerId")
+	private String ownerId;
 
 	@JsonProperty("owner")
 	private PJ owner;
@@ -38,7 +41,6 @@ public class Equipment {
 	@JsonIgnore
 	private List<Item> equip = new ArrayList<>();
 
-	// Constructores
 	public Equipment() {}
 
 	public Equipment(PJ owner, Item head, Item chest, Item legs, Item feet) {

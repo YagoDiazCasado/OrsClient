@@ -32,4 +32,6 @@ public class ComunAlmacen {
 	public static PJ selected;
 	public static Adventure adventure;
 
+	public static String urlBase;
+
 }

@@ -16,7 +16,7 @@ import main.java.com.ors.vo.PJ;
 
 public class InventoryService {
 
-	private static final String BASE_URL = "http://localhost:8080/api/inventory";
+	private static final String BASE_URL = ComunAlmacen.urlBase +"/api/inventory";
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 

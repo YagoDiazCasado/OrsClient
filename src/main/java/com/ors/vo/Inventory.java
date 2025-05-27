@@ -24,8 +24,8 @@ public class Inventory implements Serializable {
 	@JsonProperty("nombre_objeto")
 	private String objectName;
 
-	// Constructores
-	public Inventory() {}
+	public Inventory() {
+	}
 
 	public Inventory(Item i, PJ p) {
 		this.idIn = new InventoryId(p, i);
@@ -78,22 +78,30 @@ public class Inventory implements Serializable {
 		this.objectName = objectName;
 	}
 
-	// Clase interna para la clave compuesta
+	public PJ getPj() {
+		return idIn != null ? idIn.getPj() : null;
+	}
+
+	public void setPj(PJ pj) {
+		if (idIn == null)
+			idIn = new InventoryId();
+		idIn.setPj(pj);
+	}
+
 	public static class InventoryId implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-
 		private PJ pj;
 		private Item item;
 
-		public InventoryId() {}
+		public InventoryId() {
+		}
 
 		public InventoryId(PJ pj, Item item) {
 			this.pj = pj;
 			this.item = item;
 		}
 
-		// Getters y setters
 		public PJ getPj() {
 			return pj;
 		}
@@ -110,11 +118,12 @@ public class Inventory implements Serializable {
 			this.item = item;
 		}
 
-		// equals y hashCode
 		@Override
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof InventoryId)) return false;
+			if (this == o)
+				return true;
+			if (!(o instanceof InventoryId))
+				return false;
 			InventoryId that = (InventoryId) o;
 			return Objects.equals(pj, that.pj) && Objects.equals(item, that.item);
 		}

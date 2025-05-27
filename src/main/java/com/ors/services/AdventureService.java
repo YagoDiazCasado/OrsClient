@@ -2,18 +2,21 @@ package main.java.com.ors.services;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import main.java.com.ors.utiles.GestorFicheroConfiguracion;
 import main.java.com.ors.vo.Adventure;
 
 public class AdventureService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/adventures";
+	private static final String API_BASE_URL = ComunAlmacen.urlBase +"/api/adventures";
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -22,6 +25,7 @@ public class AdventureService {
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		if (response.statusCode() == 200) {
+			System.out.println(response.body().toString());
 			return mapper.readValue(response.body(), new TypeReference<List<Adventure>>() {
 			});
 		} else {

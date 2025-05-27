@@ -17,7 +17,7 @@ import main.java.com.ors.vo.PJ;
 
 public class ItemService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/items";
+	private static final String API_BASE_URL = ComunAlmacen.urlBase +"/api/items";
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 

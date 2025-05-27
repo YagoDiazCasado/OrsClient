@@ -25,32 +25,7 @@ public class Client implements Serializable {
 					Integer.parseInt(GestorFicheroConfiguracion.devolverCredencial("puertoSockets")));
 			escucharServidor();
 		} catch (Exception e) {
-			System.out.println("No me he podido conectar");
-			String ip = ObtenerIPPublica.devolver();
-			System.out.println("No esta encendido el servidor. Hosteando como Server desde la ip de este PC: " + ip
-					+ "\nPuerto :" + GestorFicheroConfiguracion.devolverCredencial("puertoSockets"));
-			GestorFicheroConfiguracion.actualizarValor("ipServer", ip);
-			Thread server = new Thread(() -> {
-				Server s = new Server();
-				try {
-					s.iniciarServer();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			});
-			server.isDaemon();
-			server.start();
-			try {
-				Thread.sleep(500);
-				cliente = new Socket(ip,
-						Integer.parseInt(GestorFicheroConfiguracion.devolverCredencial("puertoSockets")));
-				escucharServidor();
-			} catch (Exception e1) {
-				e.printStackTrace();
-				System.out.println(
-						"Probablemente el puerto 1234 no sea accesible en tu PC. Trata de cambiarlo en la pestaña de launcehr de la aplicacion");
-				throw new Exception("No se pudo iniciar");
-			}
+			e.printStackTrace();
 		}
 	}
 

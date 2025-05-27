@@ -70,9 +70,11 @@ public class LauncherController implements Initializable {
 	@FXML
 	private Button iniciarJuegoBotton;
 	@FXML
-	private TextField ipSField;
+	private TextField ipField;
 	@FXML
 	private TextField portField;
+	@FXML
+	private TextField portServerField;
 	@FXML
 	private Button addAdventureBtn;
 	@FXML
@@ -91,16 +93,25 @@ public class LauncherController implements Initializable {
 			System.out.println("No hay musica");
 		}
 
+		StyleAndEffectService.pointElement(ipField, 0.05, 0.2, "blue", "black");
+		StyleAndEffectService.pointElement(portServerField, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(portField, 0.05, 0.2, "blue", "black");
-		StyleAndEffectService.pointElement(playerOption, 0.05, 0.2, "green", "black");
-		StyleAndEffectService.pointElement(dmOption, 0.05, 0.2, "red", "black");
+		StyleAndEffectService.pointElement(playerOption, 0.05, 0.2, "blue", "black");
+		StyleAndEffectService.pointElement(dmOption, 0.05, 0.2, "blue", "black");
+		
+		StyleAndEffectService.pointElement(letraP, 0.2, 0.2, "blue", "black");
+		StyleAndEffectService.pointElement(letraD, 0.2, 0.2, "orange", "black");
+
+		
 		StyleAndEffectService.pointElement(pasword, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(adventures, 0.05, 0.2, "blue", "black");
-		StyleAndEffectService.pointElement(iniciarJuegoBotton, 0.03, 0.3, "blue", "black");
+		StyleAndEffectService.pointElement(iniciarJuegoBotton, 0.07, 0.3, "blue", "black");
 		iniciarJuegoBotton.setOnMouseClicked(event -> {
 			try {
 				GestorFicheroConfiguracion.actualizarValor("puertoSockets", portField.getText());
-				GestorFicheroConfiguracion.actualizarValor("ipServer", ipSField.getText());
+				GestorFicheroConfiguracion.actualizarValor("ipServer", ipField.getText());
+				GestorFicheroConfiguracion.actualizarValor("puerto", portServerField.getText());
+				ComunAlmacen.urlBase = "http://" + ipField.getText() + ":" + portServerField.getText();
 				List<Adventure> todas = AdventureService.getAll();
 				adventures.getItems().addAll(todas);
 				iniciarCampaing();
@@ -113,6 +124,13 @@ public class LauncherController implements Initializable {
 			}
 		});
 		mostrarCuadroDePrompts();
+	}
+
+	private void mostrarCuadroDePrompts() {
+		portField.setText(GestorFicheroConfiguracion.devolverCredencial("puertoSockets"));
+		portServerField.setText(GestorFicheroConfiguracion.devolverCredencial("puerto"));
+		ipField.setText(GestorFicheroConfiguracion.devolverCredencial("ipServer"));
+		ser.efectoEntrar(volumenEfectos);
 	}
 
 	private void reCrearBaseDatos() {
@@ -168,7 +186,7 @@ public class LauncherController implements Initializable {
 							adventures.getItems().add(nueva);
 							adventures.setValue(nueva);
 							adventure = nueva;
-							GestorFicheroConfiguracion.actualizarValor(nueva.getName(), nueva.getPasword());
+							GestorFicheroConfiguracion.actualizarValor(nueva.getAdventureName(), nueva.getPasword());
 							seleccionRango();
 							ser.efectoEleccion(volumenEfectos);
 						} catch (Exception ex) {
@@ -182,12 +200,6 @@ public class LauncherController implements Initializable {
 		});
 	}
 
-	private void mostrarCuadroDePrompts() {
-		portField.setText(GestorFicheroConfiguracion.devolverCredencial("puertoSockets"));
-		ipSField.setText(GestorFicheroConfiguracion.devolverCredencial("ipServer"));
-		ser.efectoEntrar(volumenEfectos);
-	}
-
 	private void iniciarCampaing() { // Si falla, nos devuelve al trycatch de antes
 
 		adventureLogPanel.setVisible(true);
@@ -198,10 +210,11 @@ public class LauncherController implements Initializable {
 		StyleAndEffectService.pointElement(go, 0.3, 0.3, "blue", "black");
 		go.setOnMouseClicked(event -> {
 			try {
-				adventure = (Adventure) AdventureService.getById(adventures.getValue().getName());
+				adventure = (Adventure) AdventureService.getById(adventures.getValue().getAdventureName());
 				if (!(pasword.getText().equals(""))) {
 					if (pasword.getText().equals(adventure.getPasword())) {
-						GestorFicheroConfiguracion.actualizarValor(adventure.getName(), adventure.getPasword());
+						GestorFicheroConfiguracion.actualizarValor(adventure.getAdventureName(),
+								adventure.getPasword());
 						seleccionRango();
 					} else {
 						System.out.println("FAllo");
@@ -209,8 +222,8 @@ public class LauncherController implements Initializable {
 						pasword.setStyle("-fx-radius-color: RED; -fx-background-color:RED");
 					}
 				} else {
-					if (adventures.getValue().getPasword()
-							.equals(GestorFicheroConfiguracion.devolverCredencial(adventures.getValue().getName()))) {
+					if (adventures.getValue().getPasword().equals(
+							GestorFicheroConfiguracion.devolverCredencial(adventures.getValue().getAdventureName()))) {
 						seleccionRango();
 					}
 				}
@@ -246,7 +259,7 @@ public class LauncherController implements Initializable {
 
 	private void iniciarJuego() throws IOException {
 		System.out.println("Intento");
-		System.out.println(adventure.getName() + " entrando como " + dm);
+		System.out.println(adventure.getAdventureName() + " entrando como " + dm);
 		ComunAlmacen.adventure = adventure;
 		ComunAlmacen.dm = dm;
 		try {

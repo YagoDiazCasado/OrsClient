@@ -12,8 +12,8 @@ module ORS_FX_V2 {
 	opens main.java.com.ors.application to javafx.fxml;
 	opens main.java.com.ors.controllers to javafx.fxml;
 	opens main.resources.com.ors.views to javafx.fxml;
-	opens main.java.com.ors.vo to org.hibernate.orm.core;
-
+	opens main.java.com.ors.vo;
+	
 	requires java.desktop;
 	
 	requires java.sql;
@@ -26,4 +26,6 @@ module ORS_FX_V2 {
 	requires java.net.http;
 	requires com.fasterxml.jackson.databind;
 	requires com.fasterxml.jackson.core;
+	requires org.apache.httpcomponents.client5.httpclient5;
+	requires org.apache.httpcomponents.core5.httpcore5;
 }

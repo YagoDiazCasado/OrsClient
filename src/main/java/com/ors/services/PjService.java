@@ -4,19 +4,30 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import main.java.com.ors.vo.Adventure;
+import main.java.com.ors.vo.BodyType;
 import main.java.com.ors.vo.PJ;
 
 public class PjService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/pj";
+	private static final String API_BASE_URL = ComunAlmacen.urlBase + "/api/pj";
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private static final HttpClient client = HttpClient.newHttpClient();
 
@@ -34,13 +45,6 @@ public class PjService {
 				.PUT(HttpRequest.BodyPublishers.ofString(json)).build();
 
 		return client.send(request, HttpResponse.BodyHandlers.ofString());
-	}
-
-	// DEben de ser peticiones que reciban la imagen como tal
-	public static Byte[] getFotoPj(PJ pj) {
-	}
-
-	public static Byte[] changeFotoPj(PJ pj) {
 	}
 
 	public static List<PJ> getCompletePJs(Adventure adventure, boolean dm) throws Exception {
@@ -62,14 +66,59 @@ public class PjService {
 		}
 	}
 
-	public static void update(PJ pj) throws Exception { // Updatea los valores y GUARDA en la bbdd
-		System.out.println("GUARDADO ---------------------------------------------------------------------------");
-		String json = mapper.writeValueAsString(pj);
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(API_BASE_URL + "/update"))
-				.header("Content-Type", "application/json").PUT(HttpRequest.BodyPublishers.ofString(json)).build();
-		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		if (response.statusCode() != 200) {
-			throw new RuntimeException("Error al actualizar PJ: " + response.statusCode() + " - " + response.body());
+	public static void update(PJ pj) throws Exception {
+
+		System.out.println(mapper.writeValueAsString(pj));
+
+		HttpPost post = new HttpPost(API_BASE_URL + "/update");
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addTextBody("pj", mapper.writeValueAsString(pj),
+				ContentType.create("application/json", StandardCharsets.UTF_8));
+
+		if (pj.getProfile() != null && pj.getProfile().length > 0) {
+			builder.addBinaryBody("profile", pj.getProfile(), ContentType.IMAGE_PNG, "portrait.png");
+		}
+
+		HttpEntity multipart = builder.build();
+		post.setEntity(multipart);
+		post.setHeader("Accept", "application/json");
+
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+				CloseableHttpResponse response = httpClient.execute(post)) {
+
+			int statusCode = response.getCode();
+			if (statusCode != 200) {
+				throw new RuntimeException("Error al actualizar PJ con imagen: " + statusCode);
+			}
+		}
+	}
+
+	public static void create(PJ pj) throws Exception {
+		System.out.println(mapper.writeValueAsString(pj));
+		HttpPost post = new HttpPost(API_BASE_URL + "/create");
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addTextBody("pj", mapper.writeValueAsString(pj),
+				ContentType.create("application/json", StandardCharsets.UTF_8));
+
+		if (pj.getProfile() != null && pj.getProfile().length > 0) {
+			builder.addBinaryBody("profile", pj.getProfile(), ContentType.IMAGE_PNG, "portrait.png");
+		}
+
+		HttpEntity multipart = builder.build();
+		post.setEntity(multipart);
+		post.setHeader("Accept", "application/json");
+
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+				CloseableHttpResponse response = httpClient.execute(post)) {
+
+			int statusCode = response.getCode();
+			if (statusCode != 200) {
+				throw new RuntimeException("Error al crear PJ con imagen: " + statusCode);
+			}
 		}
 	}
 
@@ -183,17 +232,6 @@ public class PjService {
 		}
 	}
 
-	public static void create(PJ pj) throws Exception {
-		String json = mapper.writeValueAsString(pj);
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(API_BASE_URL))
-				.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(json)).build();
-
-		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		if (response.statusCode() != 200) {
-			throw new RuntimeException("Error al crear PJ: " + response.body());
-		}
-	}
-
 	public static void updateFull(PJ pj) throws Exception {
 		String json = mapper.writeValueAsString(pj);
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(API_BASE_URL))
@@ -214,6 +252,30 @@ public class PjService {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		if (response.statusCode() != 200) {
 			throw new RuntimeException("Error al eliminar PJ: " + response.body());
+		}
+	}
+
+	public static void AddBodyType(BodyType b, PJ pj) throws Exception {
+		String url = API_BASE_URL + "/pjBt";
+		HttpPost post = new HttpPost(url);
+
+		ObjectMapper mapper = new ObjectMapper();
+		String pjJson = mapper.writeValueAsString(pj);
+		String btJson = mapper.writeValueAsString(b);
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.setMode(HttpMultipartMode.STRICT);
+		builder.addTextBody("pj", pjJson, ContentType.APPLICATION_JSON);
+		builder.addTextBody("bt", btJson, ContentType.APPLICATION_JSON);
+
+		HttpEntity entity = builder.build();
+		post.setEntity(entity);
+
+		try (CloseableHttpClient client = HttpClients.createDefault();
+				CloseableHttpResponse response = client.execute(post)) {
+			int statusCode = response.getCode();
+		}catch(Exception e) {	
+			e.printStackTrace();
 		}
 	}
 

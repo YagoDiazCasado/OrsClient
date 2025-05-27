@@ -2,9 +2,11 @@ package main.java.com.ors.services;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +15,7 @@ import main.java.com.ors.vo.Race;
 
 public class RaceService {
 
-	private static final String API_BASE_URL = "http://localhost:8080/api/races";
+	private static final String API_BASE_URL = ComunAlmacen.urlBase +"/api/races";
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	// 🔍 Obtener todas las razas
