@@ -522,7 +522,7 @@ public class CharacterController implements Initializable {
 		sesion.setOnCloseRequest(event -> {
 			try {
 				selected.setAble(true);
-				PjService.update(selected);
+				selected = PjService.update(selected);
 				comunicaError(selected.showInfo());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -558,13 +558,12 @@ public class CharacterController implements Initializable {
 		panelAjustes.toFront();
 		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
 	}
-	
+
 	private void comunicaError(String string) {
 		Alert a = new Alert(Alert.AlertType.INFORMATION);
 		a.setHeaderText(string);
 		a.show();
 	}
-
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////// LOADS
@@ -585,7 +584,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	public void loadResume() {
 		try {
-			PjService.update(selected);
+			selected = PjService.update(selected);
 			Tooltip.install(fotito, new Tooltip(selected.showInfo()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1398,7 +1397,7 @@ public class CharacterController implements Initializable {
 			throw new Exception();
 		}
 		selected.setInspirationPoints(selected.getInspirationPoints() + numero);
-		PjService.update(selected);
+		selected = PjService.update(selected);
 		loadShop();
 	}
 
@@ -1654,7 +1653,7 @@ public class CharacterController implements Initializable {
 					try {
 						if (!tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
 							selected.setWeapon(tipo);
-							PjService.update(selected);
+							selected = PjService.update(selected);
 						} else {
 							// Si no va , es new Equipment(selected) para obtener ID
 							Equipment equipo = (Equipment) EquipmentService.getById(selected);
@@ -1688,7 +1687,7 @@ public class CharacterController implements Initializable {
 								}
 							}
 							selected.setEquipment(equipo);
-							PjService.update(selected);
+							selected = PjService.update(selected);
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -1901,13 +1900,13 @@ public class CharacterController implements Initializable {
 	@FXML
 	private void save() throws Exception {
 
-		PjService.update(selected);
+		selected = PjService.update(selected);
 
 	}
 
 	@FXML
 	private void escribirMensaje() throws Exception {
-		PjService.update(selected);
+		selected = PjService.update(selected);
 	}
 
 	@FXML
@@ -1940,7 +1939,7 @@ public class CharacterController implements Initializable {
 			File e = fileChooser.showOpenDialog(null);
 			selected.setProfile(ImagenesUtil.fileToByte(e));
 			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));
-			PjService.update(selected);
+			selected = PjService.update(selected);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2066,7 +2065,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	public void returnToMain() throws Exception {
 		selected.setAble(true);
-		PjService.update(selected);
+		selected = PjService.update(selected);
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/LoobyVista.fxml"));
 			Parent root = loader.load();

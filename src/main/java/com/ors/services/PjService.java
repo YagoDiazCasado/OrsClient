@@ -1,5 +1,6 @@
 package main.java.com.ors.services;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -66,54 +67,36 @@ public class PjService {
 		}
 	}
 
-	public static void update(PJ pj) throws Exception {
-
+	public static PJ update(PJ pj) throws Exception {
 		HttpPost post = new HttpPost(API_BASE_URL + "/update");
-
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		builder.addTextBody("pj", mapper.writeValueAsString(pj),
-				ContentType.create("application/json", StandardCharsets.UTF_8));
-
-		if (pj.getProfile() != null && pj.getProfile().length > 0) {
-			builder.addBinaryBody("profile", pj.getProfile(), ContentType.IMAGE_PNG, "portrait.png");
-		}
-
-		HttpEntity multipart = builder.build();
-		post.setEntity(multipart);
-		post.setHeader("Accept", "application/json");
-
-		try (CloseableHttpClient httpClient = HttpClients.createDefault();
-				CloseableHttpResponse response = httpClient.execute(post)) {
-
-			int statusCode = response.getCode();
-			if (statusCode != 200) {
-				throw new RuntimeException("Error al actualizar PJ con imagen: " + statusCode);
-			}
-		}
+		return enviarPeticion(post, pj);
 	}
 
-	public static void create(PJ pj) throws Exception {
+	public static PJ create(PJ pj) throws Exception {
 		HttpPost post = new HttpPost(API_BASE_URL + "/create");
+		return enviarPeticion(post, pj);
+	}
 
+	private static PJ enviarPeticion(HttpPost post, PJ pj) throws Exception {
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		builder.addTextBody("pj", mapper.writeValueAsString(pj),
 				ContentType.create("application/json", StandardCharsets.UTF_8));
-
 		if (pj.getProfile() != null && pj.getProfile().length > 0) {
 			builder.addBinaryBody("profile", pj.getProfile(), ContentType.IMAGE_PNG, "portrait.png");
 		}
-
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
 		post.setHeader("Accept", "application/json");
-
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpClient.execute(post)) {
-
 			int statusCode = response.getCode();
 			if (statusCode != 200) {
-				throw new RuntimeException("Error al crear PJ con imagen: " + statusCode);
+				throw new RuntimeException("Error : " + statusCode);
 			}
+			InputStream content = response.getEntity().getContent();
+			PJ updatedPJ = mapper.readValue(content, PJ.class);
+			System.out.println("////////////////////////////////Recién tomado del endPoint:\n" + updatedPJ.showInfo());
+			return updatedPJ;
 		}
 	}
 

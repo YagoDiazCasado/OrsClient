@@ -268,7 +268,7 @@ public class LobbyController implements Initializable {
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
-			comunicaError("FAllo en el iniciar: " + e.getMessage());
+			comunicalo("FAllo en el iniciar: " + e.getMessage());
 		}
 	}
 
@@ -282,7 +282,6 @@ public class LobbyController implements Initializable {
 			setInitialCharacter();
 		} else {
 			ComunAlmacen.selected = pjs.get(posicion);
-			comunicaError(ComunAlmacen.selected.showInfo());
 			refrescoDeEstilo();
 		}
 	}
@@ -413,6 +412,8 @@ public class LobbyController implements Initializable {
 		personajesSel.getItems().clear();
 		pjs = PjService.getCompletePJs(adventure, dm);
 		for (PJ pj : pjs) {
+			System.out.println(
+					"////////////////////////////////Recién tomado del endPoint Get Compeltes:\n" + pj.showInfo());
 			personajesSel.getItems().add(pj.getName());
 		}
 		personajesSel.setVisible(false);
@@ -448,11 +449,9 @@ public class LobbyController implements Initializable {
 					puede = false;
 				}
 				if (puede) {
-					tempo.setCharacterType((!dm) ? CharacterTypes.PARTY : CharacterTypes.NPC); // Meter mejor un botón
+					tempo.setCharacterType((!dm) ? CharacterTypes.PARTY : CharacterTypes.NPC);
 					ser.efectoPasar(volumenEfectos);
-					System.out.println("ruta imagen" + imagenDePerfilPosible.getAbsolutePath());
-					tempo.setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible)); // a no ser que la cambien, es la
-																						// default
+					tempo.setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible));
 					tempo.setAtl((int) altSlider.getValue());
 					tempo.setStr((int) strSlider.getValue());
 					tempo.setEnd((int) endSlider.getValue());
@@ -463,12 +462,12 @@ public class LobbyController implements Initializable {
 							glimmersText.getText().isEmpty() ? 0.0 : Double.parseDouble(glimmersText.getText()));
 					tempo.setPower(powerOptions.getValue().toString());
 					tempo.setAble(true);
-					PjService.create(tempo);
+					tempo = PjService.create(tempo);
 					ComunAlmacen.pU.agregarBT(tempo, btOptions.getValue().toString());
 					tempo.setActions(tempo.getMaxActions());
 					tempo.setHp(tempo.getMaxHp());
 					tempo.setKcal(tempo.getMaxKcal());
-					PjService.update(tempo);
+					tempo = PjService.update(tempo);
 					pjs.add(tempo);
 					ser.efectoEntrar(volumenEfectos);
 					panelAjustes.setVisible(true);
@@ -627,7 +626,7 @@ public class LobbyController implements Initializable {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////// Utilidades
 
-	private void comunicaError(String string) {
+	private void comunicalo(String string) {
 		Alert a = new Alert(Alert.AlertType.INFORMATION);
 		a.setHeaderText(string);
 		a.show();
@@ -781,13 +780,14 @@ public class LobbyController implements Initializable {
 
 	@FXML
 	private void enter() throws Exception {
-		comunicaError(ComunAlmacen.selected.showInfo());
+		ComunAlmacen.selected = PjService.update(ComunAlmacen.selected);
+		backF = backImage;
+		pjs.get(posicion).setAble(false);
+
 		showLoading(true); // para la pestaña de carga
 		new Thread(() -> { // CAMBIAR!! poner mejor en el initialice de characterController todo, aqui
 							// sobra
 			try {
-				backF = backImage;
-				pjs.get(posicion).setAble(false);
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/CharacterVista.fxml"));
 				Parent root = loader.load();
 				Scene ventana = new Scene(root);
@@ -898,9 +898,10 @@ public class LobbyController implements Initializable {
 					PJ pj = pjs.get(posicion);
 					pj.setAdventureName(comboAventuras.getValue().getAdventureName());
 					pj.setCharacterType(comboTipo.getValue());
-					PjService.update(pj);
 					pjs = PjService.getCompletePJs(adventure, dm);
 					posicion = 0;
+					System.out.println("////////////////////////////////Recién tomado del endPoint Get Compeltes:\n"
+							+ pjs.get(posicion).showInfo());
 					updateCharacterView();
 					ser.efectoEleccion(volumenEfectos);
 				} catch (Exception e) {

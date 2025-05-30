@@ -71,10 +71,8 @@ public class PJ implements Serializable {
 	@JsonProperty("destreza")
 	private int dex = 1;
 
-	@JsonIgnore
 	private double modA, modS, modE, modM, modD;
 
-	@JsonIgnore
 	private List<Double> mods = new ArrayList<>();
 
 	@JsonProperty("modificadores")
@@ -112,7 +110,6 @@ public class PJ implements Serializable {
 	@JsonProperty("pérdida_peso")
 	private double weightLose = 0;
 
-	@JsonIgnore
 	private int maxHp, maxActions, maxKcal;
 
 	@JsonProperty("hp_actual")
@@ -124,13 +121,11 @@ public class PJ implements Serializable {
 	@JsonProperty("kcal_actuales")
 	private int kcal = 1;
 
-	@JsonIgnore
-	private String[] dices = { "atl", "str", "end", "min", "dex", "acr", "vas", "per", "cha" };
-
-	@JsonIgnore
 	private double leftStrong;
 
 	@JsonIgnore
+	private String[] dices = { "atl", "str", "end", "min", "dex", "acr", "vas", "per", "cha" };
+
 	private int speed, preception, charisma, acrobatics, balance_Lv, vaste, vaste_Distance;
 
 	public PJ(String name, Race race, String power, byte[] profile, CharacterTypes characterType, Adventure adventure,
@@ -484,6 +479,11 @@ public class PJ implements Serializable {
 	}
 
 	public List<Double> getMods() {
+		mods.add(modA);
+		mods.add(modS);
+		mods.add(modE);
+		mods.add(modM);
+		mods.add(modD);
 		return mods;
 	}
 

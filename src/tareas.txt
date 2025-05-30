@@ -1,18 +1,9 @@
 
 
 
-- No cargan los mods en el cc 
-del personaje
+- No carga bien las max actions y max vida en la api
 
--El daño esta roto
+- No se ponen las currentHp ni current Acc ni kcal
 
--El pj no sube de nivel usando habilidades
-
--El pj no tiene vida
-
--A todas luces este pj no se ha actualizado
-
--Mirar si lo de los mods es por esta rpiollando
-la lista en vez de uno por uno
 
 
