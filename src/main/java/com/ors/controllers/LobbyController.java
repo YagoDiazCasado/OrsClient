@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import javafx.animation.TranslateTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -65,12 +68,15 @@ public class LobbyController implements Initializable {
 	public boolean dm = ComunAlmacen.dm;
 	public Adventure adventure = ComunAlmacen.adventure;
 
-	public static String defaultImage;
+	public File defaultImage;
 	private List<PJ> pjs = new ArrayList<PJ>();
 	private int posicion = 0;
 	private boolean mirar;
 	public File imagenDePerfilPosible;
 	public static ImageView backF;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// FXML
 
 	@FXML
 	private Pane loadingOverlay;
@@ -207,17 +213,12 @@ public class LobbyController implements Initializable {
 	@FXML
 	private CheckBox animChek;
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////// START
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		defaultImage = randomImagePick();
-		fastSearchImg.setImage(new Image(getClass().getResource("/com/ors/images/lupa.png").toExternalForm()));
-		goToPosition.setImage(new Image(getClass().getResource("/com/ors/images/lupa.png").toExternalForm()));
 		try {
-			System.out.println(adventure);
-			pjs = PjService.getCompletePJs(adventure, dm);
-			setDropInImagePane();
-			floor.toBack();
-			fotito.toFront();
 			iniciar();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -233,24 +234,202 @@ public class LobbyController implements Initializable {
 		}
 	}
 
+	private void iniciar() {
+		try {
+			floor.toBack();
+			StyleAndEffectService.pointElement(bienvenidaLabel, 0.1, 0.9, "rgb(239,184,16)", colorTexto);
+			StyleAndEffectService.parpadeoConstante(bienvenidaLabel);
+			bienvenidaLabel.setVisible(true);
+			bienvenidaPanel.setVisible(true);
+			defaultImage = randomImagePick(); // correcto
+			fastSearchImg.setImage(new Image(getClass().getResource("/com/ors/images/lupa.png").toExternalForm()));
+			goToPosition.setImage(new Image(getClass().getResource("/com/ors/images/lupa.png").toExternalForm()));
+			panelAjustes.setLayoutX(920);
+			panelAjustes.setLayoutY(16);
+			panelAjustes.setPrefSize(40, 40);
+			panelAjustes.toFront();
+			setDropInImagePane();
+			bienvenidaLabel.setOnMouseClicked(event -> {
+				try {
+					ser.efectoEntrar(volumenEfectos);
+					animChek.setSelected(
+							Boolean.parseBoolean(GestorFicheroConfiguracion.devolverCredencial("animaciones")));
+					animaciones = animChek.isSelected();
+					efSlider.setValue(Double.parseDouble(GestorFicheroConfiguracion.devolverCredencial("volEfectos")));
+					muSlider.setValue(Double.parseDouble(GestorFicheroConfiguracion.devolverCredencial("volMusica")));
+					bienvenidaLabel.setVisible(false);
+					bienvenidaPanel.setVisible(false);
+					panelAjustes.setVisible(true);
+					ajustesPanelEsconder();
+					ser.efectoClick(volumenEfectos);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			comunicaError("FAllo en el iniciar: " + e.getMessage());
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Refresco
+
+	private void updateCharacterView() throws Exception {
+		defaultViewLobby(true);
+		imagenDePerfilPosible = defaultImage;
+		if (pjs.size() == 0) {
+			setInitialCharacter();
+		} else {
+			ComunAlmacen.selected = pjs.get(posicion);
+			comunicaError(ComunAlmacen.selected.showInfo());
+			refrescoDeEstilo();
+		}
+	}
+
+	private void refrescoDeEstilo() throws SQLException, Exception {
+
+		eraseBtn.setVisible(dm);
+		unableBtn.setVisible(dm);
+		moveBtn.setVisible(dm);
+
+		StyleAndEffectService.fadeIn(totalPanel, 1f);
+
+		///////////////////////// VIAJE RÁPIDO LISTA
+
+//		personajesSel.getItems().clear();
+//		for (PJ pj : pjs) {
+//			personajesSel.getItems().add(pj.getName());
+//		}
+
+		///////////////////////// IMAGENES CARROUSEL
+
+		int leftIndex = (posicion - 1 + pjs.size()) % pjs.size();
+		int rightIndex = (posicion + 1) % pjs.size();
+
+		setImagenesDePosicionesYFotito(rightImage, leftIndex, false);
+		setImagenesDePosicionesYFotito(centralImage, posicion, true);
+		setImagenesDePosicionesYFotito(leftImage, rightIndex, false);
+
+		///////////////////////// ACCIONES SLIDE
+
+		rightImage.setOnMouseClicked(event -> {
+			try {
+				rightSlide();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		leftImage.setOnMouseClicked(event -> {
+			try {
+				leftSlide();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		///////////////////////// PONER FOTO FONDO
+
+		totalPanel.getChildren().remove(backImage);
+		File[] fotos = ser.checkFotosCarpeta();
+		File elegida = fotos[dado.nextInt(0, fotos.length)];
+		String ruta = "/com/ors/images/Fondos/" + elegida.getName();
+
+		backImage = new ImageView(new Image(getClass().getResource(ruta).toExternalForm()));
+		backImage.setFitWidth(totalPanel.getWidth() + 10);
+		backImage.setFitHeight(totalPanel.getHeight() + 10);
+		GaussianBlur blur = new GaussianBlur(25);
+		backImage.setEffect(blur);
+
+		if (!totalPanel.getChildren().contains(backImage)) {
+			totalPanel.getChildren().add(0, backImage);
+		}
+
+		/////////////////////// DETALLES DEL PANEL E INFO
+
+		setStyles(ComunAlmacen.selected);
+
+	}
+
+	public void setStyles(PJ pj) throws Exception {
+
+		nameButton.setText(pjs.get(posicion).getName());
+		ajusteDeBarras(altSlider, atlBar, pjs.get(posicion).getAtl());
+		ajusteDeBarras(strSlider, strBar, pjs.get(posicion).getStr());
+		ajusteDeBarras(endSlider, endBar, pjs.get(posicion).getEnd());
+		ajusteDeBarras(minSlider, minBar, pjs.get(posicion).getMin());
+		ajusteDeBarras(dexSlider, dexBar, pjs.get(posicion).getDex());
+		if (!pj.isAble()) {
+			characterPreviewPanel.setStyle("-fx-background-color: red;");
+		} else {
+			characterPreviewPanel.setStyle("-fx-background-color: white;");
+		}
+		switch (pj.getRace().getName()) {
+		case "SOLEO":
+			colorR = "rgb(180, 60, 40)";
+			break;
+		case "TECHITA":
+			colorR = "rgb(100, 60, 200)";
+			break;
+		case "HUMANO":
+			colorR = "rgb(50, 90, 200)";
+			break;
+		default:
+			colorR = "rgb(40, 140, 190)";
+			break;
+		}
+		GestorFicheroConfiguracion.actualizarValor("colorR", colorR);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////// ESENCIALES
+
+	// Llama a updateCharacterView al final
+	@FXML
+	public void ajustesPanelEsconder() throws Exception {
+		ComunAlmacen.mediaPlayer.setVolume(volumenFondo);
+		panelAjustes.setDisable(false);
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.millis(300), new KeyValue(panelAjustes.layoutXProperty(), 920)) // o 798 si lo
+																										// quieres
+																										// desplazado
+		);
+		timeline.play();
+		botonAjustes.setVisible(false);
+		volMuLabel.setVisible(false);
+		muSlider.setVisible(false);
+		volEfLabel.setVisible(false);
+		efSlider.setVisible(false);
+		animChek.setVisible(false);
+		GestorFicheroConfiguracion.actualizarValor("animaciones", animChek.isSelected() + "");
+		GestorFicheroConfiguracion.actualizarValor("volEfectos", efSlider.getValue() + "");
+		GestorFicheroConfiguracion.actualizarValor("volMusica", muSlider.getValue() + "");
+		animaciones = animChek.isSelected();
+		volumenFondo = muSlider.getValue();
+		volumenEfectos = efSlider.getValue();
+
+		////////////////////////// RECARGA DE VIAJE RÁPIDO NOMBRES
+
+		personajesSel.getItems().clear();
+		pjs = PjService.getCompletePJs(adventure, dm);
+		for (PJ pj : pjs) {
+			personajesSel.getItems().add(pj.getName());
+		}
+		personajesSel.setVisible(false);
+
+		updateCharacterView();
+	}
+
+	// LLama a ajustesPanelEsconder al final
 	private void setInitialCharacter() throws Exception {
 		StyleAndEffectService.fadeIn(totalPanel, posicion);
 		setOptions();
-		altSlider.setMin(1);
-		altSlider.setMax(60);
-		altSlider.setValue(1);
-		strSlider.setMin(1);
-		strSlider.setMax(60);
-		strSlider.setValue(1);
-		endSlider.setMin(1);
-		endSlider.setMax(60);
-		endSlider.setValue(1);
-		minSlider.setMin(1);
-		minSlider.setMax(60);
-		minSlider.setValue(1);
-		dexSlider.setMin(1);
-		dexSlider.setMax(60);
-		dexSlider.setValue(1);
+		ajusteDeBarras(altSlider, atlBar, 1);
+		ajusteDeBarras(strSlider, strBar, 1);
+		ajusteDeBarras(endSlider, endBar, 1);
+		ajusteDeBarras(minSlider, minBar, 1);
+		ajusteDeBarras(dexSlider, dexBar, 1);
+
 		newNameText.clear();
 		newNameText.setPromptText("NUEVO PERSONAJE");
 		glimmersText.setPromptText("0");
@@ -269,11 +448,11 @@ public class LobbyController implements Initializable {
 					puede = false;
 				}
 				if (puede) {
-					ser.efectoPasar(volumenEfectos);
-					tempo.setProfile((imagenDePerfilPosible != null)
-							? ImagenesUtil.convertImageToBytes(new Image(imagenDePerfilPosible.toURI().toString()))
-							: ImagenesUtil.convertImageToBytes(new Image(new File(defaultImage).toURI().toString())));
 					tempo.setCharacterType((!dm) ? CharacterTypes.PARTY : CharacterTypes.NPC); // Meter mejor un botón
+					ser.efectoPasar(volumenEfectos);
+					System.out.println("ruta imagen" + imagenDePerfilPosible.getAbsolutePath());
+					tempo.setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible)); // a no ser que la cambien, es la
+																						// default
 					tempo.setAtl((int) altSlider.getValue());
 					tempo.setStr((int) strSlider.getValue());
 					tempo.setEnd((int) endSlider.getValue());
@@ -290,224 +469,26 @@ public class LobbyController implements Initializable {
 					tempo.setHp(tempo.getMaxHp());
 					tempo.setKcal(tempo.getMaxKcal());
 					PjService.update(tempo);
-
 					pjs.add(tempo);
+					ser.efectoEntrar(volumenEfectos);
 					panelAjustes.setVisible(true);
-					panelAjustes.setDisable(false);
-					panelAjustes.toFront();
-					panelAjustes.setLayoutX(920);
-					panelAjustes.setLayoutY(16);
-					panelAjustes.setPrefSize(40, 40);
-					if (pjs.size() < 1) {
-						iniciar();
-					} else {
-						ser.efectoEntrar(volumenEfectos);
-						bienvenidaLabel.setVisible(false);
-						bienvenidaLabel.setDisable(true);
-						bienvenidaPanel.setVisible(false);
-						bienvenidaPanel.setDisable(true);
-						panelAjustes.setVisible(true);
-						panelAjustes.setDisable(false);
-						panelAjustes.toFront();
-						panelAjustes.setLayoutX(920);
-						panelAjustes.setLayoutY(16);
-						panelAjustes.setPrefSize(40, 40);
-						ajustesPanelEsconder();
-						ser.efectoClick(volumenEfectos);
-					}
+					ajustesPanelEsconder();
 				} else {
-					setInitialCharacter();
+					ser.efectoClick(volumenEfectos);
+					newNameText.setPromptText("Nombre existente");
+					newNameText.setStyle("-fx-text-fill: red;");
 					newNameText.requestFocus();
 				}
-
 			} catch (Exception e) {
 				e.printStackTrace();
+				iniciar();
 			}
 		});
 	}
 
-	private void iniciar() throws Exception {
-		StyleAndEffectService.pointElement(bienvenidaLabel, 0.1, 0.9, "rgb(239,184,16)", colorTexto);
-		bienvenidaLabel.setVisible(true);
-		bienvenidaLabel.setDisable(false);
-		bienvenidaPanel.setVisible(true);
-		bienvenidaPanel.setDisable(false);
-		StyleAndEffectService.parpadeoConstante(bienvenidaLabel);
-		bienvenidaLabel.setOnMouseClicked(event -> {
-			try {
-				ser.efectoEntrar(volumenEfectos);
-				animChek.setSelected(
-						Boolean.parseBoolean(GestorFicheroConfiguracion.devolverCredencial("animaciones")));
-				animaciones = animChek.isSelected();
-				efSlider.setValue(Double.parseDouble(GestorFicheroConfiguracion.devolverCredencial("volEfectos")));
-				muSlider.setValue(Double.parseDouble(GestorFicheroConfiguracion.devolverCredencial("volMusica")));
-				bienvenidaLabel.setVisible(false);
-				bienvenidaLabel.setDisable(true);
-				bienvenidaPanel.setVisible(false);
-				bienvenidaPanel.setDisable(true);
-				panelAjustes.setVisible(true);
-				panelAjustes.setDisable(false);
-				panelAjustes.toFront();
-				panelAjustes.setLayoutX(920);
-				panelAjustes.setLayoutY(16);
-				panelAjustes.setPrefSize(40, 40);
-				ajustesPanelEsconder();
-				ser.efectoClick(volumenEfectos);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	private void updateCharacterView() throws Exception {
-		if (pjs.size() == 0) {
-			setInitialCharacter();
-		} else {
-			personajesSel.getItems().clear();
-			for (PJ pj : pjs) {
-				personajesSel.getItems().add(pj.getName());
-			}
-			ComunAlmacen.selected = pjs.get(posicion);
-			updateMapView(); // la vista de arriba
-			setStyles(ComunAlmacen.selected);
-			defaultViewLobby(true); // Desactivar el modo edit
-			StyleAndEffectService.fadeIn(totalPanel, 1f);
-		}
-	}
-
-	private void updateMapView() throws SQLException, Exception {
-
-		int leftIndex = (posicion - 1 + pjs.size()) % pjs.size();
-		int rightIndex = (posicion + 1) % pjs.size();
-
-		if (pjs.get(leftIndex).getProfile() != null) {
-			leftImage.setImage(ImagenesUtil.byteArrayToImage(pjs.get(leftIndex).getProfile()));
-		} else {
-			leftImage.setImage(new Image(getClass().getResource(defaultImage).toExternalForm()));
-		}
-
-		if (pjs.get(posicion).getProfile() != null) {
-			centralImage.setImage(ImagenesUtil.byteArrayToImage(pjs.get(posicion).getProfile()));
-		} else {
-			centralImage.setImage(new Image(getClass().getResource(defaultImage).toExternalForm()));
-		}
-
-		if (pjs.get(rightIndex).getProfile() != null) {
-			rightImage.setImage(ImagenesUtil.byteArrayToImage(pjs.get(rightIndex).getProfile()));
-		} else {
-			rightImage.setImage(new Image(getClass().getResource(defaultImage).toExternalForm()));
-		}
-
-		rightImage.setOnMouseClicked(event -> {
-			try {
-				rightSlide();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		leftImage.setOnMouseClicked(event -> {
-			try {
-				leftSlide();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-
-	}
-
-	public void setStyles(PJ pj) throws Exception {
-
-		switch (pj.getRace().getName()) {
-		case "SOLEO":
-			colorR = "rgb(180, 60, 40)";
-			break;
-		case "TECHITA":
-			colorR = "rgb(100, 60, 200)";
-			break;
-		case "HUMANO":
-			colorR = "rgb(50, 90, 200)";
-			break;
-		default:
-			colorR = "rgb(40, 140, 190)";
-			break;
-		}
-
-		GestorFicheroConfiguracion.actualizarValor("colorR", colorR);
-
-		altSlider.setMin(1);
-		altSlider.setMax(60);
-		altSlider.setValue(pj.getAtl());
-		strSlider.setMin(1);
-		strSlider.setMax(60);
-		strSlider.setValue(pj.getStr());
-		endSlider.setMin(1);
-		endSlider.setMax(60);
-		endSlider.setValue(pj.getEnd());
-		minSlider.setMin(1);
-		minSlider.setMax(60);
-		minSlider.setValue(pj.getMin());
-		dexSlider.setMin(1);
-		dexSlider.setMax(60);
-		dexSlider.setValue(pj.getDex());
-
-		nameButton.setText(pjs.get(posicion).getName());
-
-		atlBar.setProgress(pjs.get(posicion).getAtl() / 60.0);
-		strBar.setProgress(pjs.get(posicion).getStr() / 60.0);
-		endBar.setProgress(pjs.get(posicion).getEnd() / 60.0);
-		minBar.setProgress(pjs.get(posicion).getMin() / 60.0);
-		dexBar.setProgress(pjs.get(posicion).getDex() / 60.0);
-
-		atlBar.setStyle("-fx-accent:" + colorR + ";");
-		strBar.setStyle("-fx-accent:" + colorR + ";");
-		endBar.setStyle("-fx-accent:" + colorR + ";");
-		minBar.setStyle("-fx-accent:" + colorR + ";");
-		dexBar.setStyle("-fx-accent:" + colorR + ";");
-
-		totalPanel.getChildren().remove(backImage);
-		if (!pj.isAble()) {
-			characterPreviewPanel.setStyle("-fx-background-color: red;");
-		} else {
-			characterPreviewPanel.setStyle("-fx-background-color: white;");
-		}
-
-		File[] fotos = ser.checkFotosCarpeta();
-		File elegida = fotos[dado.nextInt(0, fotos.length)];
-		String ruta = "/com/ors/images/Fondos/" + elegida.getName();
-
-		backImage = new ImageView(new Image(getClass().getResource(ruta).toExternalForm()));
-		backImage.setFitWidth(totalPanel.getWidth() + 10);
-		backImage.setFitHeight(totalPanel.getHeight() + 10);
-		GaussianBlur blur = new GaussianBlur(25);
-		backImage.setEffect(blur);
-
-		if (!totalPanel.getChildren().contains(backImage)) {
-			totalPanel.getChildren().add(0, backImage);
-		}
-
-		Image foto = ImagenesUtil.byteArrayToImage(pj.getProfile());
-		if (foto != null && foto.getWidth() != 0) {
-			fotito.setImage(foto);
-			pj.setProfile(ImagenesUtil.convertImageToBytes(foto));
-		} else {
-			fotito.setImage(new Image(getClass().getResource(defaultImage).toExternalForm())); // Imagen por defecto
-		}
-
-	}
-
-	private String randomImagePick() {
-		File carpetita = new File("src/main/resources/com/ors/images/profiles");
-		File[] todas = carpetita.listFiles();
-		return "/com/ors/images/profiles/" + todas[dado.nextInt(0, todas.length)].getName();
-	}
-
+	// Guarda el personaje y llama a ajustesPanelEsconder al final
 	private void enviar() throws Exception {
 		ser.efectoClick(volumenEfectos);
-		aplicarCambios();
-		ajustesPanelEsconder(); // vuelvo a cargar los personajes
-	}
-
-	private void aplicarCambios() throws Exception {
 		pjs.get(posicion).setAtl((int) altSlider.getValue());
 		pjs.get(posicion).setStr((int) strSlider.getValue());
 		pjs.get(posicion).setEnd((int) endSlider.getValue());
@@ -521,17 +502,18 @@ public class LobbyController implements Initializable {
 		pjs.get(posicion).setPower(powerOptions.getValue().toString());
 		ComunAlmacen.pU.agregarBT(pjs.get(posicion), btOptions.getValue().toString());
 		PjService.update(pjs.get(posicion));
+		ajustesPanelEsconder(); // vuelvo a cargar los personajes
 	}
 
 	@FXML
 	private void edit() throws Exception {
-		setOptions(); // rellena los comboBox con las opciones de la bbdd
 		ser.efectoClick(volumenEfectos);
 		defaultViewLobby(false);
+		setOptions();
 		if (dm) {
 			listoBtn.setOnAction(event -> {
 				try {
-					if (imagenDePerfilPosible != null) {
+					if (imagenDePerfilPosible != defaultImage) {
 						pjs.get(posicion).setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible));
 					}
 					enviar();
@@ -545,10 +527,225 @@ public class LobbyController implements Initializable {
 			raceOptions.setValue(pjs.get(posicion).getRace().getName());
 			btOptions.setValue(pjs.get(posicion).getBodyTypes().iterator().next().getName());
 		} else {
-			setInitialCharacter(); // Crea un personaje desde 0
+			setInitialCharacter();
 		}
 		adjustTexts();
 	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////// Multimedia
+
+	/////////////////////////////////////////////////////////////// EDICION DE
+	/////////////////////////////////////////////////////////////// IMAGEN DE PJ
+	@FXML
+	private void guardarImagen() throws Exception {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+		imagenDePerfilPosible = fileChooser.showOpenDialog(null);
+		checkTamanoFoto();
+	}
+
+	private void setDropInImagePane() {
+		selectImagePanel.setOnDragOver(event -> {
+			if (event.getDragboard().hasFiles()) {
+				dropLabel.setText("DROP");
+				event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+			}
+			event.consume();
+		});
+
+		selectImagePanel.setOnDragDropped(event -> {
+			List<File> archivos = event.getDragboard().getFiles();
+			if (!archivos.isEmpty()) {
+				imagenDePerfilPosible = archivos.get(0);
+				checkTamanoFoto();
+			}
+			event.setDropCompleted(true);
+			event.consume();
+		});
+	}
+
+	// Si la foto es muy grande, pone la default, sino, no hace nada.
+	private void checkTamanoFoto() {
+		if (imagenDePerfilPosible != null) {
+			if (imagenDePerfilPosible.length() > 2147483647) {
+				dropLabel.setText("TOO HEAVY");
+				imagenDePerfilPosible = defaultImage;
+			} else {
+				dropLabel.setText("SAVED");
+			}
+		}
+	}
+
+	////////////////////////////////// REFRESCO POR CADA SLIDE Y CARGA
+
+	private void setImagenesDePosicionesYFotito(ImageView i, int index, boolean central) throws Exception {
+		if (pjs.get(index).getProfile() != null) {
+			if (central) {
+				refrescarImagenActual();
+			} else {
+				i.setImage(ImagenesUtil.byteArrayToImage(pjs.get(index).getProfile()));
+			}
+		} else {
+			pjs.get(index).setProfile(ImagenesUtil.fileToByte((defaultImage)));
+			setImagenesDePosicionesYFotito(i, index, central);
+		}
+	}
+
+	private void refrescarImagenActual() {
+		Image nueva = ImagenesUtil.byteArrayToImage(pjs.get(posicion).getProfile());
+		if (nueva != null && nueva.getWidth() > 0) { //
+			fotito.setImage(nueva);
+			fotito.toFront();
+			centralImage.setImage(nueva);
+		}
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////// Modularizacion
+
+	private void ajusteDeBarras(Slider a, ProgressBar o, int i) {
+		a.setMin(1);
+		a.setMax(60);
+		a.setValue(i);
+		o.setProgress(i / 60.0);
+		o.setStyle("-fx-accent:" + colorR + ";");
+	}
+
+	private void anim(int i) {
+		StyleAndEffectService.entradaEpica(fotito, 600 * i);
+		StyleAndEffectService.entradaEpica(nameButton, 600 * i);
+		StyleAndEffectService.entradaEpica(characterPreviewPanel, 600 * i);
+		StyleAndEffectService.entradaEpica(centralImage, 100 * i);
+		StyleAndEffectService.entradaEpica(rightImage, -200 * i);
+		StyleAndEffectService.entradaEpica(leftImage, 100 * i);
+		StyleAndEffectService.entradaEpica(editBtn, 600 * i);
+		StyleAndEffectService.entradaEpica(enterBtn, 600 * i);
+		StyleAndEffectService.entradaEpica(fastSearchImg, 600 * i);
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////// Utilidades
+
+	private void comunicaError(String string) {
+		Alert a = new Alert(Alert.AlertType.INFORMATION);
+		a.setHeaderText(string);
+		a.show();
+	}
+
+	private File randomImagePick() {
+		String prefijo = "src/main/resources/com/ors/images/profiles/";
+		File carpetita = new File(prefijo);
+		File[] todas = carpetita.listFiles();
+		return new File(prefijo + todas[dado.nextInt(0, todas.length)].getName());
+	}
+
+	synchronized void adjustTexts() {
+		Platform.runLater(() -> {
+			altNum.setText((int) altSlider.getValue() + "");
+			strNum.setText((int) strSlider.getValue() + "");
+			endNum.setText((int) endSlider.getValue() + "");
+			minNum.setText((int) minSlider.getValue() + "");
+			dexNum.setText((int) dexSlider.getValue() + "");
+		});
+	}
+
+	private void setOptions() throws Exception {
+		newNameText.setStyle("-fx-text-fill: black;");
+		btOptions.getItems().clear();
+		List<BodyType> bts = BodyTypeService.getAll();
+		for (BodyType b : bts) {
+			b.fillMods();
+		}
+		btOptions.getItems().addAll(bts.stream().map(obj -> ((BodyType) obj).getName()).toList());
+
+		raceOptions.getItems().clear();
+		raceOptions.getItems().addAll(RaceService.getAll().stream().map(obj -> ((Race) obj).getName()).toList());
+		String[] talentos = { "REGULAR", "JANO", "BUNRAKU", "LEIRZA" };
+		powerOptions.getItems().clear();
+		powerOptions.getItems().addAll(talentos);
+	}
+
+	private void defaultViewLobby(boolean estado) throws Exception { // Esto es una gilipollez pero bueno, asi se queda
+
+		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
+
+		goToPosition.setVisible(false);
+		fastSearchImg.setVisible(true);
+		dropLabel.setText("NUEVA IMAGEN");
+
+		characterPreviewPanel.setVisible(true);
+		mapView.setVisible(estado);
+		mapView.setDisable(!estado);
+		leftSlideBtn.setVisible(true);
+		rightSlideBtn.setVisible(true);
+
+		nameButton.setVisible(estado);
+		nameButton.setDisable(!estado);
+		editBtn.setVisible(estado);
+		editBtn.setDisable(!estado);
+		createBtn.setVisible(estado);
+		createBtn.setDisable(!estado);
+		enterBtn.setVisible(estado);
+		enterBtn.setDisable(!estado);
+
+		fotito.setVisible(estado);
+
+		atlBar.setVisible(estado);
+		strBar.setVisible(estado);
+		endBar.setVisible(estado);
+		minBar.setVisible(estado);
+		dexBar.setVisible(estado);
+
+		atlBar.setDisable(!estado);
+		strBar.setDisable(!estado);
+		endBar.setDisable(!estado);
+		minBar.setDisable(!estado);
+		dexBar.setDisable(!estado);
+
+		altNum.setVisible(!estado);
+		strNum.setVisible(!estado);
+		endNum.setVisible(!estado);
+		minNum.setVisible(!estado);
+		dexNum.setVisible(!estado);
+
+		listoBtn.setVisible(!estado);
+
+		altSlider.setVisible(!estado);
+		strSlider.setVisible(!estado);
+		endSlider.setVisible(!estado);
+		minSlider.setVisible(!estado);
+		dexSlider.setVisible(!estado);
+
+		selectImagePanel.setVisible(!estado);
+		selectImagePanel.setDisable(estado);
+
+		btLabel.setVisible(!estado);
+		btLabel.setDisable(estado);
+		btOptions.setVisible(!estado);
+		btOptions.setDisable(estado);
+		raceOptions.setVisible(!estado);
+		raceOptions.setDisable(estado);
+		powerOptions.setVisible(!estado);
+		powerOptions.setDisable(estado);
+		powerLabel.setVisible(!estado);
+		powerLabel.setDisable(estado);
+		glimmersLabel.setVisible(!estado);
+		glimmersLabel.setDisable(estado);
+		glimmersText.setVisible(!estado);
+		glimmersText.setDisable(estado);
+		raceLabel.setVisible(!estado);
+		raceLabel.setDisable(estado);
+
+		newNamePane.setVisible(!estado);
+		newNamePane.setDisable(estado);
+		newNameText.setVisible(!estado);
+		newNameText.setDisable(estado);
+
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// FXML
 
 	@FXML
 	private void create() throws Exception {
@@ -576,18 +773,6 @@ public class LobbyController implements Initializable {
 		mirandoTexto.start();
 	}
 
-	synchronized void adjustTexts() {
-		Platform.runLater(() -> { // Esto es porque en fx los hilos no deberian tocar cosas de la interfaz
-			// Hay que hacer un runLater(), lo cual ejecute nuestros hilos en orden para que
-			// la interfaz ocurra siempre a su ritmo
-			altNum.setText((int) altSlider.getValue() + "");
-			strNum.setText((int) strSlider.getValue() + "");
-			endNum.setText((int) endSlider.getValue() + "");
-			minNum.setText((int) minSlider.getValue() + "");
-			dexNum.setText((int) dexSlider.getValue() + "");
-		});
-	}
-
 	@FXML
 	private void dejarDeMirar() { // Cuando suelto el slider ocurre esto
 		mirar = false;
@@ -596,18 +781,13 @@ public class LobbyController implements Initializable {
 
 	@FXML
 	private void enter() throws Exception {
+		comunicaError(ComunAlmacen.selected.showInfo());
 		showLoading(true); // para la pestaña de carga
 		new Thread(() -> { // CAMBIAR!! poner mejor en el initialice de characterController todo, aqui
 							// sobra
 			try {
-				selected = pjs.get(posicion);
-				ComunAlmacen.selected = selected;
-				System.out.println(selected.getName() + " acaba de entrar. El POj completo");
 				backF = backImage;
-				ComunAlmacen.colorR = colorR;
 				pjs.get(posicion).setAble(false);
-
-				// Cargar FXML y escena SÍ se puede hacer fuera del FX thread
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/CharacterVista.fxml"));
 				Parent root = loader.load();
 				Scene ventana = new Scene(root);
@@ -639,15 +819,7 @@ public class LobbyController implements Initializable {
 		if (posicion < 0)
 			posicion += pjs.size();
 		if (animaciones) {
-			StyleAndEffectService.entradaEpica(fotito, 600);
-			StyleAndEffectService.entradaEpica(nameButton, 600);
-			StyleAndEffectService.entradaEpica(characterPreviewPanel, 600);
-			StyleAndEffectService.entradaEpica(centralImage, 100);
-			StyleAndEffectService.entradaEpica(rightImage, -200);
-			StyleAndEffectService.entradaEpica(leftImage, 100);
-			StyleAndEffectService.entradaEpica(editBtn, 600);
-			StyleAndEffectService.entradaEpica(enterBtn, 600);
-			StyleAndEffectService.entradaEpica(fastSearchImg, 600);
+			anim(1);
 		}
 		ser.efectoPasar(volumenEfectos);
 		updateCharacterView();
@@ -658,17 +830,8 @@ public class LobbyController implements Initializable {
 		posicion = (posicion - 1) % pjs.size();
 		if (posicion < 0)
 			posicion += pjs.size();
-
 		if (animaciones) {
-			StyleAndEffectService.entradaEpica(fotito, -600);
-			StyleAndEffectService.entradaEpica(nameButton, -600);
-			StyleAndEffectService.entradaEpica(characterPreviewPanel, -600);
-			StyleAndEffectService.entradaEpica(centralImage, -100);
-			StyleAndEffectService.entradaEpica(leftImage, 200);
-			StyleAndEffectService.entradaEpica(rightImage, -100);
-			StyleAndEffectService.entradaEpica(editBtn, -600);
-			StyleAndEffectService.entradaEpica(enterBtn, -600);
-			StyleAndEffectService.entradaEpica(fastSearchImg, -600);
+			anim(-1);
 		}
 		ser.efectoPasar(volumenEfectos);
 		updateCharacterView();
@@ -678,69 +841,18 @@ public class LobbyController implements Initializable {
 	public void fastSearch() {
 		ser.efectoClick(volumenEfectos);
 		personajesSel.setVisible(true);
-		personajesSel.setDisable(false);
 		fastSearchImg.setVisible(false);
-		fastSearchImg.setDisable(true);
 		goToPosition.setVisible(true);
-		goToPosition.setDisable(false);
 	}
 
 	@FXML
 	public void gotoPositionGo() throws Exception {
 		ser.efectoClick(volumenEfectos);
 		fastSearchImg.setVisible(true);
-		fastSearchImg.setDisable(false);
 		goToPosition.setVisible(false);
-		goToPosition.setDisable(true);
-
-		try {
-			posicion = personajesSel.getSelectionModel().getSelectedIndex();
-			personajesSel.setVisible(false);
-			personajesSel.setDisable(true);
-			updateCharacterView();
-		} catch (Exception e) {
-			System.out.println("No esta en la lsita");
-		}
-	}
-
-	private void setDropInImagePane() {
-		selectImagePanel.setOnDragOver(event -> {
-			if (event.getDragboard().hasFiles()) {
-				dropLabel.setText("DROP");
-				event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-			}
-			event.consume();
-		});
-
-		selectImagePanel.setOnDragDropped(event -> {
-			List<File> archivos = event.getDragboard().getFiles();
-			if (!archivos.isEmpty()) {
-				imagenDePerfilPosible = archivos.get(0);
-				if (imagenDePerfilPosible.length() > 2147483647) {
-					dropLabel.setText("TOO HEAVY");
-					imagenDePerfilPosible = new File(defaultImage);
-				} else {
-					dropLabel.setText("SAVED");
-				}
-			}
-			event.setDropCompleted(true);
-			event.consume();
-		});
-	}
-
-	@FXML
-	private void guardarImagen() throws Exception {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		imagenDePerfilPosible = fileChooser.showOpenDialog(null);
-		if (imagenDePerfilPosible != null) {
-			if (imagenDePerfilPosible.length() > 2147483647) {
-				dropLabel.setText("TOO HEAVY");
-				imagenDePerfilPosible = new File(defaultImage);
-			} else {
-				dropLabel.setText("SAVED");
-			}
-		}
+		posicion = personajesSel.getSelectionModel().getSelectedIndex();
+		personajesSel.setVisible(false);
+		updateCharacterView();
 	}
 
 	@FXML
@@ -811,89 +923,6 @@ public class LobbyController implements Initializable {
 		updateCharacterView();
 	}
 
-	private void defaultViewLobby(boolean estado) throws Exception { // Esto es una gilipollez pero bueno, asi se queda
-
-		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
-
-		goToPosition.setVisible(false);
-		goToPosition.setDisable(true);
-		fastSearchImg.setVisible(true);
-		fastSearchImg.setDisable(false);
-		dropLabel.setText("NUEVA IMAGEN");
-
-		characterPreviewPanel.setVisible(true);
-		characterPreviewPanel.setDisable(false);
-		mapView.setVisible(estado);
-		mapView.setDisable(!estado);
-		leftSlideBtn.setVisible(true);
-		leftSlideBtn.setDisable(false);
-		rightSlideBtn.setVisible(true);
-		rightSlideBtn.setDisable(false);
-
-		nameButton.setVisible(estado);
-		nameButton.setDisable(!estado);
-		editBtn.setVisible(estado);
-		editBtn.setDisable(!estado);
-		createBtn.setVisible(estado);
-		createBtn.setDisable(!estado);
-		enterBtn.setVisible(estado);
-		enterBtn.setDisable(!estado);
-
-		fotito.setVisible(estado);
-
-		atlBar.setVisible(estado);
-		strBar.setVisible(estado);
-		endBar.setVisible(estado);
-		minBar.setVisible(estado);
-		dexBar.setVisible(estado);
-
-		atlBar.setDisable(!estado);
-		strBar.setDisable(!estado);
-		endBar.setDisable(!estado);
-		minBar.setDisable(!estado);
-		dexBar.setDisable(!estado);
-
-		altNum.setVisible(!estado);
-		strNum.setVisible(!estado);
-		endNum.setVisible(!estado);
-		minNum.setVisible(!estado);
-		dexNum.setVisible(!estado);
-
-		listoBtn.setVisible(!estado);
-
-		altSlider.setVisible(!estado);
-		strSlider.setVisible(!estado);
-		endSlider.setVisible(!estado);
-		minSlider.setVisible(!estado);
-		dexSlider.setVisible(!estado);
-
-		selectImagePanel.setVisible(!estado);
-		selectImagePanel.setDisable(estado);
-
-		btLabel.setVisible(!estado);
-		btLabel.setDisable(estado);
-		btOptions.setVisible(!estado);
-		btOptions.setDisable(estado);
-		raceOptions.setVisible(!estado);
-		raceOptions.setDisable(estado);
-		powerOptions.setVisible(!estado);
-		powerOptions.setDisable(estado);
-		powerLabel.setVisible(!estado);
-		powerLabel.setDisable(estado);
-		glimmersLabel.setVisible(!estado);
-		glimmersLabel.setDisable(estado);
-		glimmersText.setVisible(!estado);
-		glimmersText.setDisable(estado);
-		raceLabel.setVisible(!estado);
-		raceLabel.setDisable(estado);
-
-		newNamePane.setVisible(!estado);
-		newNamePane.setDisable(estado);
-		newNameText.setVisible(!estado);
-		newNameText.setDisable(estado);
-
-	}
-
 	@FXML
 	public void ajustesPanelDesplegar() throws Exception {
 		// inicial:
@@ -904,10 +933,17 @@ public class LobbyController implements Initializable {
 		// Objetivo:
 		// x =798
 
-		TranslateTransition agrandar = new TranslateTransition(Duration.millis(300), panelAjustes);
-		agrandar.setFromX(0);
-		agrandar.setToX(-122); // 798 - 920
-		agrandar.playFromStart();
+		panelAjustes.setDisable(false);
+		panelAjustes.toFront();
+
+//		TranslateTransition agrandar = new TranslateTransition(Duration.millis(300), panelAjustes);
+//		agrandar.setFromX(0);
+//		agrandar.setToX(-122); // 798 - 920
+//		agrandar.playFromStart();
+
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.millis(300), new KeyValue(panelAjustes.layoutXProperty(), 798)));
+		timeline.play();
 
 		animChek.setSelected(animaciones);
 		efSlider.setMin(0);
@@ -923,88 +959,6 @@ public class LobbyController implements Initializable {
 		volEfLabel.setVisible(true);
 		efSlider.setVisible(true);
 		animChek.setVisible(true);
-		botonAjustes.setDisable(false);
-		volMuLabel.setDisable(false);
-		muSlider.setDisable(false);
-		volEfLabel.setDisable(false);
-		efSlider.setDisable(false);
-		animChek.setDisable(false);
-	}
-
-	@FXML
-	public void ajustesPanelEsconder() throws Exception {
-		botonAjustes.setVisible(false);
-		volMuLabel.setVisible(false);
-		muSlider.setVisible(false);
-		volEfLabel.setVisible(false);
-		efSlider.setVisible(false);
-		animChek.setVisible(false);
-		botonAjustes.setDisable(true);
-		volMuLabel.setDisable(true);
-		muSlider.setDisable(true);
-		volEfLabel.setDisable(true);
-		efSlider.setDisable(true);
-		animChek.setDisable(true);
-		GestorFicheroConfiguracion.actualizarValor("animaciones", animChek.isSelected() + "");
-		GestorFicheroConfiguracion.actualizarValor("volEfectos", efSlider.getValue() + "");
-		GestorFicheroConfiguracion.actualizarValor("volMusica", muSlider.getValue() + "");
-		animaciones = animChek.isSelected();
-		volumenFondo = muSlider.getValue();
-		volumenEfectos = efSlider.getValue();
-		if (dm) {
-			eraseBtn.setVisible(true);
-			unableBtn.setVisible(true);
-			moveBtn.setVisible(true);
-			moveBtn.setDisable(false);
-			eraseBtn.setDisable(false);
-			unableBtn.setDisable(false);
-		} else {
-			eraseBtn.setVisible(false);
-			unableBtn.setVisible(false);
-			moveBtn.setVisible(false);
-			moveBtn.setDisable(true);
-			eraseBtn.setDisable(true);
-			unableBtn.setDisable(true);
-		}
-		ComunAlmacen.mediaPlayer.setVolume(volumenFondo);
-		personajesSel.getItems().clear();
-		try {
-			pjs = PjService.getCompletePJs(adventure, dm);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		for (PJ pj : pjs) {
-			personajesSel.getItems().add(pj.getName());
-		}
-		personajesSel.setVisible(false);
-		personajesSel.setDisable(true);
-
-		TranslateTransition mover = new TranslateTransition(Duration.millis(300), panelAjustes);
-		mover.setFromX(-122);
-		mover.setToX(0);
-		mover.play();
-		try {
-			updateCharacterView();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("La primera creación ha fallado");
-		}
-	}
-
-	private void setOptions() throws Exception {
-		newNameText.setStyle("-fx-text-fill: black;");
-		btOptions.getItems().clear();
-		List<BodyType> bts = BodyTypeService.getAll();
-		for (BodyType b : bts) {
-			b.fillMods();
-		}
-		btOptions.getItems().addAll(bts.stream().map(obj -> ((BodyType) obj).getName()).toList());
-
-		raceOptions.getItems().clear();
-		raceOptions.getItems().addAll(RaceService.getAll().stream().map(obj -> ((Race) obj).getName()).toList());
-		String[] talentos = { "REGULAR", "JANO", "BUNRAKU", "LEIRZA" };
-		powerOptions.getItems().clear();
-		powerOptions.getItems().addAll(talentos);
 	}
 
 }

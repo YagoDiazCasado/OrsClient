@@ -1,3 +1,18 @@
 
 
--
+
+- No cargan los mods en el cc 
+del personaje
+
+-El daño esta roto
+
+-El pj no sube de nivel usando habilidades
+
+-El pj no tiene vida
+
+-A todas luces este pj no se ha actualizado
+
+-Mirar si lo de los mods es por esta rpiollando
+la lista en vez de uno por uno
+
+

@@ -301,35 +301,35 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
                <children>
-                  <Button id="botonStandar" fx:id="botonAjustes" disable="true" layoutX="46.0" layoutY="148.0" mnemonicParsing="false" onAction="#ajustesPanelEsconder" text="REFRESH" visible="false">
+                  <Button id="botonStandar" fx:id="botonAjustes" layoutX="46.0" layoutY="148.0" mnemonicParsing="false" onAction="#ajustesPanelEsconder" text="REFRESH" visible="false">
                      <font>
                         <Font name="Impact" size="15.0" />
                      </font>
                   </Button>
-                  <Slider id="lvSliders" fx:id="muSlider" disable="true" layoutX="11.0" layoutY="46.0" visible="false" />
-                  <Slider id="lvSliders" fx:id="efSlider" disable="true" layoutX="11.0" layoutY="88.0" visible="false" />
-                  <CheckBox fx:id="animChek" disable="true" layoutX="28.0" layoutY="117.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="123.0" text="Animaciones" textFill="WHITE" visible="false">
+                  <Slider id="lvSliders" fx:id="muSlider" layoutX="11.0" layoutY="46.0" visible="false" />
+                  <Slider id="lvSliders" fx:id="efSlider" layoutX="11.0" layoutY="88.0" visible="false" />
+                  <CheckBox fx:id="animChek" layoutX="28.0" layoutY="117.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="123.0" text="Animaciones" textFill="WHITE" visible="false">
                      <font>
                         <Font name="Impact" size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label fx:id="volMuLabel" disable="true" layoutX="47.0" layoutY="29.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Musica" textFill="WHITE" visible="false">
+                  <Label fx:id="volMuLabel" layoutX="47.0" layoutY="29.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Musica" textFill="WHITE" visible="false">
                      <font>
                         <Font name="Impact" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="volEfLabel" disable="true" layoutX="48.0" layoutY="71.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Efectos" textFill="WHITE" visible="false">
+                  <Label fx:id="volEfLabel" layoutX="48.0" layoutY="71.0" prefHeight="17.0" prefWidth="103.0" text="Volumen Efectos" textFill="WHITE" visible="false">
                      <font>
                         <Font name="Impact" size="14.0" />
                      </font>
                   </Label>
                </children>
             </Pane>
-            <Button id="botonStandar" fx:id="moveBtn" disable="true" layoutX="478.0" layoutY="601.0" mnemonicParsing="false" onAction="#move" onMouseClicked="#erase" text="MOVER">
+            <Button id="botonStandar" fx:id="moveBtn" layoutX="478.0" layoutY="601.0" mnemonicParsing="false" onAction="#move" onMouseClicked="#erase" text="MOVER" visible="false">
                <font>
                   <Font name="Impact" size="14.0" />
                </font></Button>
-            <Button id="botonStandar" fx:id="unableBtn" disable="true" layoutX="550.0" layoutY="601.0" mnemonicParsing="false" onMouseClicked="#unable" text="UNABLE">
+            <Button id="botonStandar" fx:id="unableBtn" layoutX="550.0" layoutY="601.0" mnemonicParsing="false" onMouseClicked="#unable" text="UNABLE" visible="false">
                <font>
                   <Font name="Impact" size="14.0" />
                </font></Button>
@@ -341,7 +341,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button id="botonStandar" fx:id="eraseBtn" disable="true" layoutX="404.0" layoutY="601.0" mnemonicParsing="false" onMouseClicked="#erase" text="BORRAR">
+            <Button id="botonStandar" fx:id="eraseBtn" layoutX="404.0" layoutY="601.0" mnemonicParsing="false" onMouseClicked="#erase" text="BORRAR" visible="false">
                <font>
                   <Font name="Impact" size="14.0" />
                </font>

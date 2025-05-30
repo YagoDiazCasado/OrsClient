@@ -103,7 +103,6 @@ public class CharacterController implements Initializable {
 	// COSITIS NECESARIAS
 	public static List<Pane> paneles = new ArrayList<Pane>();
 	private Client cliente;
-	public String defaultImage = LobbyController.defaultImage;
 	public GaussianBlur blur = new GaussianBlur(25);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -521,10 +520,10 @@ public class CharacterController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		selected = ComunAlmacen.selected;
 		sesion.setOnCloseRequest(event -> {
-			System.out.println("El programa se está cerrando...");
 			try {
 				selected.setAble(true);
 				PjService.update(selected);
+				comunicaError(selected.showInfo());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -532,17 +531,12 @@ public class CharacterController implements Initializable {
 		try {
 			cliente = new Client(this);
 		} catch (Exception e) {
-			System.out.println("Cerrando");
-			System.out.println(e.getMessage());
 			sesion.close();
 		}
 		backImage = LobbyController.backF;
 		rellenarListaPaneles();
 		setAllStyles();
 		Platform.runLater(() -> {
-			if (selected.getProfile() == null) {
-				selected.setProfile(ImagenesUtil.fileToByte(new File("src/main/resources/" + defaultImage)));
-			}
 			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));
 			backImage.setEffect(blur);
 			totalPanel.getChildren().add(0, backImage);
@@ -564,6 +558,13 @@ public class CharacterController implements Initializable {
 		panelAjustes.toFront();
 		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
 	}
+	
+	private void comunicaError(String string) {
+		Alert a = new Alert(Alert.AlertType.INFORMATION);
+		a.setHeaderText(string);
+		a.show();
+	}
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////// LOADS
@@ -980,7 +981,7 @@ public class CharacterController implements Initializable {
 			itemsEscPanel.getChildren().clear();
 			equipmentEscPanel.getChildren().clear();
 		} catch (Exception e) {
-			System.out.println("Aqui");
+			e.printStackTrace();
 		}
 
 		List<Item> todos = ItemService.getAll(); // todfos los items de objetos
@@ -1024,7 +1025,6 @@ public class CharacterController implements Initializable {
 			StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
 			b.setOnAction(event -> {
 				posible = h.getName();
-				System.out.println("Habilidad seleccionada: " + posible);
 				alert.close();
 				hideAction();
 			});
@@ -1044,9 +1044,7 @@ public class CharacterController implements Initializable {
 					String ammo = InventoryService.cantidadAmmo(selected, selected.getWeapon().getItemShape());
 					equippedNameLbl.setText(selected.getWeapon().getName() + " [" + ammo + "]");
 				} catch (Exception ne) {
-					System.out.println(
-							"NO SE PUDO CARGAR LA MUNICION DEL ARMA EQUIPADA\n................................\n"
-									+ ne.getMessage());
+					ne.printStackTrace();
 					equippedNameLbl.setText(selected.getWeapon().getName());
 				}
 			}
@@ -1096,7 +1094,6 @@ public class CharacterController implements Initializable {
 		double y = 10;
 
 		List<Double> mods = selected.getMods();
-		System.out.println("Mods: " + mods);
 
 		for (int i = 0; i < mods.size(); i++) {
 			Double d = mods.get(i);
@@ -1171,7 +1168,6 @@ public class CharacterController implements Initializable {
 
 	private void cargarInspiracion() {
 		try {
-			System.out.println("Inspiracion cargada");
 			int puntos = selected.getInspirationPoints();
 			puntosInspiracionLbl.setText("Inspiración: " + puntos);
 			puntosInspiracionLbl.setOnMouseClicked(event -> {
@@ -1204,7 +1200,6 @@ public class CharacterController implements Initializable {
 
 			List<Item> piezas = equipo.getEquip();
 			if (piezas == null || piezas.isEmpty()) {
-				System.out.println("No hay equipo");
 				equipmentSummaryPanel.setVisible(false);
 				equipmentSummaryPanel.setManaged(false);
 				return;
@@ -1331,14 +1326,13 @@ public class CharacterController implements Initializable {
 		try {
 			procesarMensaje(Habilidad.getHabilidadMethod(posible, selected, ventaja.isSelected(), 0));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
 	private void rellenarTienda(List<Skill> skills, String tipo) {
 		Tab tab = new Tab();
 		TilePane tienda = new TilePane();
-		System.out.println(skills.toString());
 		switch (tipo) {
 		case "T":
 			tab.setText(selected.getPower());
@@ -1427,7 +1421,6 @@ public class CharacterController implements Initializable {
 			try {
 				int cantidad = Integer.parseInt(input);
 				InventoryService.usarMunicion(tipoDeMunicion, selected, cantidad);
-				System.out.println("Hecho");
 				loadInventory();
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -1457,9 +1450,9 @@ public class CharacterController implements Initializable {
 			ButtonType addImage = new ButtonType("FOtito Nueva");
 			ButtonType eliminar = new ButtonType("Eliminar");
 			if (dm) {
-				ventanita.getButtonTypes().setAll(verInfo, coger, eliminar);
+				ventanita.getButtonTypes().setAll(verInfo, coger, eliminar, addImage);
 			} else {
-				ventanita.getButtonTypes().setAll(verInfo, coger);
+				ventanita.getButtonTypes().setAll(verInfo, coger, addImage);
 			}
 			ventanita.showAndWait().ifPresent(presionado -> {
 				switch (presionado.getText()) {
@@ -1702,7 +1695,6 @@ public class CharacterController implements Initializable {
 					}
 					break;
 				case "Guardar en otro sitio":
-					System.out.println("Todavia no hay otros sitios xd");
 					break;
 				}
 			});
@@ -1932,13 +1924,11 @@ public class CharacterController implements Initializable {
 
 	@FXML
 	private void refresh() { // SONIDO EFECTOS
-		System.out.println("\n----------------------------------------------- PASO");
 		ser.efectoClick(volumenEfectos);
 		try {
 			loadResume();
 		} catch (Exception e) {
-			System.out.println("Algo falla en el refresh");
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -2033,11 +2023,10 @@ public class CharacterController implements Initializable {
 		dialog.showAndWait().ifPresent(input -> {
 			try {
 				int numero = Integer.parseInt(input);
-				System.out.println(numero + " = valor de HP para añadir");
 				pU.useHp(numero, selected);
 				refresh();
 			} catch (Exception e) {
-				System.out.println("Ha muerto"); // hacerlo con una alerta
+				e.printStackTrace();
 			}
 		});
 	}
@@ -2050,7 +2039,6 @@ public class CharacterController implements Initializable {
 		dialog.showAndWait().ifPresent(input -> {
 			try {
 				int numero = Integer.parseInt(input);
-				System.out.println(numero + " = valor de ACC para añadir");
 				pU.useActions(numero, selected);
 				refresh();
 			} catch (Exception e) {
@@ -2067,7 +2055,6 @@ public class CharacterController implements Initializable {
 		dialog.showAndWait().ifPresent(input -> {
 			try {
 				int numero = Integer.parseInt(input);
-				System.out.println(numero + " = valor de KCAL para añadir");
 				pU.useKcal(numero, selected);
 				refresh();
 			} catch (Exception e) {
@@ -2086,7 +2073,7 @@ public class CharacterController implements Initializable {
 			Scene ventana = new Scene(root);
 			ventana.getStylesheets()
 					.add(getClass().getResource(GestorFicheroConfiguracion.devolverCredencial("css")).toExternalForm());
-			sesion.setTitle("LOBBY"); // esto es el primaryStage
+			sesion.setTitle("LOBBY");
 			sesion.setScene(ventana);
 			sesion.sizeToScene();
 			sesion.setResizable(false);

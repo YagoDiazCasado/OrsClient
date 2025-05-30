@@ -27,14 +27,7 @@ public class ImagenesUtil {
 	            }
 	        } else {
 	            // Si es una ruta relativa o absoluta del sistema de archivos
-	            //return Files.readAllBytes(Paths.get(url));
 	             return Files.readAllBytes(Paths.get(url));
-//	            try (InputStream inputStream = ImagenesUtil.class.getResourceAsStream(url)) {
-//					if (inputStream == null) {
-//						throw new IllegalArgumentException("Recurso no encontrado: " + url);
-//					}
-//					return inputStream.readAllBytes();
-//				}
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -42,16 +35,13 @@ public class ImagenesUtil {
 	    return null;
 	}
 	
-	  public static byte[] fileToByte(File file) {
-	        byte[] bytes = new byte[(int) file.length()];
-	        try (FileInputStream fis = new FileInputStream(file)) {
-	           // int bytesRead = fis.read(bytes);
-	            return bytes; 
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return null; 
-	        }
-	    }
+	  public static byte[] fileToByte(File file) throws IOException {
+		    BufferedImage bImage = ImageIO.read(file);
+		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		    ImageIO.write(bImage, "png", bos);  // ⚠ cuidado con formato aquí
+		    return bos.toByteArray();
+		}
+
 	
 
 	public static byte[] convertImageToBytes(Image image) throws IOException {
@@ -61,13 +51,8 @@ public class ImagenesUtil {
 		return outputStream.toByteArray();
 	}
 
-	public static Image byteArrayToImage(byte[] byteArray) {
-		try {
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
-		return new Image(byteArrayInputStream);
-		}catch(Exception e) {
-			return null;
-		}
+	public static Image byteArrayToImage(byte[] data) {
+	    return new Image(new ByteArrayInputStream(data));
 	}
 
 }

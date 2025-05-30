@@ -68,8 +68,6 @@ public class PjService {
 
 	public static void update(PJ pj) throws Exception {
 
-		System.out.println(mapper.writeValueAsString(pj));
-
 		HttpPost post = new HttpPost(API_BASE_URL + "/update");
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -84,7 +82,6 @@ public class PjService {
 		post.setEntity(multipart);
 		post.setHeader("Accept", "application/json");
 
-
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpClient.execute(post)) {
 
@@ -96,7 +93,6 @@ public class PjService {
 	}
 
 	public static void create(PJ pj) throws Exception {
-		System.out.println(mapper.writeValueAsString(pj));
 		HttpPost post = new HttpPost(API_BASE_URL + "/create");
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -110,7 +106,6 @@ public class PjService {
 		HttpEntity multipart = builder.build();
 		post.setEntity(multipart);
 		post.setHeader("Accept", "application/json");
-
 
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpClient.execute(post)) {
@@ -274,7 +269,7 @@ public class PjService {
 		try (CloseableHttpClient client = HttpClients.createDefault();
 				CloseableHttpResponse response = client.execute(post)) {
 			int statusCode = response.getCode();
-		}catch(Exception e) {	
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
