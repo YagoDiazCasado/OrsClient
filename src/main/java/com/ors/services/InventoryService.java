@@ -21,6 +21,7 @@ public class InventoryService {
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	public static void insertar(Inventory inv) throws Exception {
+		System.out.println("Valor de id_pj ahora: " + inv.getPj().getName());
 		String json = mapper.writeValueAsString(inv);
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/insert"))
 				.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(json)).build();
@@ -36,7 +37,7 @@ public class InventoryService {
 		return Double.parseDouble(response.body());
 	}
 
-	public static HashMap<Item, Integer> getInventarioDePJ(PJ pj) throws Exception {
+	public static HashMap<Long, Integer> getInventarioDePJ(PJ pj) throws Exception {
 		String json = mapper.writeValueAsString(pj);
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/porPJ"))
 				.header("Content-Type", "application/json").method("GET", HttpRequest.BodyPublishers.ofString(json))
@@ -83,9 +84,9 @@ public class InventoryService {
 		return response.body();
 	}
 
-	public static int getCantidad(PJ pj, String itemName) throws Exception {
+	public static int getCantidad(PJ pj, Long itemId) throws Exception {
 		String json = mapper.writeValueAsString(pj);
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/cantidad?itemName=" + itemName))
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/cantidad?itemId=" + itemId))
 				.header("Content-Type", "application/json").method("GET", HttpRequest.BodyPublishers.ofString(json))
 				.build();
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

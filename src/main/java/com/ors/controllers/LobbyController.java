@@ -464,7 +464,9 @@ public class LobbyController implements Initializable {
 					tempo.setAble(true);
 					tempo = PjService.create(tempo);
 					ComunAlmacen.pU.agregarBT(tempo, btOptions.getValue().toString());
+					tempo = PjService.update(tempo);
 					tempo.setActions(tempo.getMaxActions());
+					System.out.println("Acciones de inicio" + tempo.getActions());
 					tempo.setHp(tempo.getMaxHp());
 					tempo.setKcal(tempo.getMaxKcal());
 					tempo = PjService.update(tempo);

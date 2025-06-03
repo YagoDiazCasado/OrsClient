@@ -6,6 +6,7 @@ import main.java.com.ors.services.BodyTypeService;
 import main.java.com.ors.services.ComunAlmacen;
 import main.java.com.ors.services.ItemService;
 import main.java.com.ors.services.PjService;
+import main.java.com.ors.utiles.Combo;
 import main.java.com.ors.utiles.EnumsDeItems.Distance;
 import main.java.com.ors.utiles.Habilidad;
 import main.java.com.ors.vo.BodyType;
@@ -21,41 +22,48 @@ public class PjUsables {
 	///////////////////////////////////////// Metodos de Accion
 
 	public String atacar(PJ pj, int diff, boolean adventage) throws Exception {
+
+		String extra = "";
+		double mods = 1.0;
+
 		if (pj.getWeapon().equals(null)) {
 			return fistAttack(pj);
 		} else {
-			if (pj.getWeapon().getDistance().equals(Distance.MELEE)) {
-				System.out.println("Gasto 1");
+			if (pj.getWeapon().getDistance().equals(Distance.MELEE)) { // Arma mele
 				useActions(-1, pj);
-				if (pj.getWeapon().getWeight() > 8) {
+				if (pj.getWeapon().getWeight() > 8) { // Arma pesada
 					diff = (int) (diff * pj.getModD());
-					int basicDamage = ItemService.atacar(pj.getWeapon(), diff, adventage, pj);
-					String extra = "";
-					if (pj.getPower().equals("LEIRZA")) {
-						extra = "\n" + Habilidad.getHabilidadMethod("drenarVida", pj, adventage, basicDamage);
-					}
 					pj.setXpS(pj.getXpS() + 2);
-					return "Ejecuta " + df.format((basicDamage / pj.getModS())) + " con " + pj.getWeapon().getName()
-							+ extra;
-				} else {
+				} else { // Arma ligera
 					diff = (int) (diff * pj.getModS());
-					int basicDamage = ItemService.atacar(pj.getWeapon(), diff, adventage, pj);
-					String extra = "";
-					if (pj.getPower().equals("LEIRZA")) {
-						extra = "\n" + Habilidad.getHabilidadMethod("drenarVida", pj, adventage, basicDamage);
-					}
 					pj.setXpD(pj.getXpD() + 1);
 					pj.setXpA(pj.getXpA() + 1);
-					return "Ejecuta " + df.format((basicDamage / (Math.min(pj.getModD(), pj.getModA())))) + " con "
-							+ pj.getWeapon().getName() + extra;
+					mods = (Math.min(pj.getModD(), pj.getModA()));
 				}
-			} else {
+			} else { // Arma distancia
 				if (pj.getPower().equals("JANO")) {
 					diff -= diff / 2;
 				}
-				int basicDamage = ItemService.atacar(pj.getWeapon(), (int) (diff * pj.getModM()), adventage, pj);
-				return "Ejecuta " + basicDamage + " con " + pj.getWeapon().getName();
+				diff = (int) (diff * pj.getModM());
 			}
+
+			// Entrega
+			Combo ataque = ItemService.atacar(pj.getWeapon(), diff, adventage, pj);
+			pj = ataque.getPj();
+			int basicDamage = ataque.getDano();
+
+			if (basicDamage == 0) {
+				return "Fallastes";
+			} else if (basicDamage == -1) {
+				return "No hay municion";
+			} else {
+				if (pj.getPower().equals("LEIRZA") && basicDamage >= 1
+						&& pj.getWeapon().getDistance().equals(Distance.MELEE)) {
+					extra = "\n" + Habilidad.getHabilidadMethod("drenarVida", pj, adventage, basicDamage);
+				}
+				return "Ejecuta " + df.format((basicDamage / mods)) + " con " + pj.getWeapon().getName() + "" + extra;
+			}
+
 		}
 	}
 

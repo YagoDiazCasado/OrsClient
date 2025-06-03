@@ -479,6 +479,7 @@ public class PJ implements Serializable {
 	}
 
 	public List<Double> getMods() {
+		mods.clear();
 		mods.add(modA);
 		mods.add(modS);
 		mods.add(modE);

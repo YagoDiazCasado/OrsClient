@@ -12,7 +12,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -69,9 +68,11 @@ import main.java.com.ors.utiles.EnumsDeItems.Distance;
 import main.java.com.ors.utiles.EnumsDeItems.ItemFamily;
 import main.java.com.ors.utiles.EnumsDeItems.ItemShape;
 import main.java.com.ors.utiles.EnumsDeItems.Rarity;
+import main.java.com.ors.utiles.GestionLog;
 import main.java.com.ors.utiles.GestorFicheroConfiguracion;
 import main.java.com.ors.utiles.Habilidad;
 import main.java.com.ors.utiles.ImagenesUtil;
+import main.java.com.ors.utiles.PJStub;
 import main.java.com.ors.vo.BodyType;
 import main.java.com.ors.vo.Equipment;
 import main.java.com.ors.vo.Inventory;
@@ -523,7 +524,6 @@ public class CharacterController implements Initializable {
 			try {
 				selected.setAble(true);
 				selected = PjService.update(selected);
-				comunicaError(selected.showInfo());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -559,11 +559,11 @@ public class CharacterController implements Initializable {
 		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
 	}
 
-	private void comunicaError(String string) {
-		Alert a = new Alert(Alert.AlertType.INFORMATION);
-		a.setHeaderText(string);
-		a.show();
-	}
+//	private void comunicaError(String string) {
+//		Alert a = new Alert(Alert.AlertType.INFORMATION);
+//		a.setHeaderText(string);
+//		a.show();
+//	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////// LOADS
@@ -970,45 +970,6 @@ public class CharacterController implements Initializable {
 		a.show();
 	}
 
-	private void cargarEscaparate() throws Exception {
-		try {
-			todosEscPanel.getChildren().clear();
-			todosEscPanel.setPrefTileHeight(-1);
-			todosEscPanel.setPrefTileWidth(-1);
-			weaponsEscPanel.getChildren().clear();
-			ediblesEscPanel.getChildren().clear();
-			itemsEscPanel.getChildren().clear();
-			equipmentEscPanel.getChildren().clear();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		List<Item> todos = ItemService.getAll(); // todfos los items de objetos
-		todos.forEach(e -> {
-			Button b = new Button(e.getName());
-			Tooltip.install(b, new Tooltip(e.showInfo()));
-			b.setId("botonMasMasOpaco");
-			Item tipo = e;
-			// (Item) ItemService.obtenerPorId(e.getId_O())
-			StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
-			b.setOnAction(event -> administrarItemEsc(tipo));
-			Button copy = crearBotonCopia(b);
-			if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
-					|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
-				weaponsEscPanel.getChildren().add(b);
-			} else if (tipo.getItemFamily().equals(ItemFamily.EDIBLE)) {
-				ediblesEscPanel.getChildren().add(b);
-			} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
-				itemsEscPanel.getChildren().add(b);
-			} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
-				equipmentEscPanel.getChildren().add(b);
-			}
-			if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
-				todosEscPanel.getChildren().add(copy);
-			}
-		});
-	}
-
 	private void cargarAction() throws Exception {
 		Set<Skill> skills = selected.getSkills();
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1093,8 +1054,7 @@ public class CharacterController implements Initializable {
 		double y = 10;
 
 		List<Double> mods = selected.getMods();
-
-		for (int i = 0; i < mods.size(); i++) {
+		for (int i = 0; i < 5; i++) {
 			Double d = mods.get(i);
 
 			Label modLbl = new Label(df.format(d));
@@ -1112,46 +1072,89 @@ public class CharacterController implements Initializable {
 	}
 
 	private void cargarInvent() throws Exception {
+		selected = PjService.update(selected); // temporal
 		pesoLbl.setText("" + InventoryService.getPeso(selected) + " kg / " + selected.getMaxCarry());
 		todosInvPanel.getChildren().clear();
 		weaponsInvPanel.getChildren().clear();
 		ediblesInvPanel.getChildren().clear();
 		itemsInvPanel.getChildren().clear();
 		equipmentInvPanel.getChildren().clear();
-
 		barraHpI.setProgress((double) selected.getHp() / selected.getMaxHp());
 		barraAccI.setProgress((double) selected.getActions() / selected.getMaxActions());
 		barraKcalI.setProgress((double) selected.getKcal() / selected.getMaxKcal());
 
-		List<Item> equipo = ((Equipment) EquipmentService.getById(selected)).getEquip();
+		List<Inventory> actual = selected.getInventario(); // hace de puntero, asique correcto
 
-		HashMap<Item, Integer> todos = InventoryService.getInventarioDePJ(selected);
-		todos.keySet().forEach(e -> {
-			Button b = new Button(e.getName() + " [" + todos.get(e) + "]");
-			Tooltip.install(b, new Tooltip(e.showInfo()));
-			b.setId("botonMasMasOpaco");
-			StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
-			b.setOnAction(event -> administrarItem(e));
-			Button copy = crearBotonCopia(b);
-			if (e.getItemFamily().equals(ItemFamily.MELEWEAPON) || e.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
-				if (selected.getWeapon() != null && selected.getWeapon().getName().equals(e)) {
-					b.setText("[EQUIPPED]" + b.getText());
+		actual.forEach(o -> {
+			try {
+				Item e = o.getItem();
+				Button b = new Button(e.getName() + " [" + o.getQuantity() + "]");
+				Tooltip.install(b, new Tooltip(e.showInfo()));
+				b.setId("botonMasMasOpaco");
+				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
+				b.setOnAction(event -> administrarItem(o));
+				Button copy = crearBotonCopia(b);
+				if (e.getItemFamily().equals(ItemFamily.MELEWEAPON)
+						|| e.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
+					if (selected.getWeapon() != null && selected.getWeapon().getName().equals(e)) {
+						b.setText("[EQUIPPED]" + b.getText());
+					}
+					weaponsInvPanel.getChildren().add(b);
+				} else if (e.getItemFamily().equals(ItemFamily.EDIBLE)) {
+					ediblesInvPanel.getChildren().add(b);
+				} else if (e.getItemFamily().equals(ItemFamily.ITEM)) {
+					itemsInvPanel.getChildren().add(b);
+				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
+					if (selected.getEquipment().getEquip().contains(e)) {
+						b.setText("[EQUIPPED]" + b.getText());
+					}
+					equipmentInvPanel.getChildren().add(b);
 				}
-				weaponsInvPanel.getChildren().add(b);
-			} else if (e.getItemFamily().equals(ItemFamily.EDIBLE)) {
-				ediblesInvPanel.getChildren().add(b);
-			} else if (e.getItemFamily().equals(ItemFamily.ITEM)) {
-				itemsInvPanel.getChildren().add(b);
-			} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
-				if (equipo.contains(e)) {
-					b.setText("[EQUIPPED]" + b.getText());
+				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
+					todosInvPanel.getChildren().add(copy);
 				}
-				equipmentInvPanel.getChildren().add(b);
-			}
-			if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
-				todosInvPanel.getChildren().add(copy);
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		});
+	}
+
+	private void cargarEscaparate() throws Exception {
+		try {
+			todosEscPanel.getChildren().clear();
+			todosEscPanel.setPrefTileHeight(-1);
+			todosEscPanel.setPrefTileWidth(-1);
+			weaponsEscPanel.getChildren().clear();
+			ediblesEscPanel.getChildren().clear();
+			itemsEscPanel.getChildren().clear();
+			equipmentEscPanel.getChildren().clear();
+
+			List<Item> todos = ItemService.getAll(); // todfos los items de objetos
+			todos.forEach(e -> {
+				Button b = new Button(e.getName());
+				Tooltip.install(b, new Tooltip(e.showInfo()));
+				b.setId("botonMasMasOpaco");
+				Item tipo = e;
+				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
+				b.setOnAction(event -> administrarItemEsc(tipo));
+				Button copy = crearBotonCopia(b);
+				if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
+						|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
+					weaponsEscPanel.getChildren().add(b);
+				} else if (tipo.getItemFamily().equals(ItemFamily.EDIBLE)) {
+					ediblesEscPanel.getChildren().add(b);
+				} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
+					itemsEscPanel.getChildren().add(b);
+				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
+					equipmentEscPanel.getChildren().add(b);
+				}
+				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
+					todosEscPanel.getChildren().add(copy);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void cargarMuniciones() throws Exception { // Hacer que el panel se genere segun todos los enums que hay
@@ -1401,35 +1404,6 @@ public class CharacterController implements Initializable {
 		loadShop();
 	}
 
-	private void administrarAmmo(ItemShape tipoDeMunicion) {
-		Dialog<String> ammo = new Dialog<>();
-		ammo.setTitle("Munición");
-		ammo.setHeaderText("Tirar (-) Coger (+)");
-		ButtonType confirmarButton = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
-		ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-		ammo.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
-		TextField cantidadInput = new TextField();
-		ammo.getDialogPane().setContent(cantidadInput);
-		ammo.setResultConverter(button -> {
-			if (button == confirmarButton) {
-				return cantidadInput.getText();
-			}
-			return null;
-		});
-		ammo.showAndWait().ifPresent(input -> {
-			try {
-				int cantidad = Integer.parseInt(input);
-				InventoryService.usarMunicion(tipoDeMunicion, selected, cantidad);
-				loadInventory();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				Alert infoVtn = new Alert(AlertType.INFORMATION);
-				infoVtn.setContentText(e1.getMessage());
-				infoVtn.show();
-			}
-		});
-	}
-
 	private Button crearBotonCopia(Button original) {
 		Button copy = new Button(original.getText());
 		copy.setId(original.getId()); // el de css
@@ -1438,82 +1412,10 @@ public class CharacterController implements Initializable {
 		return copy;
 	}
 
-	private void administrarItemEsc(Item tipo) {
-		try {
-			Alert ventanita = new Alert(AlertType.CONFIRMATION);
-			ventanita.setTitle("Administrar");
-			ventanita.setHeaderText("ADMINISTRAR");
-			ventanita.setContentText("Selecciona una opción:");
-			ButtonType verInfo = new ButtonType("Informacion");
-			ButtonType coger = new ButtonType("Coger");
-			ButtonType addImage = new ButtonType("FOtito Nueva");
-			ButtonType eliminar = new ButtonType("Eliminar");
-			if (dm) {
-				ventanita.getButtonTypes().setAll(verInfo, coger, eliminar, addImage);
-			} else {
-				ventanita.getButtonTypes().setAll(verInfo, coger, addImage);
-			}
-			ventanita.showAndWait().ifPresent(presionado -> {
-				switch (presionado.getText()) {
-				case "Informacion":
-					Alert infoVtn = new Alert(AlertType.INFORMATION);
-					infoVtn.setContentText(tipo.showInfo());
-					if (tipo.getImagenUrl() != null) {
-						Image image = new Image(tipo.getImagenUrl(), true);
-						ImageView imageView = new ImageView(image);
-						imageView.setFitWidth(300);
-						imageView.setPreserveRatio(true);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// Corregir
 
-						VBox contenido = new VBox(imageView);
-						contenido.setSpacing(10);
-						infoVtn.getDialogPane().setContent(contenido);
-					}
-					infoVtn.show();
-					break;
-				case "Coger":
-					try {
-						int cant = InventoryService.getCantidad(selected, tipo.getName());
-						if (cant >= 1) {
-							InventoryService.sumar(selected, tipo, 1);
-						} else {
-							Inventory adquisicion = new Inventory(tipo, selected, 1, tipo.getWeight(), tipo.getName());
-							InventoryService.insertar(adquisicion);
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					break;
-				case "Eliminar":
-					try {
-						ItemService.delete(tipo);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					break;
-				case "FOtito Nueva":
-					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
-					dialog.setTitle("Meter imagen nueva");
-					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
-					dialog.setContentText("URL:");
-
-					dialog.showAndWait().ifPresent(url -> {
-						tipo.setImagenUrl(url);
-						try {
-							ItemService.update(tipo);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					});
-					break;
-				}
-			});
-			cargarInvent();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-	}
-
-	private void administrarItem(Item tipo) {
+	private void administrarItem(Inventory inv) {
 		try {
 			Alert ventanita = new Alert(AlertType.CONFIRMATION);
 			ventanita.setTitle("Administrar");
@@ -1522,9 +1424,13 @@ public class CharacterController implements Initializable {
 
 			ButtonType verInfo = new ButtonType("Informacion");
 			ButtonType tirarCantidad = new ButtonType("Tirar");
+			ButtonType addImage = new ButtonType("FOtito Nueva");
+
+			Item tipo = inv.getItem();
+
 			if (tipo.getItemFamily().equals(ItemFamily.EDIBLE)) {
 				ButtonType consumir = new ButtonType("Consumir");
-				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, consumir);
+				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, consumir, addImage);
 			} else if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
 					|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)
 					|| tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
@@ -1535,7 +1441,7 @@ public class CharacterController implements Initializable {
 						accion = new ButtonType("Desequipar");
 					}
 					if (tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
-						Equipment equipo = (Equipment) EquipmentService.getById(selected);
+						Equipment equipo = selected.getEquipment();
 						if (equipo.getEquip().contains(tipo)) {
 							accion = new ButtonType("Desequipar");
 						}
@@ -1543,13 +1449,15 @@ public class CharacterController implements Initializable {
 				} else {
 					accion = new ButtonType("Equipar");
 				}
-				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, accion);
+				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, accion, addImage);
 			} else if (tipo.getItemFamily().equals("Item")) {
 				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad);
 			} else {
 				ButtonType equipar = new ButtonType("Equipar");
-				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, equipar);
+				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, equipar, addImage);
 			}
+			Equipment equipo = selected.getEquipment();
+
 			ventanita.showAndWait().ifPresent(presionado -> {
 
 				switch (presionado.getText()) {
@@ -1561,6 +1469,7 @@ public class CharacterController implements Initializable {
 					ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
 					tirarVtn.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
 					TextField cantidadInput = new TextField();
+					cantidadInput.setText("1"); // para que si solo es uno se borre sin poner nada
 					tirarVtn.getDialogPane().setContent(cantidadInput);
 
 					tirarVtn.setResultConverter(button -> {
@@ -1573,9 +1482,31 @@ public class CharacterController implements Initializable {
 					tirarVtn.showAndWait().ifPresent(input -> {
 						try {
 							int cantidad = Integer.parseInt(input);
-							InventoryService.tirar(tipo, selected, cantidad);
-							if (selected.getWeapon().equals(tipo)) {
-								selected.setWeapon(null);
+							inv.setQuantity(inv.getQuantity() - cantidad);
+							if (inv.getQuantity() < 1) {
+								selected.getInventario().remove(inv);
+
+								if (selected.getWeapon().equals(tipo)) {
+									selected.setWeapon(null);
+								}
+
+								if (equipo.getEquip().contains(tipo)) {
+									switch (inv.getItem().getItemShape()) {
+									case HEAD -> equipo.setHead(null);
+									case CHEST -> equipo.setChest(null);
+									case LEGS -> equipo.setLegs(null);
+									case FEET -> equipo.setFeet(null);
+									case EXTRA -> {
+										if (equipo.getExtra1() == inv.getItem())
+											equipo.setExtra1(null);
+										else if (equipo.getExtra2() == inv.getItem())
+											equipo.setExtra2(null);
+										else if (equipo.getExtra3() == inv.getItem())
+											equipo.setExtra3(null);
+									}
+									}
+									selected.setEquipment(equipo);
+								}
 							}
 						} catch (Exception e1) {
 							e1.printStackTrace();
@@ -1584,23 +1515,30 @@ public class CharacterController implements Initializable {
 					break;
 				case "Informacion":
 					Alert infoVtn = new Alert(AlertType.INFORMATION);
-					infoVtn.setContentText(tipo.showInfo());
+					Label texto = new Label(tipo.showInfo());
+					texto.setWrapText(true);
+
 					if (tipo.getImagenUrl() != null) {
 						Image image = new Image(tipo.getImagenUrl(), true);
 						ImageView imageView = new ImageView(image);
-						imageView.setFitWidth(300);
+						imageView.setFitWidth(image.getWidth() + 300);
+						imageView.setFitHeight(image.getHeight() + 200);
 						imageView.setPreserveRatio(true);
-
-						VBox contenido = new VBox(imageView);
+						VBox contenido = new VBox(10, imageView, texto);
 						contenido.setSpacing(10);
 						infoVtn.getDialogPane().setContent(contenido);
+					} else {
+						infoVtn.setContentText(tipo.showInfo());
 					}
 					infoVtn.show();
 					break;
 				case "Consumir":
 					try {
 						pU.makeEffect(tipo.getConsumEffect(), selected);
-						InventoryService.tirar(tipo, selected, 1);
+						inv.setQuantity(inv.getQuantity() - 1);
+						if (inv.getQuantity() < 1) {
+							selected.getInventario().remove(inv);
+						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
 						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1613,7 +1551,6 @@ public class CharacterController implements Initializable {
 						if (!tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
 							envainar();
 						} else {
-							Equipment equipo = (Equipment) EquipmentService.getById(selected);
 							if (!equipo.getEquip().contains(tipo)) {
 								switch (tipo.getItemShape()) {
 								case HEAD:
@@ -1653,10 +1590,7 @@ public class CharacterController implements Initializable {
 					try {
 						if (!tipo.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
 							selected.setWeapon(tipo);
-							selected = PjService.update(selected);
 						} else {
-							// Si no va , es new Equipment(selected) para obtener ID
-							Equipment equipo = (Equipment) EquipmentService.getById(selected);
 							if (!equipo.getEquip().contains(tipo)) {
 								switch (tipo.getItemShape()) {
 								case HEAD:
@@ -1687,20 +1621,177 @@ public class CharacterController implements Initializable {
 								}
 							}
 							selected.setEquipment(equipo);
-							selected = PjService.update(selected);
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 					break;
+				case "FOtito Nueva":
+					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
+					dialog.setTitle("Meter imagen nueva");
+					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
+					dialog.setContentText("URL:");
+
+					dialog.showAndWait().ifPresent(url -> {
+						tipo.setImagenUrl(url);
+						try {
+							ItemService.update(tipo);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					break;
 				case "Guardar en otro sitio":
 					break;
 				}
 			});
-
-			cargarInvent();
+			loadInventory();
 		} catch (Exception e1) {
 			e1.printStackTrace();
+		}
+	}
+
+	private void administrarItemEsc(Item tipo) {
+		try {
+			Alert ventanita = new Alert(AlertType.CONFIRMATION);
+			ventanita.setTitle("Administrar");
+			ventanita.setHeaderText("ADMINISTRAR");
+			ventanita.setContentText("Selecciona una opción:");
+			ButtonType verInfo = new ButtonType("Informacion");
+			ButtonType coger = new ButtonType("Coger");
+			ButtonType addImage = new ButtonType("FOtito Nueva");
+			ButtonType eliminar = new ButtonType("Eliminar");
+			if (dm) {
+				ventanita.getButtonTypes().setAll(verInfo, coger, eliminar, addImage);
+			} else {
+				ventanita.getButtonTypes().setAll(verInfo, coger, addImage);
+			}
+			ventanita.showAndWait().ifPresent(presionado -> {
+				switch (presionado.getText()) {
+				case "Informacion":
+					Alert infoVtn = new Alert(AlertType.INFORMATION);
+					Label texto = new Label(tipo.showInfo());
+					texto.setWrapText(true); // Por si es largo
+
+					if (tipo.getImagenUrl() != null) {
+						Image image = new Image(tipo.getImagenUrl(), true);
+						ImageView imageView = new ImageView(image);
+						imageView.setFitWidth(image.getWidth() + 300);
+						imageView.setFitHeight(image.getHeight() + 200);
+						imageView.setPreserveRatio(true);
+						VBox contenido = new VBox(10, imageView, texto);
+						contenido.setSpacing(10);
+						infoVtn.getDialogPane().setContent(contenido);
+					} else {
+						infoVtn.setContentText(tipo.showInfo());
+					}
+					infoVtn.show();
+					break;
+				case "Coger":
+					try {
+						Inventory inv = selected.getInventario().stream()
+								.filter(i -> i.getItem().getId_O() == tipo.getId_O()).findFirst().orElse(null);
+						double peso = InventoryService.getPeso(selected);
+						if (peso + tipo.getWeight() < selected.getMaxCarry()) {
+							if (inv != null) {
+								inv.setQuantity(inv.getQuantity() + 1);
+							} else {
+								selected.getInventario().add(new Inventory(tipo, new PJStub(selected.getName()), 1,
+										tipo.getWeight(), tipo.getName()));
+							}
+						} else {
+							infoVtn = new Alert(AlertType.INFORMATION);
+							infoVtn.setContentText("No cabe, pesa " + tipo.getWeight() + ".");
+							infoVtn.show();
+						}
+
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						GestionLog.guardarLog(e1.getMessage());
+					}
+					break;
+				case "Eliminar":
+					try {
+						ItemService.delete(tipo);
+					} catch (Exception e) {
+						e.printStackTrace();
+						GestionLog.guardarLog(e.getMessage());
+					}
+					break;
+				case "FOtito Nueva":
+					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
+					dialog.setTitle("Meter imagen nueva");
+					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
+					dialog.setContentText("URL:");
+
+					dialog.showAndWait().ifPresent(url -> {
+						tipo.setImagenUrl(url);
+						try {
+							ItemService.update(tipo);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					break;
+				}
+			});
+			loadInventory();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void administrarAmmo(ItemShape tipoDeMunicion) {
+		Dialog<String> ammo = new Dialog<>();
+		ammo.setTitle("Munición");
+		ammo.setHeaderText("Tirar (-) Coger (+)");
+		ButtonType confirmarButton = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+		ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+		ammo.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
+		TextField cantidadInput = new TextField();
+		ammo.getDialogPane().setContent(cantidadInput);
+		ammo.setResultConverter(button -> {
+			if (button == confirmarButton) {
+				return cantidadInput.getText();
+			}
+			return null;
+		});
+		ammo.showAndWait().ifPresent(input -> {
+			try {
+				int cantidad = Integer.parseInt(input);
+				usarMuniciones(cantidad, tipoDeMunicion);
+				loadInventory();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				Alert infoVtn = new Alert(AlertType.INFORMATION);
+				infoVtn.setContentText(e1.getMessage());
+				infoVtn.show();
+			}
+		});
+	}
+
+	private void usarMuniciones(int cantidad, ItemShape tipoDeMunicion) throws Exception {
+
+		String nombreMunicion = tipoDeMunicion.name() + "AMMO";
+		Item nuevo = new Item(nombreMunicion, Rarity.H, ItemFamily.AMMO, ItemShape.AMMO, 0.2, 0.0,
+				"Munición de " + nombreMunicion);
+
+		Inventory inv = selected.getInventario().stream()
+				.filter(i -> i.getItem() != null && i.getItem().getName().equals(nombreMunicion)).findFirst()
+				.orElse(null);
+
+		if (inv != null) {
+			if (inv.getQuantity() + cantidad <= 0) {
+				throw new Exception();
+			} else {
+				inv.setQuantity(inv.getQuantity() + cantidad);
+			}
+		} else {
+			ItemService.create(nuevo);
+			Item persistido = ItemService.getByName(nombreMunicion)
+					.orElseThrow(() -> new Exception("No se pudo recuperar la munición recién creada"));
+			selected.getInventario()
+					.add(new Inventory(persistido, new PJStub(selected.getName()), cantidad, 0.0, nombreMunicion));
 		}
 	}
 
@@ -1979,10 +2070,20 @@ public class CharacterController implements Initializable {
 				dialog.showAndWait().ifPresent(input -> {
 					try {
 						int diff = Integer.parseInt(input);
+						Item actual = selected.getWeapon();
 						try {
-							procesarMensaje("" + pU.atacar(selected, diff, ventaja.isSelected()) + "\nQuedan "
-									+ InventoryService.cantidadAmmo(selected, selected.getWeapon().getItemShape())
-									+ " proyectiles");
+							int a = (!actual.getItemShape().equals(ItemShape.TELESCOPE))
+									? Integer.parseInt(InventoryService.cantidadAmmo(selected, actual.getItemShape()))
+									: 100000;
+							if (a < 1) {
+								procesarMensaje("No hay municion");
+							} else {
+								String ataque = "" + pU.atacar(selected, diff, ventaja.isSelected());
+								if (!actual.getItemShape().equals(ItemShape.TELESCOPE)) {
+									usarMuniciones(-1, actual.getItemShape());
+								}
+								procesarMensaje(ataque);
+							}
 						} catch (Exception e) {
 							procesarMensaje(e.getMessage());
 						}
@@ -1992,7 +2093,8 @@ public class CharacterController implements Initializable {
 				});
 			} else {
 				try {
-					procesarMensaje("" + pU.atacar(selected, 4, ventaja.isSelected()));
+					String ataque = "" + pU.atacar(selected, 3, ventaja.isSelected());
+					procesarMensaje(ataque);
 				} catch (Exception e) {
 					procesarMensaje(e.getMessage());
 				}

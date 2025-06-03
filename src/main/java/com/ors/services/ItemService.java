@@ -12,6 +12,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import main.java.com.ors.utiles.Combo;
 import main.java.com.ors.vo.Item;
 import main.java.com.ors.vo.PJ;
 
@@ -21,12 +22,13 @@ public class ItemService {
 	private static final HttpClient client = HttpClient.newHttpClient();
 	private static final ObjectMapper mapper = new ObjectMapper();
 
-	public static int atacar(Item actual, int difficulty, boolean adventage, PJ pj) throws Exception {
+	public static Combo atacar(Item actual, int difficulty, boolean adventage, PJ pj) throws Exception {
 		String url = API_BASE_URL + "/combat/atacar" + "?dificultad=" + difficulty + "&ventaja=" + adventage + "&item="
-				+ URLEncoder.encode(actual.getName(), StandardCharsets.UTF_8); // Solo válido si el back espera el
-																				// nombre
+				+ URLEncoder.encode(actual.getName(), StandardCharsets.UTF_8); 
 
-		String json = mapper.writeValueAsString(pj);
+		Combo c = new Combo(pj, 0 , difficulty, adventage, actual);
+		
+		String json = mapper.writeValueAsString(c);
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("Content-Type", "application/json")
 				.POST(HttpRequest.BodyPublishers.ofString(json)).build();
@@ -34,9 +36,9 @@ public class ItemService {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		if (response.statusCode() == 200) {
-			return Integer.parseInt(response.body());
+		    return mapper.readValue(response.body(), Combo.class);
 		} else {
-			throw new RuntimeException("Error en ataque: " + response.body());
+		    throw new RuntimeException("Error en ataque: " + response.body());
 		}
 	}
 
@@ -69,6 +71,24 @@ public class ItemService {
 			throw new RuntimeException("Error al obtener ítem por ID: " + response.body());
 		}
 	}
+	
+	public static Optional<Item> getByName(String name) throws Exception {
+	    String url = API_BASE_URL + "/nombre/" + URLEncoder.encode(name, StandardCharsets.UTF_8);
+
+	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+
+	    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+	    if (response.statusCode() == 200 && response.body() != null && !response.body().isEmpty()) {
+	        Item item = mapper.readValue(response.body(), Item.class);
+	        return Optional.of(item);
+	    } else if (response.statusCode() == 404) {
+	        return Optional.empty();
+	    } else {
+	        throw new RuntimeException("Error al obtener ítem por nombre: " + response.body());
+	    }
+	}
+
 
 	public static void create(Item item) throws Exception {
 		String json = mapper.writeValueAsString(item);
@@ -109,4 +129,7 @@ public class ItemService {
 			throw new RuntimeException("Error al eliminar ítem: " + response.body());
 		}
 	}
+	
+	
+	
 }

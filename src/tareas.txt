@@ -1,9 +1,31 @@
 
+-Cuando eeliminas una prenda equipada no se desequipa
 
+-No va a funcionar la municion porque se resta en la api y luego 
+se updatea el cliente, asique nunca se verá el cambio.
+Hay que hacer que el cliente guarde una copia suya del pj, ataque
+pida el inventario de la api y después se lo meta al pj del cliente
+y se haga update.
+Hacer en PjUsables metodo atacar.
 
-- No carga bien las max actions y max vida en la api
+-No funciona la munición, pero no sale error
 
-- No se ponen las currentHp ni current Acc ni kcal
+-No se puede ver todo el escaparate, 
+no deja deslizar mas abajo. 
+Aprovechar para remodelar
+Hacer simplemente más pequeño.
+
+-Falla el discrod. Corregir y meter 
+que si no funciona continue, manejar error
+
+-Comprobar tienda de skills
+
+-Comprobar creación de cosas
+
+-Sistema de login y seguridad
+
+-Empaquetar
+
 
 
 

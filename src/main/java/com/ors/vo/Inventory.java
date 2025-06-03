@@ -5,15 +5,15 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Inventory implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@JsonUnwrapped
-	private InventoryId idIn;
+	private long id;
+	private PJ pj;
+	private Item item;
 
 	@JsonProperty("cantidad")
 	private int quantity;
@@ -28,30 +28,22 @@ public class Inventory implements Serializable {
 	}
 
 	public Inventory(Item i, PJ p) {
-		this.idIn = new InventoryId(p, i);
+		this.pj = p;
+		this.item = i;
 	}
 
-	public Inventory(InventoryId idIn, int quantity, double singleWeight, String objectName) {
-		this.idIn = idIn;
-		this.quantity = quantity;
-		this.singleWeight = singleWeight;
-		this.objectName = objectName;
+	public Inventory(Item i, PJ p, int cant) {
+		this.pj = p;
+		this.item = i;
+		this.quantity = cant;
 	}
 
 	public Inventory(Item i, PJ p, int quantity, double singleWeight, String objectName) {
-		this.idIn = new InventoryId(p, i);
+		this.pj = p;
+		this.item = i;
 		this.quantity = quantity;
 		this.singleWeight = singleWeight;
 		this.objectName = objectName;
-	}
-
-	// Getters y setters
-	public InventoryId getId() {
-		return idIn;
-	}
-
-	public void setId(InventoryId id) {
-		this.idIn = id;
 	}
 
 	public int getQuantity() {
@@ -78,59 +70,58 @@ public class Inventory implements Serializable {
 		this.objectName = objectName;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public PJ getPj() {
-		return idIn != null ? idIn.getPj() : null;
+		return pj;
 	}
 
 	public void setPj(PJ pj) {
-		if (idIn == null)
-			idIn = new InventoryId();
-		idIn.setPj(pj);
+		this.pj = pj;
 	}
 
-	public static class InventoryId implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-		private PJ pj;
-		private Item item;
-
-		public InventoryId() {
-		}
-
-		public InventoryId(PJ pj, Item item) {
-			this.pj = pj;
-			this.item = item;
-		}
-
-		public PJ getPj() {
-			return pj;
-		}
-
-		public void setPj(PJ pj) {
-			this.pj = pj;
-		}
-
-		public Item getItem() {
-			return item;
-		}
-
-		public void setItem(Item item) {
-			this.item = item;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (!(o instanceof InventoryId))
-				return false;
-			InventoryId that = (InventoryId) o;
-			return Objects.equals(pj, that.pj) && Objects.equals(item, that.item);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(pj, item);
-		}
+	public Item getItem() {
+		return item;
 	}
+
+	public void setItem(Item item) {
+		this.item = item;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	@Override
+	public String toString() {
+		return item.getName() ;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(item, pj);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Inventory other = (Inventory) obj;
+		return Objects.equals(item, other.item) && Objects.equals(pj, other.pj);
+	}
+	
+	
+	
+	
+
 }

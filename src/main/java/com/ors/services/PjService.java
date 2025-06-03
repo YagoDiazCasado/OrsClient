@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import main.java.com.ors.vo.Adventure;
 import main.java.com.ors.vo.BodyType;
+import main.java.com.ors.vo.Inventory;
 import main.java.com.ors.vo.PJ;
 
 public class PjService {
@@ -69,7 +70,8 @@ public class PjService {
 
 	public static PJ update(PJ pj) throws Exception {
 		HttpPost post = new HttpPost(API_BASE_URL + "/update");
-		return enviarPeticion(post, pj);
+		PJ k = enviarPeticion(post, pj);
+		return k;
 	}
 
 	public static PJ create(PJ pj) throws Exception {

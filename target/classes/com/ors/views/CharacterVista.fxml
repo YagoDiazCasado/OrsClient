@@ -280,7 +280,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosInvPanel" prefHeight="382.0" prefWidth="349.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosInvPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -297,7 +297,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsInvPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -314,7 +314,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesInvPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -331,7 +331,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsInvPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -348,7 +348,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentInvPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentInvPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -374,7 +374,7 @@
                                       <content>
                                         <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosEscPanel" prefHeight="382.0" prefTileHeight="1.0" prefTileWidth="1.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="todosEscPanel" hgap="5.0" prefHeight="382.0" prefTileHeight="1.0" prefTileWidth="1.0" prefWidth="349.0" vgap="5.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -391,7 +391,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="weaponsEscPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -408,7 +408,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="ediblesEscPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -425,7 +425,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="itemsEscPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
@@ -442,7 +442,7 @@
                                        <content>
                                           <AnchorPane id="panelPreview" minHeight="0.0" minWidth="0.0" prefHeight="388.0" prefWidth="359.0">
                                              <children>
-                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentEscPanel" prefHeight="382.0" prefWidth="349.0" AnchorPane.topAnchor="0.0">
+                                                <TilePane id="panelPreviewMasOpaco" fx:id="equipmentEscPanel" hgap="5.0" prefHeight="382.0" prefWidth="349.0" vgap="5.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
