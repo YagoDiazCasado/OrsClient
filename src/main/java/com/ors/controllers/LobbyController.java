@@ -306,10 +306,9 @@ public class LobbyController implements Initializable {
 		int leftIndex = (posicion - 1 + pjs.size()) % pjs.size();
 		int rightIndex = (posicion + 1) % pjs.size();
 
-		setImagenesDePosicionesYFotito(rightImage, leftIndex, false);
+		setImagenesDePosicionesYFotito(rightImage, rightIndex, false);
 		setImagenesDePosicionesYFotito(centralImage, posicion, true);
-		setImagenesDePosicionesYFotito(leftImage, rightIndex, false);
-
+		setImagenesDePosicionesYFotito(leftImage, leftIndex, false);
 		///////////////////////// ACCIONES SLIDE
 
 		rightImage.setOnMouseClicked(event -> {
@@ -514,7 +513,7 @@ public class LobbyController implements Initializable {
 		if (dm) {
 			listoBtn.setOnAction(event -> {
 				try {
-					if (imagenDePerfilPosible != defaultImage) {
+					if (imagenDePerfilPosible != defaultImage && imagenDePerfilPosible != null) {
 						pjs.get(posicion).setProfile(ImagenesUtil.fileToByte(imagenDePerfilPosible));
 					}
 					enviar();
@@ -542,6 +541,8 @@ public class LobbyController implements Initializable {
 	private void guardarImagen() throws Exception {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+		fileChooser.setInitialDirectory(new File(getClass().getResource("/com/ors/images/profiles/").toURI()));
+
 		imagenDePerfilPosible = fileChooser.showOpenDialog(null);
 		checkTamanoFoto();
 	}
@@ -874,10 +875,10 @@ public class LobbyController implements Initializable {
 
 		ComboBox<Adventure> comboAventuras = new ComboBox<>();
 		comboAventuras.getItems().addAll(aventurasDisponibles);
-		comboAventuras.setValue(aventurasDisponibles.get(0));
+		comboAventuras.setValue(aventurasDisponibles.get(aventurasDisponibles.indexOf(adventure)));
 		ComboBox<CharacterTypes> comboTipo = new ComboBox<>();
 		comboTipo.getItems().addAll(CharacterTypes.values());
-		comboTipo.setValue(CharacterTypes.NPC);
+		comboTipo.setValue(pjs.get(posicion).getCharacterType()); // CharacterTypes.NPC o PARTY
 
 		Pane content = new Pane();
 		Label aventuraLabel = new Label("Aventura:");
@@ -900,10 +901,9 @@ public class LobbyController implements Initializable {
 					PJ pj = pjs.get(posicion);
 					pj.setAdventureName(comboAventuras.getValue().getAdventureName());
 					pj.setCharacterType(comboTipo.getValue());
+					PjService.update(pj);
 					pjs = PjService.getCompletePJs(adventure, dm);
 					posicion = 0;
-					System.out.println("////////////////////////////////Recién tomado del endPoint Get Compeltes:\n"
-							+ pjs.get(posicion).showInfo());
 					updateCharacterView();
 					ser.efectoEleccion(volumenEfectos);
 				} catch (Exception e) {

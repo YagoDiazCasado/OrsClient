@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 //Seguir adad
 
@@ -1949,8 +1950,8 @@ public class CharacterController implements Initializable {
 				.orElse(null);
 
 		if (inv != null) {
-			if (inv.getQuantity() + cantidad <= 0) {
-				throw new Exception();
+			if (inv.getQuantity() + cantidad < 0) {		
+				cheEscuchateEsto("NO", "NO HAY Municion Bobo");
 			} else {
 				inv.setQuantity(inv.getQuantity() + cantidad);
 			}
@@ -1962,6 +1963,19 @@ public class CharacterController implements Initializable {
 					.add(new Inventory(persistido, new PJStub(selected.getName()), cantidad, 0.0, nombreMunicion));
 		}
 	}
+	
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// COMUNICACION
+
+	
+	private void cheEscuchateEsto(String uno, String dos) {
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setHeaderText(uno);
+		alert.setContentText(dos);
+	}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////// OBLIGATORIOS
@@ -1977,9 +1991,8 @@ public class CharacterController implements Initializable {
 			selected.setDex(selected.getDex() + 1);
 			procesarMensaje("SUBE DE NIVEL ++1");
 		} else {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setHeaderText("NO");
-			alert.setContentText("NO HAY PUNTOS");
+			cheEscuchateEsto("NO", "NO HAY PUNTOS");
+
 		}
 	}
 
@@ -1988,9 +2001,8 @@ public class CharacterController implements Initializable {
 		if (getIp() >= 3) {
 			gastarInspiracion(getIp() - 3);
 		} else {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setHeaderText("NO");
-			alert.setContentText("NO HAY PUNTOS");
+			cheEscuchateEsto("NO", "NO HAY PUNTOS");
+
 		}
 	}
 
@@ -1999,9 +2011,8 @@ public class CharacterController implements Initializable {
 		if (getIp() >= 4) {
 			gastarInspiracion(getIp() - 4);
 		} else {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setHeaderText("NO");
-			alert.setContentText("NO HAY PUNTOS");
+			cheEscuchateEsto("NO", "NO HAY PUNTOS");
+
 		}
 	}
 
@@ -2010,9 +2021,8 @@ public class CharacterController implements Initializable {
 		if (getIp() >= 7) {
 			gastarInspiracion(getIp() - 7);
 		} else {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setHeaderText("NO");
-			alert.setContentText("NO HAY PUNTOS");
+			cheEscuchateEsto("NO", "NO HAY PUNTOS");
+
 		}
 	}
 
@@ -2191,10 +2201,11 @@ public class CharacterController implements Initializable {
 	}
 
 	@FXML
-	private void saveFotito() {
+	private void saveFotito() throws Exception {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		try {
+		fileChooser.setInitialDirectory(new File(getClass().getResource("/com/ors/images/profiles/").toURI()));
+	try {
 			File e = fileChooser.showOpenDialog(null);
 			selected.setProfile(ImagenesUtil.fileToByte(e));
 			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));

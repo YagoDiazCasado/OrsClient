@@ -3,17 +3,21 @@
 -Meter generador de nombre aleatorio viejo al de prueba
 y arma aleatoria de la bbdd
 
--WebSocket
-
--Municion
-
--Problema doble pj en consola
-
 -Empaquetar beta.1 jpackage
+
+-Retoque visual (fondos personalizados, 
+interfaz roja si hay poca vida <- pponer con un simpel if)
+
+-Inventario hacer que los botones puedan 
+ser incluso puntos
+
+-Poner la busqueda rápida al inventt también
 
 -Grabar video
 
--Creacion habilidades
+-Creacion habilidades con janino o groovy
+
+-Meter ErrorHandler
 
 -Empaquetar beta.2 jpackage
 
