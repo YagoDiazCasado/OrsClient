@@ -1,31 +1,25 @@
 
--Cuando eeliminas una prenda equipada no se desequipa
 
--No va a funcionar la municion porque se resta en la api y luego 
-se updatea el cliente, asique nunca se verá el cambio.
-Hay que hacer que el cliente guarde una copia suya del pj, ataque
-pida el inventario de la api y después se lo meta al pj del cliente
-y se haga update.
-Hacer en PjUsables metodo atacar.
+-Meter generador de nombre aleatorio viejo al de prueba
+y arma aleatoria de la bbdd
 
--No funciona la munición, pero no sale error
+-WebSocket
 
--No se puede ver todo el escaparate, 
-no deja deslizar mas abajo. 
-Aprovechar para remodelar
-Hacer simplemente más pequeño.
+-Municion
 
--Falla el discrod. Corregir y meter 
-que si no funciona continue, manejar error
+-Problema doble pj en consola
 
--Comprobar tienda de skills
+-Empaquetar beta.1 jpackage
 
--Comprobar creación de cosas
+-Grabar video
 
--Sistema de login y seguridad
+-Creacion habilidades
 
--Empaquetar
+-Empaquetar beta.2 jpackage
 
+-Login y seguridad
+
+-Inventario re-work
 
 
 

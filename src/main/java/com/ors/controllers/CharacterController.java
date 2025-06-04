@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -225,6 +226,9 @@ public class CharacterController implements Initializable {
 	private Pane petPanel;
 
 	// COSAS DEL INVENTARIO
+
+	@FXML
+	private Label buscarLbl;
 
 	// PANEL RESUMEN
 	@FXML
@@ -1070,30 +1074,137 @@ public class CharacterController implements Initializable {
 			modsPane.getChildren().add(modLbl);
 		}
 	}
+//
+//	private void cargarInvent() throws Exception {
+//		selected = PjService.update(selected); // temporal
+//		pesoLbl.setText("" + InventoryService.getPeso(selected) + " kg / " + selected.getMaxCarry());
+//		todosInvPanel.getChildren().clear();
+//		weaponsInvPanel.getChildren().clear();
+//		ediblesInvPanel.getChildren().clear();
+//		itemsInvPanel.getChildren().clear();
+//		equipmentInvPanel.getChildren().clear();
+//		barraHpI.setProgress((double) selected.getHp() / selected.getMaxHp());
+//		barraAccI.setProgress((double) selected.getActions() / selected.getMaxActions());
+//		barraKcalI.setProgress((double) selected.getKcal() / selected.getMaxKcal());
+//
+//		List<Inventory> actual = selected.getInventario(); // hace de puntero, asique correcto
+//
+//		actual.forEach(o -> {
+//			try {
+//				Item e = o.getItem();
+//				Button b = new Button(e.getName() + " [" + o.getQuantity() + "]");
+//				b.setPrefWidth(150);  // ancho preferido
+//				b.setPrefHeight(25); // alto preferido
+//				Tooltip.install(b, new Tooltip(e.showInfo()));
+//				b.setId("botonMasMasOpaco");
+//				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
+//				b.setOnAction(event -> administrarItem(o));
+//				Button copy = crearBotonCopia(b);
+//				if (e.getItemFamily().equals(ItemFamily.MELEWEAPON)
+//						|| e.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
+//					if (selected.getWeapon() != null && selected.getWeapon().getName().equals(e)) {
+//						b.setText("[EQUIPPED]" + b.getText());
+//					}
+//					weaponsInvPanel.getChildren().add(b);
+//				} else if (e.getItemFamily().equals(ItemFamily.EDIBLE)) {
+//					ediblesInvPanel.getChildren().add(b);
+//				} else if (e.getItemFamily().equals(ItemFamily.ITEM)) {
+//					itemsInvPanel.getChildren().add(b);
+//				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
+//					if (selected.getEquipment().getEquip().contains(e)) {
+//						b.setText("[EQUIPPED]" + b.getText());
+//					}
+//					equipmentInvPanel.getChildren().add(b);
+//				}
+//				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
+//					todosInvPanel.getChildren().add(copy);
+//				}
+//			} catch (Exception e1) {
+//				e1.printStackTrace();
+//			}
+//		});
+//	}
+//
+//	private void cargarEscaparate() throws Exception {
+//		try {
+//			todosEscPanel.getChildren().clear();
+//			todosEscPanel.setPrefTileHeight(-1);
+//			todosEscPanel.setPrefTileWidth(-1);
+//			weaponsEscPanel.getChildren().clear();
+//			ediblesEscPanel.getChildren().clear();
+//			itemsEscPanel.getChildren().clear();
+//			equipmentEscPanel.getChildren().clear();
+//
+//			List<Item> todos = ItemService.getAll(); // todfos los items de objetos
+//			todos.forEach(e -> {
+//				Button b = new Button(e.getName());
+//				b.setPrefWidth(125);  // ancho preferido
+//				b.setPrefHeight(25); // alto preferido
+//				Tooltip.install(b, new Tooltip(e.showInfo()));
+//				b.setId("botonMasMasOpaco");
+//				Item tipo = e;
+//				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
+//				b.setOnAction(event -> administrarItemEsc(tipo));
+//				Button copy = crearBotonCopia(b);
+//				if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
+//						|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
+//					weaponsEscPanel.getChildren().add(b);
+//				} else if (tipo.getItemFamily().equals(ItemFamily.EDIBLE)) {
+//					ediblesEscPanel.getChildren().add(b);
+//				} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
+//					itemsEscPanel.getChildren().add(b);
+//				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
+//					equipmentEscPanel.getChildren().add(b);
+//				}
+//				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
+//					todosEscPanel.getChildren().add(copy);
+//				}
+//			});
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private void cargarInvent() throws Exception {
 		selected = PjService.update(selected); // temporal
 		pesoLbl.setText("" + InventoryService.getPeso(selected) + " kg / " + selected.getMaxCarry());
+
+		double minHeightTodos = todosInvPanel.getHeight();
+		double minHeightW = weaponsInvPanel.getHeight();
+		double minHeightE = ediblesInvPanel.getHeight();
+		double minHeightI = itemsInvPanel.getHeight();
+		double minHeightEq = equipmentInvPanel.getHeight();
+
 		todosInvPanel.getChildren().clear();
 		weaponsInvPanel.getChildren().clear();
 		ediblesInvPanel.getChildren().clear();
 		itemsInvPanel.getChildren().clear();
 		equipmentInvPanel.getChildren().clear();
+
+		todosInvPanel.setMinHeight(minHeightTodos);
+		weaponsInvPanel.setMinHeight(minHeightW);
+		ediblesInvPanel.setMinHeight(minHeightE);
+		itemsInvPanel.setMinHeight(minHeightI);
+		equipmentInvPanel.setMinHeight(minHeightEq);
+
 		barraHpI.setProgress((double) selected.getHp() / selected.getMaxHp());
 		barraAccI.setProgress((double) selected.getActions() / selected.getMaxActions());
 		barraKcalI.setProgress((double) selected.getKcal() / selected.getMaxKcal());
 
-		List<Inventory> actual = selected.getInventario(); // hace de puntero, asique correcto
+		List<Inventory> actual = selected.getInventario();
 
 		actual.forEach(o -> {
 			try {
 				Item e = o.getItem();
 				Button b = new Button(e.getName() + " [" + o.getQuantity() + "]");
+				b.setPrefWidth(150);
+				b.setPrefHeight(25);
 				Tooltip.install(b, new Tooltip(e.showInfo()));
 				b.setId("botonMasMasOpaco");
 				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
 				b.setOnAction(event -> administrarItem(o));
 				Button copy = crearBotonCopia(b);
+
 				if (e.getItemFamily().equals(ItemFamily.MELEWEAPON)
 						|| e.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
 					if (selected.getWeapon() != null && selected.getWeapon().getName().equals(e)) {
@@ -1121,6 +1232,50 @@ public class CharacterController implements Initializable {
 
 	private void cargarEscaparate() throws Exception {
 		try {
+
+			buscarLbl.setOnMouseClicked(o -> {
+				TextInputDialog busqueda = new TextInputDialog();
+				busqueda.setHeaderText("BUSCAR");
+				busqueda.setContentText("Introduce el nombre del ítem:");
+				busqueda.showAndWait().ifPresent(input -> {
+					try {
+						List<Item> items = ItemService.buscarItemsQueEmpiecenPor(input);
+						if (items.isEmpty()) {
+							Alert sinResultados = new Alert(Alert.AlertType.INFORMATION);
+							sinResultados.setHeaderText("Sin resultados");
+							sinResultados.setContentText("No se encontraron ítems que comiencen por: " + input);
+							sinResultados.showAndWait();
+							return;
+						}
+						Dialog<Void> seleccion = new Dialog<>();
+						seleccion.setTitle("Coger");
+						seleccion.setHeaderText("¿Cuál quieres coger?");
+						seleccion.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+						VBox vbox = new VBox(10);
+						vbox.setPadding(new Insets(10));
+						for (Item i : items) {
+							Button boton = new Button(i.getName());
+							boton.setMaxWidth(Double.MAX_VALUE);
+							boton.setOnAction(j -> {
+								administrarItemEsc(i);
+								seleccion.close();
+							});
+							vbox.getChildren().add(boton);
+						}
+						seleccion.getDialogPane().setContent(vbox);
+						seleccion.showAndWait();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+			});
+
+			double minHeightTodos = todosEscPanel.getHeight();
+			double minHeightW = weaponsEscPanel.getHeight();
+			double minHeightE = ediblesEscPanel.getHeight();
+			double minHeightI = itemsEscPanel.getHeight();
+			double minHeightEq = equipmentEscPanel.getHeight();
+
 			todosEscPanel.getChildren().clear();
 			todosEscPanel.setPrefTileHeight(-1);
 			todosEscPanel.setPrefTileWidth(-1);
@@ -1129,15 +1284,24 @@ public class CharacterController implements Initializable {
 			itemsEscPanel.getChildren().clear();
 			equipmentEscPanel.getChildren().clear();
 
-			List<Item> todos = ItemService.getAll(); // todfos los items de objetos
+			todosEscPanel.setMinHeight(minHeightTodos);
+			weaponsEscPanel.setMinHeight(minHeightW);
+			ediblesEscPanel.setMinHeight(minHeightE);
+			itemsEscPanel.setMinHeight(minHeightI);
+			equipmentEscPanel.setMinHeight(minHeightEq);
+
+			List<Item> todos = ItemService.getAll();
 			todos.forEach(e -> {
 				Button b = new Button(e.getName());
+				b.setPrefWidth(125);
+				b.setPrefHeight(25);
 				Tooltip.install(b, new Tooltip(e.showInfo()));
 				b.setId("botonMasMasOpaco");
 				Item tipo = e;
 				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
 				b.setOnAction(event -> administrarItemEsc(tipo));
 				Button copy = crearBotonCopia(b);
+
 				if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
 						|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
 					weaponsEscPanel.getChildren().add(b);
@@ -1391,6 +1555,16 @@ public class CharacterController implements Initializable {
 
 	}
 
+	private Button crearBotonCopia(Button original) {
+		Button copy = new Button(original.getText());
+		copy.setPrefWidth(100); // ancho preferido
+		copy.setPrefHeight(25); // alto preferido
+		copy.setId(original.getId()); // el de css
+		copy.setOnAction(original.getOnAction());
+		StyleAndEffectService.pointElement(copy, tama, brillo, colorR, colorTexto);
+		return copy;
+	}
+
 	private int getIp() {
 		return Integer.parseInt(puntosInspiracionLbl.getText().split(" ")[1]);
 	}
@@ -1402,14 +1576,6 @@ public class CharacterController implements Initializable {
 		selected.setInspirationPoints(selected.getInspirationPoints() + numero);
 		selected = PjService.update(selected);
 		loadShop();
-	}
-
-	private Button crearBotonCopia(Button original) {
-		Button copy = new Button(original.getText());
-		copy.setId(original.getId()); // el de css
-		copy.setOnAction(original.getOnAction());
-		StyleAndEffectService.pointElement(copy, tama, brillo, colorR, colorTexto);
-		return copy;
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1450,7 +1616,7 @@ public class CharacterController implements Initializable {
 					accion = new ButtonType("Equipar");
 				}
 				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, accion, addImage);
-			} else if (tipo.getItemFamily().equals("Item")) {
+			} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
 				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad);
 			} else {
 				ButtonType equipar = new ButtonType("Equipar");
@@ -1504,6 +1670,8 @@ public class CharacterController implements Initializable {
 										else if (equipo.getExtra3() == inv.getItem())
 											equipo.setExtra3(null);
 									}
+									default -> throw new IllegalArgumentException(
+											"Unexpected value: " + inv.getItem().getItemShape());
 									}
 									selected.setEquipment(equipo);
 								}

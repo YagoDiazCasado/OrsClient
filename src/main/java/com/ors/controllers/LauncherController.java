@@ -206,7 +206,8 @@ public class LauncherController implements Initializable {
 		adventureLogPanel.setDisable(false);
 		conexionPanel.setVisible(false);
 		conexionPanel.setDisable(true);
-
+		adventures.getSelectionModel().selectFirst();
+		
 		StyleAndEffectService.pointElement(go, 0.3, 0.3, "blue", "black");
 		go.setOnMouseClicked(event -> {
 			try {

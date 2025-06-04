@@ -425,11 +425,11 @@ public class LobbyController implements Initializable {
 	private void setInitialCharacter() throws Exception {
 		StyleAndEffectService.fadeIn(totalPanel, posicion);
 		setOptions();
-		ajusteDeBarras(altSlider, atlBar, 1);
-		ajusteDeBarras(strSlider, strBar, 1);
-		ajusteDeBarras(endSlider, endBar, 1);
-		ajusteDeBarras(minSlider, minBar, 1);
-		ajusteDeBarras(dexSlider, dexBar, 1);
+		ajusteDeBarras(altSlider, atlBar, dado.nextInt(1, 60));
+		ajusteDeBarras(strSlider, strBar, dado.nextInt(1, 60));
+		ajusteDeBarras(endSlider, endBar, dado.nextInt(1, 60));
+		ajusteDeBarras(minSlider, minBar, dado.nextInt(1, 60));
+		ajusteDeBarras(dexSlider, dexBar, dado.nextInt(1, 60));
 
 		newNameText.clear();
 		newNameText.setPromptText("NUEVO PERSONAJE");
@@ -442,7 +442,7 @@ public class LobbyController implements Initializable {
 		listoBtn.setOnAction(event -> {
 			try {
 				boolean puede = true;
-				PJ tempo = new PJ(newNameText.getText());
+				PJ tempo = new PJ((!newNameText.getText().isEmpty()) ? newNameText.getText() : "PRUEBA");
 				tempo.setAdventureName(adventure.getAdventureName());
 				List<PJ> todos = PjService.getAll();
 				if (todos.contains(tempo)) {
