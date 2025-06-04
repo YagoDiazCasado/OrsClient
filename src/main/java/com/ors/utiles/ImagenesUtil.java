@@ -42,7 +42,6 @@ public class ImagenesUtil {
 		    return bos.toByteArray();
 		}
 
-	
 
 	public static byte[] convertImageToBytes(Image image) throws IOException {
 		BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
