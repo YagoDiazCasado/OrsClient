@@ -1198,8 +1198,8 @@ public class CharacterController implements Initializable {
 			try {
 				Item e = o.getItem();
 				Button b = new Button(e.getName() + " [" + o.getQuantity() + "]");
-				b.setPrefWidth(150);
-				b.setPrefHeight(25);
+				b.setPrefWidth(130);
+				b.setPrefHeight(15);
 				Tooltip.install(b, new Tooltip(e.showInfo()));
 				b.setId("botonMasMasOpaco");
 				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
@@ -1294,8 +1294,8 @@ public class CharacterController implements Initializable {
 			List<Item> todos = ItemService.getAll();
 			todos.forEach(e -> {
 				Button b = new Button(e.getName());
-				b.setPrefWidth(125);
-				b.setPrefHeight(25);
+				b.setPrefWidth(115);
+				b.setPrefHeight(15);
 				Tooltip.install(b, new Tooltip(e.showInfo()));
 				b.setId("botonMasMasOpaco");
 				Item tipo = e;
@@ -1950,7 +1950,7 @@ public class CharacterController implements Initializable {
 				.orElse(null);
 
 		if (inv != null) {
-			if (inv.getQuantity() + cantidad < 0) {		
+			if (inv.getQuantity() + cantidad < 0) {
 				cheEscuchateEsto("NO", "NO HAY Municion Bobo");
 			} else {
 				inv.setQuantity(inv.getQuantity() + cantidad);
@@ -1963,19 +1963,15 @@ public class CharacterController implements Initializable {
 					.add(new Inventory(persistido, new PJStub(selected.getName()), cantidad, 0.0, nombreMunicion));
 		}
 	}
-	
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////// COMUNICACION
 
-	
 	private void cheEscuchateEsto(String uno, String dos) {
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setHeaderText(uno);
 		alert.setContentText(dos);
 	}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////// OBLIGATORIOS
@@ -2204,8 +2200,7 @@ public class CharacterController implements Initializable {
 	private void saveFotito() throws Exception {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		fileChooser.setInitialDirectory(new File(getClass().getResource("/com/ors/images/profiles/").toURI()));
-	try {
+		try {
 			File e = fileChooser.showOpenDialog(null);
 			selected.setProfile(ImagenesUtil.fileToByte(e));
 			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));

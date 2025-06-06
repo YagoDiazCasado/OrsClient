@@ -1,23 +1,10 @@
 
 
--Meter generador de nombre aleatorio viejo al de prueba
-y arma aleatoria de la bbdd
-
--Empaquetar beta.1 jpackage
-
--Retoque visual (fondos personalizados, 
-interfaz roja si hay poca vida <- pponer con un simpel if)
-
--Inventario hacer que los botones puedan 
-ser incluso puntos
-
--Poner la busqueda rápida al inventt también
+-Poner la busqueda rápida al invent también
 
 -Grabar video
 
 -Creacion habilidades con janino o groovy
-
--Meter ErrorHandler
 
 -Empaquetar beta.2 jpackage
 

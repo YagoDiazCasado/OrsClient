@@ -98,11 +98,10 @@ public class LauncherController implements Initializable {
 		StyleAndEffectService.pointElement(portField, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(playerOption, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(dmOption, 0.05, 0.2, "blue", "black");
-		
+
 		StyleAndEffectService.pointElement(letraP, 0.2, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(letraD, 0.2, 0.2, "orange", "black");
 
-		
 		StyleAndEffectService.pointElement(pasword, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(adventures, 0.05, 0.2, "blue", "black");
 		StyleAndEffectService.pointElement(iniciarJuegoBotton, 0.07, 0.3, "blue", "black");
@@ -116,7 +115,9 @@ public class LauncherController implements Initializable {
 				adventures.getItems().addAll(todas);
 				iniciarCampaing();
 				setupAdventureCreation();
-				reCrearBaseDatos();
+				if (todas.isEmpty()) {
+					reCrearBaseDatos();
+				}
 				ser.efectoPasar(volumenEfectos);
 			} catch (Exception e) { // Ha fallado la carga de la campaña
 				e.printStackTrace();
@@ -207,7 +208,7 @@ public class LauncherController implements Initializable {
 		conexionPanel.setVisible(false);
 		conexionPanel.setDisable(true);
 		adventures.getSelectionModel().selectFirst();
-		
+
 		StyleAndEffectService.pointElement(go, 0.3, 0.3, "blue", "black");
 		go.setOnMouseClicked(event -> {
 			try {

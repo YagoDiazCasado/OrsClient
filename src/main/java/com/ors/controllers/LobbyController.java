@@ -43,6 +43,7 @@ import main.java.com.ors.services.PjService;
 import main.java.com.ors.services.RaceService;
 import main.java.com.ors.services.StyleAndEffectService;
 import main.java.com.ors.utiles.EnumsDeItems.CharacterTypes;
+import main.java.com.ors.utiles.GeneradorAleatorios;
 import main.java.com.ors.utiles.GestorFicheroConfiguracion;
 import main.java.com.ors.utiles.ImagenesUtil;
 import main.java.com.ors.vo.Adventure;
@@ -441,7 +442,8 @@ public class LobbyController implements Initializable {
 		listoBtn.setOnAction(event -> {
 			try {
 				boolean puede = true;
-				PJ tempo = new PJ((!newNameText.getText().isEmpty()) ? newNameText.getText() : "PRUEBA");
+				PJ tempo = new PJ((!newNameText.getText().isEmpty()) ? newNameText.getText()
+						: GeneradorAleatorios.generarNombre(raceOptions.getValue().toString()));
 				tempo.setAdventureName(adventure.getAdventureName());
 				List<PJ> todos = PjService.getAll();
 				if (todos.contains(tempo)) {
@@ -541,7 +543,6 @@ public class LobbyController implements Initializable {
 	private void guardarImagen() throws Exception {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		fileChooser.setInitialDirectory(new File(getClass().getResource("/com/ors/images/profiles/").toURI()));
 
 		imagenDePerfilPosible = fileChooser.showOpenDialog(null);
 		checkTamanoFoto();
