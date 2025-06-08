@@ -1,4 +1,4 @@
-package main.java.com.ors.vo;
+package com.ors.vo;
 
 import java.io.Serializable;
 import java.util.Objects;

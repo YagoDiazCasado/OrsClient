@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -22,10 +22,9 @@ import org.apache.hc.core5.http.HttpEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.vo.Adventure;
-import main.java.com.ors.vo.BodyType;
-import main.java.com.ors.vo.Inventory;
-import main.java.com.ors.vo.PJ;
+import com.ors.vo.Adventure;
+import com.ors.vo.BodyType;
+import com.ors.vo.PJ;
 
 public class PjService {
 

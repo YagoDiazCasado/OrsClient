@@ -1,16 +1,16 @@
-package main.java.com.ors.usables;
+package com.ors.usables;
 
 import java.text.DecimalFormat;
 
-import main.java.com.ors.services.BodyTypeService;
-import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.services.ItemService;
-import main.java.com.ors.services.PjService;
-import main.java.com.ors.utiles.Combo;
-import main.java.com.ors.utiles.EnumsDeItems.Distance;
-import main.java.com.ors.utiles.Habilidad;
-import main.java.com.ors.vo.BodyType;
-import main.java.com.ors.vo.PJ;
+import com.ors.services.BodyTypeService;
+import com.ors.services.ComunAlmacen;
+import com.ors.services.ItemService;
+import com.ors.services.PjService;
+import com.ors.utiles.Combo;
+import com.ors.utiles.EnumsDeItems.Distance;
+import com.ors.utiles.Habilidad;
+import com.ors.vo.BodyType;
+import com.ors.vo.PJ;
 
 // NO existe el arma manos, se falsea cuando no hay arma
 //df.format(pj.getStr() / (2 * pj.getModS())) es su daño de cada vez 

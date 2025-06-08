@@ -1,4 +1,4 @@
-package main.java.com.ors.vo;
+package com.ors.vo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import main.java.com.ors.utiles.EnumsDeItems.BasicHitter;
-import main.java.com.ors.utiles.EnumsDeItems.CharacterTypes;
+import com.ors.utiles.EnumsDeItems.BasicHitter;
+import com.ors.utiles.EnumsDeItems.CharacterTypes;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PJ implements Serializable {

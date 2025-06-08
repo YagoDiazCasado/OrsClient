@@ -1,14 +1,14 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.text.DecimalFormat;
 import java.util.Random;
 
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import main.java.com.ors.usables.PjUsables;
-import main.java.com.ors.utiles.GestorFicheroConfiguracion;
-import main.java.com.ors.vo.Adventure;
-import main.java.com.ors.vo.PJ;
+import com.ors.usables.PjUsables;
+import com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.vo.Adventure;
+import com.ors.vo.PJ;
 
 public class ComunAlmacen {
 

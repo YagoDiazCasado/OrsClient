@@ -1,15 +1,15 @@
-package main.java.com.ors.vo;
+package com.ors.vo;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import main.java.com.ors.utiles.EnumsDeItems.DamageType;
-import main.java.com.ors.utiles.EnumsDeItems.Distance;
-import main.java.com.ors.utiles.EnumsDeItems.ItemFamily;
-import main.java.com.ors.utiles.EnumsDeItems.ItemShape;
-import main.java.com.ors.utiles.EnumsDeItems.Rarity;
+import com.ors.utiles.EnumsDeItems.DamageType;
+import com.ors.utiles.EnumsDeItems.Distance;
+import com.ors.utiles.EnumsDeItems.ItemFamily;
+import com.ors.utiles.EnumsDeItems.ItemShape;
+import com.ors.utiles.EnumsDeItems.Rarity;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Item implements Serializable {

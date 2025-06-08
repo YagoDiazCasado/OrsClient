@@ -1,4 +1,4 @@
-package main.java.com.ors.controllers;
+package com.ors.controllers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,12 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import main.java.com.ors.services.AdventureService;
-import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.services.StartService;
-import main.java.com.ors.services.StyleAndEffectService;
-import main.java.com.ors.utiles.GestorFicheroConfiguracion;
-import main.java.com.ors.vo.Adventure;
+import com.ors.services.AdventureService;
+import com.ors.services.ComunAlmacen;
+import com.ors.services.StartService;
+import com.ors.services.StyleAndEffectService;
+import com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.vo.Adventure;
 
 public class LauncherController implements Initializable {
 

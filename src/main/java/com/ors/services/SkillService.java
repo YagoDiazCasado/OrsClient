@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,7 +9,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.vo.Skill;
+import com.ors.vo.Skill;
 
 public class SkillService {
 

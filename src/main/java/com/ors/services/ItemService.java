@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,9 +13,9 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.utiles.Combo;
-import main.java.com.ors.vo.Item;
-import main.java.com.ors.vo.PJ;
+import com.ors.utiles.Combo;
+import com.ors.vo.Item;
+import com.ors.vo.PJ;
 
 public class ItemService {
 

@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <javafx.version>20.0.2</javafx.version>
+        <javafx.version>23</javafx.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
@@ -69,14 +69,8 @@
             <version>2.18.2</version>
         </dependency>
         
-         <!-- Cosas del multiformat -->
-        <dependency>
-    <groupId>org.apache.httpcomponents.client5</groupId>
-    <artifactId>httpclient5</artifactId>
-    <version>5.2.1</version>
-</dependency>
-
-        <!-- SLF4J -->
+        
+          <!-- SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -88,11 +82,16 @@
             <version>2.0.9</version>
         </dependency>
         
+         <!-- Cosas del multiformat -->
+        <dependency>
+    <groupId>org.apache.httpcomponents.client5</groupId>
+    <artifactId>httpclient5</artifactId>
+    <version>5.2.1</version>
+</dependency>
+        
     </dependencies>
 
     <build>
-        <!-- Ojo: este sourceDirectory puede causar confusión -->
-        <sourceDirectory>src</sourceDirectory>
 
         <resources>
             <resource>
@@ -115,7 +114,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>main.java.com.ors.application.MainLobby</mainClass>
+                    <mainClass>com.ors.application.MainLobby</mainClass>
                 </configuration>
             </plugin>
 
@@ -132,7 +131,7 @@
                             <finalName>ORS</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>main.java.com.ors.application.MainLobby</mainClass>
+                                    <mainClass>com.ors.application.MainLobby</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

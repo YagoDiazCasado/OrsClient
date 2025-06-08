@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.io.IOException;
 import java.net.URI;

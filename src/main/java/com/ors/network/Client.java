@@ -1,4 +1,4 @@
-package main.java.com.ors.network;
+package com.ors.network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 
-import main.java.com.ors.controllers.CharacterController;
-import main.java.com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.controllers.CharacterController;
+import com.ors.utiles.GestorFicheroConfiguracion;
 
 public class Client implements Serializable {
 

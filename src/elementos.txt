@@ -1,6 +1,0 @@
-
-btnCrearItem
-
-crearItemPane
-
-selectorTipo ccb

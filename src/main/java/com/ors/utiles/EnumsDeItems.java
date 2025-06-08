@@ -1,4 +1,4 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
 public class EnumsDeItems {
 	public enum Rarity {

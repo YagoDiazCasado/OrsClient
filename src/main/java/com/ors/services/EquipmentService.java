@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -11,8 +11,8 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.vo.Equipment;
-import main.java.com.ors.vo.PJ;
+import com.ors.vo.Equipment;
+import com.ors.vo.PJ;
 
 public class EquipmentService {
 

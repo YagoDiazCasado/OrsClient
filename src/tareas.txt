@@ -1,4 +1,17 @@
 
+-Boton de unable no funciona
+
+-Poner random los combobox al inicio
+
+-El color texto de raza se aplcia al siguiente 
+y no al que toca 
+
+-Meter imagenes mejores o que la imagen random
+dependa de la raza escogida.
+(Que la ruta del random se concatene con el race
+para la fotitoRandom)
+
+-Hacer que la imagen se ajuste mejor
 
 -Poner la busqueda rápida al invent también
 

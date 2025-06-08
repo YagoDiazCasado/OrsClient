@@ -1,4 +1,4 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class GestorFicheroConfiguracion {
 
-	public static String ruta = "conf/conf.properties";
+	public static String ruta = ("src/main/resources/com/ors/conf/conf.properties");
 
 	public static String devolverCredencial(String v) {
 		Properties p = new Properties();

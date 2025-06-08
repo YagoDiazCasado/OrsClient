@@ -1,6 +1,6 @@
-package main.java.com.ors.application;
+package com.ors.application;
 
-import main.java.com.ors.utiles.GeneradorAleatorios;
+import com.ors.utiles.GeneradorAleatorios;
 
 public class Prueba {
 

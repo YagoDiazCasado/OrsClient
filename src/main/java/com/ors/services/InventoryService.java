@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,10 +9,10 @@ import java.util.HashMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.utiles.EnumsDeItems.ItemShape;
-import main.java.com.ors.vo.Inventory;
-import main.java.com.ors.vo.Item;
-import main.java.com.ors.vo.PJ;
+import com.ors.utiles.EnumsDeItems.ItemShape;
+import com.ors.vo.Inventory;
+import com.ors.vo.Item;
+import com.ors.vo.PJ;
 
 public class InventoryService {
 

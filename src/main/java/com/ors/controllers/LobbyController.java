@@ -1,4 +1,4 @@
-package main.java.com.ors.controllers;
+package com.ors.controllers;
 
 import java.io.File;
 import java.net.URL;
@@ -36,20 +36,20 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import main.java.com.ors.services.AdventureService;
-import main.java.com.ors.services.BodyTypeService;
-import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.services.PjService;
-import main.java.com.ors.services.RaceService;
-import main.java.com.ors.services.StyleAndEffectService;
-import main.java.com.ors.utiles.EnumsDeItems.CharacterTypes;
-import main.java.com.ors.utiles.GeneradorAleatorios;
-import main.java.com.ors.utiles.GestorFicheroConfiguracion;
-import main.java.com.ors.utiles.ImagenesUtil;
-import main.java.com.ors.vo.Adventure;
-import main.java.com.ors.vo.BodyType;
-import main.java.com.ors.vo.PJ;
-import main.java.com.ors.vo.Race;
+import com.ors.services.AdventureService;
+import com.ors.services.BodyTypeService;
+import com.ors.services.ComunAlmacen;
+import com.ors.services.PjService;
+import com.ors.services.RaceService;
+import com.ors.services.StyleAndEffectService;
+import com.ors.utiles.EnumsDeItems.CharacterTypes;
+import com.ors.utiles.GeneradorAleatorios;
+import com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.utiles.ImagenesUtil;
+import com.ors.vo.Adventure;
+import com.ors.vo.BodyType;
+import com.ors.vo.PJ;
+import com.ors.vo.Race;
 
 public class LobbyController implements Initializable {
 

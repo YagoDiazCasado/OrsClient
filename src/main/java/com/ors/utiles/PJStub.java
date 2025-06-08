@@ -1,6 +1,6 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
-import main.java.com.ors.vo.PJ;
+import com.ors.vo.PJ;
 
 public class PJStub extends PJ {
     public PJStub(String name) {

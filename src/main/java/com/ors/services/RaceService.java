@@ -1,4 +1,4 @@
-package main.java.com.ors.services;
+package com.ors.services;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -11,7 +11,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import main.java.com.ors.vo.Race;
+import com.ors.vo.Race;
 
 public class RaceService {
 

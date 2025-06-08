@@ -1,10 +1,9 @@
-package main.java.com.ors.controllers;
+package com.ors.controllers;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 //Seguir adad
 
@@ -54,34 +53,34 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import main.java.com.ors.network.Client;
-import main.java.com.ors.services.BodyTypeService;
-import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.services.EquipmentService;
-import main.java.com.ors.services.InventoryService;
-import main.java.com.ors.services.ItemService;
-import main.java.com.ors.services.PjService;
-import main.java.com.ors.services.RaceService;
-import main.java.com.ors.services.SkillService;
-import main.java.com.ors.services.StyleAndEffectService;
-import main.java.com.ors.usables.PjUsables;
-import main.java.com.ors.utiles.EnumsDeItems.DamageType;
-import main.java.com.ors.utiles.EnumsDeItems.Distance;
-import main.java.com.ors.utiles.EnumsDeItems.ItemFamily;
-import main.java.com.ors.utiles.EnumsDeItems.ItemShape;
-import main.java.com.ors.utiles.EnumsDeItems.Rarity;
-import main.java.com.ors.utiles.GestionLog;
-import main.java.com.ors.utiles.GestorFicheroConfiguracion;
-import main.java.com.ors.utiles.Habilidad;
-import main.java.com.ors.utiles.ImagenesUtil;
-import main.java.com.ors.utiles.PJStub;
-import main.java.com.ors.vo.BodyType;
-import main.java.com.ors.vo.Equipment;
-import main.java.com.ors.vo.Inventory;
-import main.java.com.ors.vo.Item;
-import main.java.com.ors.vo.PJ;
-import main.java.com.ors.vo.Race;
-import main.java.com.ors.vo.Skill;
+import com.ors.network.Client;
+import com.ors.services.BodyTypeService;
+import com.ors.services.ComunAlmacen;
+import com.ors.services.EquipmentService;
+import com.ors.services.InventoryService;
+import com.ors.services.ItemService;
+import com.ors.services.PjService;
+import com.ors.services.RaceService;
+import com.ors.services.SkillService;
+import com.ors.services.StyleAndEffectService;
+import com.ors.usables.PjUsables;
+import com.ors.utiles.EnumsDeItems.DamageType;
+import com.ors.utiles.EnumsDeItems.Distance;
+import com.ors.utiles.EnumsDeItems.ItemFamily;
+import com.ors.utiles.EnumsDeItems.ItemShape;
+import com.ors.utiles.EnumsDeItems.Rarity;
+import com.ors.utiles.GestionLog;
+import com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.utiles.Habilidad;
+import com.ors.utiles.ImagenesUtil;
+import com.ors.utiles.PJStub;
+import com.ors.vo.BodyType;
+import com.ors.vo.Equipment;
+import com.ors.vo.Inventory;
+import com.ors.vo.Item;
+import com.ors.vo.PJ;
+import com.ors.vo.Race;
+import com.ors.vo.Skill;
 
 public class CharacterController implements Initializable {
 

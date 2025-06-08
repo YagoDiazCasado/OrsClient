@@ -1,11 +1,11 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
 import java.util.Random;
 
-import main.java.com.ors.services.ComunAlmacen;
-import main.java.com.ors.usables.PjUsables;
-import main.java.com.ors.utiles.EnumsDeItems.ItemShape;
-import main.java.com.ors.vo.PJ;
+import com.ors.services.ComunAlmacen;
+import com.ors.usables.PjUsables;
+import com.ors.utiles.EnumsDeItems.ItemShape;
+import com.ors.vo.PJ;
 
 public interface Habilidad {
 

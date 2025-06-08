@@ -1,4 +1,4 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
 import java.io.File;
 import java.io.IOException;

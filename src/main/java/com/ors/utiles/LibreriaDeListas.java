@@ -1,4 +1,4 @@
-package main.java.com.ors.utiles;
+package com.ors.utiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
