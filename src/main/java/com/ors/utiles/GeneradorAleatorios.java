@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GeneradorAleatorios {
-	//hola
+	//hol
 
 	public static Random dado = new Random();
 

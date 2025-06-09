@@ -17,42 +17,11 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import com.ors.controllers.elementos.AlertBonico;
+import com.ors.controllers.elementos.DialogBonico;
 import com.ors.network.Client;
 import com.ors.services.BodyTypeService;
 import com.ors.services.ComunAlmacen;
@@ -82,6 +51,37 @@ import com.ors.vo.PJ;
 import com.ors.vo.Race;
 import com.ors.vo.Skill;
 
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 public class CharacterController implements Initializable {
 
 	// COMUNES
@@ -107,8 +107,8 @@ public class CharacterController implements Initializable {
 	private Client cliente;
 	public GaussianBlur blur = new GaussianBlur(25);
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// FXML
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// FXML
 
 	@FXML
 	private Pane absolutePane;
@@ -514,12 +514,12 @@ public class CharacterController implements Initializable {
 	private Pane loadingOverlay;
 
 	@FXML
-	private VBox itemFormBox; // Lo agregaremos al FXML dinámicamente si no existe
+	private VBox itemFormBox;
 	@FXML
-	private Button guardarItemBtn; // Botón para guardar item
+	private Button guardarItemBtn;
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// START
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// START
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -548,29 +548,10 @@ public class CharacterController implements Initializable {
 		loadResume();
 	}
 
-	private void rellenarListaPaneles() {
-		paneles.add(panelAjustes);
-		paneles.add(resumePanel);
-		paneles.add(shopPanel);
-		paneles.add(inventaryPanel);
-		paneles.add(lootBoxPanel);
-		paneles.add(petPanel);
-		paneles.add(crearItemPane);
-	}
-
 	private void setAllStyles() {
 		panelAjustes.toFront();
 		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
 	}
-
-//	private void comunicaError(String string) {
-//		Alert a = new Alert(Alert.AlertType.INFORMATION);
-//		a.setHeaderText(string);
-//		a.show();
-//	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////// LOADS
 
 	public void setVisibilities(Pane visible) { // esto hace que solo sea visible el panel
 												// actual
@@ -584,7 +565,8 @@ public class CharacterController implements Initializable {
 		StyleAndEffectService.fadeIn(visible, volumenEfectos);
 	}
 
-	// Carga de 0 el panel de resumen, con info stats, envainar y dados base
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////// LOADS
 	@FXML
 	public void loadResume() {
 		try {
@@ -639,8 +621,6 @@ public class CharacterController implements Initializable {
 		ser.efectoPaginas(volumenEfectos);
 	}
 
-	// Carga el inventario con opcion de filtros. Opciones de crear objetos y
-	// hacerse con otros de la BBDD
 	@FXML
 	public void loadInventory() throws Exception {
 		setVisibilities(inventaryPanel);
@@ -651,10 +631,8 @@ public class CharacterController implements Initializable {
 		ser.efectoPaginas(volumenEfectos);
 	}
 
-	// Carga el árbol de compra de habilidades basicas y los boost de stats con los
-	// iPoints
 	@FXML
-	public void loadShop() throws Exception { // Añade Tabs a la tienda según los atributos del Pj (poderes y raza)
+	public void loadShop() throws Exception {
 		setVisibilities(shopPanel);
 		messagePanel.setVisible(true);
 		cargarInspiracion(); // seteamos la accion al label de inspiración y su efecto en la BBDD
@@ -662,8 +640,6 @@ public class CharacterController implements Initializable {
 		ser.efectoPaginas(volumenEfectos);
 	}
 
-	// Aqui se pueden abrir cajas de 3 tipos para recibir loot de la BBDD segun su
-	// rareza
 	@FXML
 	public void loadLootBoxes() {
 		setVisibilities(lootBoxPanel);
@@ -677,38 +653,8 @@ public class CharacterController implements Initializable {
 		ser.efectoPaginas(volumenEfectos);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR
-
-	@FXML
-	private void cargarCreador() {
-		if (selectorTipo.getItems().isEmpty()) {
-			selectorTipo.getItems().addAll(ItemFamily.values());
-		}
-		if (itemFormBox.getChildren().size() > 0) {
-			itemFormBox.getChildren().clear(); // esta es la caja en la que aparecerá el formulario
-		}
-		ItemFamily selectedFamily = ItemFamily.valueOf(selectorTipo.getValue().toString());
-		switch (selectedFamily) {
-		case EDIBLE -> mostrarFormularioEdible();
-		case MELEWEAPON -> mostrarFormularioMelee();
-		case RANGEWEAPON -> mostrarFormularioRange();
-		case ITEM -> mostrarFormularioItem();
-		case EQUIPMENT -> mostrarFormularioEquipment();
-		case AMMO -> mostrarFormularioAmmo();
-		case RACE -> mostrarFormularioRace();
-		case BODYTYPE -> mostrarFormularioBodyType();
-
-		default -> itemFormBox.getChildren().add(new Label("Sin hacer"));
-		}
-	}
-
-	private ComboBox<Rarity> crearSelectorRareza() {
-		ComboBox<Rarity> selectorRareza = new ComboBox<>();
-		selectorRareza.getItems().addAll(Rarity.values());
-		selectorRareza.setValue(Rarity.C);
-		return selectorRareza;
-	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////// MOSTRAR
 
 	private void mostrarFormularioRace() {
 		TextField nombre = new TextField();
@@ -962,27 +908,53 @@ public class CharacterController implements Initializable {
 	}
 
 	private void mostrarConfirmacion(String mensaje) {
-		Alert a = new Alert(Alert.AlertType.INFORMATION);
+		AlertBonico a = new AlertBonico(Alert.AlertType.INFORMATION);
 		a.setHeaderText(mensaje);
 		a.show();
 	}
 
 	private void mostrarError(String mensaje) {
-		Alert a = new Alert(Alert.AlertType.ERROR);
+		AlertBonico a = new AlertBonico(Alert.AlertType.ERROR);
 		a.setHeaderText("Error");
 		a.setContentText(mensaje);
 		a.show();
 	}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////// CARGAR
+
+	@FXML
+	private void cargarCreador() {
+		if (selectorTipo.getItems().isEmpty()) {
+			selectorTipo.getItems().addAll(ItemFamily.values());
+		}
+		if (itemFormBox.getChildren().size() > 0) {
+			itemFormBox.getChildren().clear();
+		}
+		try {
+			ItemFamily selectedFamily = ItemFamily.valueOf(selectorTipo.getValue().toString());
+			switch (selectedFamily) {
+			case EDIBLE -> mostrarFormularioEdible();
+			case MELEWEAPON -> mostrarFormularioMelee();
+			case RANGEWEAPON -> mostrarFormularioRange();
+			case ITEM -> mostrarFormularioItem();
+			case EQUIPMENT -> mostrarFormularioEquipment();
+			case AMMO -> mostrarFormularioAmmo();
+			case RACE -> mostrarFormularioRace();
+			case BODYTYPE -> mostrarFormularioBodyType();
+
+			default -> itemFormBox.getChildren().add(new Label("Sin hacer"));
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
 	private void cargarAction() throws Exception {
 		Set<Skill> skills = selected.getSkills();
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Habilidades");
 		alert.setHeaderText("Selecciona una habilidad para usar:");
-		DialogPane dialogPane = alert.getDialogPane();
-		dialogPane.setId("panelPreview");
-		VBox skillBox = new VBox();
-		skillBox.setSpacing(10);
 		for (Skill h : skills) {
 			Button b = new Button(h.getName());
 			b.setId("botonMasOpaco");
@@ -992,9 +964,8 @@ public class CharacterController implements Initializable {
 				alert.close();
 				hideAction();
 			});
-			skillBox.getChildren().add(b);
+			alert.content.getChildren().add(b);
 		}
-		dialogPane.setContent(skillBox);
 		alert.showAndWait();
 	}
 
@@ -1047,123 +1018,6 @@ public class CharacterController implements Initializable {
 		cargarResumenEquipamiento();
 
 	}
-
-	private void rellenarMods() {
-		modsPane.getChildren().clear();
-
-		double spacing = 10;
-		double labelWidth = 50;
-		double labelHeight = 25;
-		double startX = 2;
-		double y = 10;
-
-		List<Double> mods = selected.getMods();
-		for (int i = 0; i < 5; i++) {
-			Double d = mods.get(i);
-
-			Label modLbl = new Label(df.format(d));
-			modLbl.setPrefSize(labelWidth, labelHeight);
-			modLbl.setAlignment(Pos.CENTER);
-			modLbl.setStyle("-fx-background-color: #eee; -fx-border-radius: 4;"
-					+ "-fx-background-radius: 4; -fx-font-size: 11px;");
-
-			double x = startX + i * (labelWidth + spacing);
-			modLbl.setLayoutX(x);
-			modLbl.setLayoutY(y);
-
-			modsPane.getChildren().add(modLbl);
-		}
-	}
-//
-//	private void cargarInvent() throws Exception {
-//		selected = PjService.update(selected); // temporal
-//		pesoLbl.setText("" + InventoryService.getPeso(selected) + " kg / " + selected.getMaxCarry());
-//		todosInvPanel.getChildren().clear();
-//		weaponsInvPanel.getChildren().clear();
-//		ediblesInvPanel.getChildren().clear();
-//		itemsInvPanel.getChildren().clear();
-//		equipmentInvPanel.getChildren().clear();
-//		barraHpI.setProgress((double) selected.getHp() / selected.getMaxHp());
-//		barraAccI.setProgress((double) selected.getActions() / selected.getMaxActions());
-//		barraKcalI.setProgress((double) selected.getKcal() / selected.getMaxKcal());
-//
-//		List<Inventory> actual = selected.getInventario(); // hace de puntero, asique correcto
-//
-//		actual.forEach(o -> {
-//			try {
-//				Item e = o.getItem();
-//				Button b = new Button(e.getName() + " [" + o.getQuantity() + "]");
-//				b.setPrefWidth(150);  // ancho preferido
-//				b.setPrefHeight(25); // alto preferido
-//				Tooltip.install(b, new Tooltip(e.showInfo()));
-//				b.setId("botonMasMasOpaco");
-//				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
-//				b.setOnAction(event -> administrarItem(o));
-//				Button copy = crearBotonCopia(b);
-//				if (e.getItemFamily().equals(ItemFamily.MELEWEAPON)
-//						|| e.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
-//					if (selected.getWeapon() != null && selected.getWeapon().getName().equals(e)) {
-//						b.setText("[EQUIPPED]" + b.getText());
-//					}
-//					weaponsInvPanel.getChildren().add(b);
-//				} else if (e.getItemFamily().equals(ItemFamily.EDIBLE)) {
-//					ediblesInvPanel.getChildren().add(b);
-//				} else if (e.getItemFamily().equals(ItemFamily.ITEM)) {
-//					itemsInvPanel.getChildren().add(b);
-//				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
-//					if (selected.getEquipment().getEquip().contains(e)) {
-//						b.setText("[EQUIPPED]" + b.getText());
-//					}
-//					equipmentInvPanel.getChildren().add(b);
-//				}
-//				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
-//					todosInvPanel.getChildren().add(copy);
-//				}
-//			} catch (Exception e1) {
-//				e1.printStackTrace();
-//			}
-//		});
-//	}
-//
-//	private void cargarEscaparate() throws Exception {
-//		try {
-//			todosEscPanel.getChildren().clear();
-//			todosEscPanel.setPrefTileHeight(-1);
-//			todosEscPanel.setPrefTileWidth(-1);
-//			weaponsEscPanel.getChildren().clear();
-//			ediblesEscPanel.getChildren().clear();
-//			itemsEscPanel.getChildren().clear();
-//			equipmentEscPanel.getChildren().clear();
-//
-//			List<Item> todos = ItemService.getAll(); // todfos los items de objetos
-//			todos.forEach(e -> {
-//				Button b = new Button(e.getName());
-//				b.setPrefWidth(125);  // ancho preferido
-//				b.setPrefHeight(25); // alto preferido
-//				Tooltip.install(b, new Tooltip(e.showInfo()));
-//				b.setId("botonMasMasOpaco");
-//				Item tipo = e;
-//				StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
-//				b.setOnAction(event -> administrarItemEsc(tipo));
-//				Button copy = crearBotonCopia(b);
-//				if (tipo.getItemFamily().equals(ItemFamily.MELEWEAPON)
-//						|| tipo.getItemFamily().equals(ItemFamily.RANGEWEAPON)) {
-//					weaponsEscPanel.getChildren().add(b);
-//				} else if (tipo.getItemFamily().equals(ItemFamily.EDIBLE)) {
-//					ediblesEscPanel.getChildren().add(b);
-//				} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
-//					itemsEscPanel.getChildren().add(b);
-//				} else if (e.getItemFamily().equals(ItemFamily.EQUIPMENT)) {
-//					equipmentEscPanel.getChildren().add(b);
-//				}
-//				if (!e.getItemFamily().equals(ItemFamily.AMMO)) {
-//					todosEscPanel.getChildren().add(copy);
-//				}
-//			});
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	private void cargarInvent() throws Exception {
 		selected = PjService.update(selected); // temporal
@@ -1234,25 +1088,23 @@ public class CharacterController implements Initializable {
 		try {
 
 			buscarLbl.setOnMouseClicked(o -> {
-				TextInputDialog busqueda = new TextInputDialog();
+				DialogBonico busqueda = new DialogBonico();
 				busqueda.setHeaderText("BUSCAR");
 				busqueda.setContentText("Introduce el nombre del ítem:");
 				busqueda.showAndWait().ifPresent(input -> {
 					try {
-						List<Item> items = ItemService.buscarItemsQueEmpiecenPor(input);
+						List<Item> items = ItemService.buscarItemsQueEmpiecenPor((String) input);
 						if (items.isEmpty()) {
-							Alert sinResultados = new Alert(Alert.AlertType.INFORMATION);
+							AlertBonico sinResultados = new AlertBonico(Alert.AlertType.INFORMATION);
 							sinResultados.setHeaderText("Sin resultados");
 							sinResultados.setContentText("No se encontraron ítems que comiencen por: " + input);
 							sinResultados.showAndWait();
 							return;
 						}
-						Dialog<Void> seleccion = new Dialog<>();
+						DialogBonico seleccion = new DialogBonico();
 						seleccion.setTitle("Coger");
 						seleccion.setHeaderText("¿Cuál quieres coger?");
 						seleccion.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-						VBox vbox = new VBox(10);
-						vbox.setPadding(new Insets(10));
 						for (Item i : items) {
 							Button boton = new Button(i.getName());
 							boton.setMaxWidth(Double.MAX_VALUE);
@@ -1260,9 +1112,9 @@ public class CharacterController implements Initializable {
 								administrarItemEsc(i);
 								seleccion.close();
 							});
-							vbox.getChildren().add(boton);
+							seleccion.content.getChildren().add(boton);
 						}
-						seleccion.getDialogPane().setContent(vbox);
+
 						seleccion.showAndWait();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -1337,13 +1189,9 @@ public class CharacterController implements Initializable {
 			int puntos = selected.getInspirationPoints();
 			puntosInspiracionLbl.setText("Inspiración: " + puntos);
 			puntosInspiracionLbl.setOnMouseClicked(event -> {
-				TextInputDialog dialog = new TextInputDialog();
-				dialog.setHeaderText("Cuanto pierdes(-) / ganas(+)?:");
-				dialog.setContentText("Cuanto pierdes(-) / ganas(+)?:");
-				dialog.showAndWait().ifPresent(input -> {
+				mostrarDialogoNumerico("Cuanto pierdes(-) / ganas(+)?:", n -> {
 					try {
-						int numero = Integer.parseInt(input);
-						gastarInspiracion(numero);
+						gastarInspiracion(n);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1353,9 +1201,6 @@ public class CharacterController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////// FUNCIONAMIENTO
 
 	private void cargarResumenEquipamiento() {
 		equipmentBox.getChildren().clear();
@@ -1395,7 +1240,7 @@ public class CharacterController implements Initializable {
 				});
 
 				b.setOnAction(event -> {
-					Alert ventanita = new Alert(Alert.AlertType.CONFIRMATION);
+					AlertBonico ventanita = new AlertBonico(Alert.AlertType.CONFIRMATION);
 					ventanita.setTitle("Administrar");
 					ventanita.setHeaderText("ADMINISTRAR");
 					ventanita.setContentText("Selecciona una opción:");
@@ -1408,9 +1253,7 @@ public class CharacterController implements Initializable {
 					ventanita.showAndWait().ifPresent(res -> {
 						switch (res.getText()) {
 						case "Información":
-							Alert infoVtn = new Alert(Alert.AlertType.INFORMATION);
-							infoVtn.setContentText(pieza.showInfo());
-							infoVtn.show();
+							informarDeItem(pieza);
 							break;
 						case "Desequipar":
 							try {
@@ -1483,107 +1326,12 @@ public class CharacterController implements Initializable {
 		}
 	}
 
-	private List<Skill> filtrarLista(String string, List<Skill> skills) {
-		return skills.stream().filter(e -> e.getPower().equals(string)).collect(Collectors.toList());
-	}
-
-	@FXML
-	public void hideAction() {
-		try {
-			procesarMensaje(Habilidad.getHabilidadMethod(posible, selected, ventaja.isSelected(), 0));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void rellenarTienda(List<Skill> skills, String tipo) {
-		Tab tab = new Tab();
-		TilePane tienda = new TilePane();
-		switch (tipo) {
-		case "T":
-			tab.setText(selected.getPower());
-			break;
-		case "G":
-			tab = tabGeneral;
-			tienda = tiendaGeneral;
-			tienda.getChildren().clear();
-			break;
-		case "DENNARIS":
-			tab.setText(tipo);
-			break;
-		case "VASTE":
-			tab.setText(tipo);
-			break;
-		}
-		tab.setContent(tienda);
-		tiendasTabPanel.getTabs().add(tab);
-
-		for (Skill h : skills) {
-			Button boton = new Button();
-			boton.setText(h.getName());
-			if (!selected.getSkills().contains(h)) {
-				boton.setOnAction(o -> {
-					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-					alert.setHeaderText("¿SEGURO?");
-					alert.setContentText("¿SEGURO?\nCuesta " + h.getCost() + "ip");
-
-					Optional<ButtonType> result = alert.showAndWait();
-					if (result.isPresent() && result.get() == ButtonType.OK) {
-						int puntosActuales;
-						try {
-							puntosActuales = selected.getInspirationPoints();
-							int costo = h.getCost();
-							if (puntosActuales >= costo) {
-								selected.getSkills().add(h);
-								gastarInspiracion(-costo);
-							} else {
-								Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-								errorAlert.setHeaderText("Puntos insuficientes");
-								errorAlert.setContentText("No tienes suficientes puntos de inspiración.");
-								errorAlert.showAndWait();
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-				tienda.getChildren().add(boton);
-			} else {
-				boton.setDisable(true);
-			}
-		}
-
-	}
-
-	private Button crearBotonCopia(Button original) {
-		Button copy = new Button(original.getText());
-		copy.setPrefWidth(100); // ancho preferido
-		copy.setPrefHeight(25); // alto preferido
-		copy.setId(original.getId()); // el de css
-		copy.setOnAction(original.getOnAction());
-		StyleAndEffectService.pointElement(copy, tama, brillo, colorR, colorTexto);
-		return copy;
-	}
-
-	private int getIp() {
-		return Integer.parseInt(puntosInspiracionLbl.getText().split(" ")[1]);
-	}
-
-	public void gastarInspiracion(int numero) throws Exception {
-		if (numero < 0 && selected.getInspirationPoints() <= 0) { // asi no pueden entrar negativos)
-			throw new Exception();
-		}
-		selected.setInspirationPoints(selected.getInspirationPoints() + numero);
-		selected = PjService.update(selected);
-		loadShop();
-	}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////// Corregir
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// ADMINISTRAR
 
 	private void administrarItem(Inventory inv) {
 		try {
-			Alert ventanita = new Alert(AlertType.CONFIRMATION);
+			AlertBonico ventanita = new AlertBonico(AlertType.CONFIRMATION);
 			ventanita.setTitle("Administrar");
 			ventanita.setHeaderText("ADMINISTRAR");
 			ventanita.setContentText("Selecciona una opción:");
@@ -1615,12 +1363,12 @@ public class CharacterController implements Initializable {
 				} else {
 					accion = new ButtonType("Equipar");
 				}
-				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, accion, addImage);
+				ventanita.getDialogPane().getButtonTypes().addAll(verInfo, tirarCantidad, accion, addImage);
 			} else if (tipo.getItemFamily().equals(ItemFamily.ITEM)) {
 				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad);
 			} else {
 				ButtonType equipar = new ButtonType("Equipar");
-				ventanita.getButtonTypes().setAll(verInfo, tirarCantidad, equipar, addImage);
+				ventanita.getDialogPane().getButtonTypes().addAll(verInfo, tirarCantidad, equipar, addImage);
 			}
 			Equipment equipo = selected.getEquipment();
 
@@ -1628,7 +1376,7 @@ public class CharacterController implements Initializable {
 
 				switch (presionado.getText()) {
 				case "Tirar":
-					Dialog<String> tirarVtn = new Dialog<>();
+					DialogBonico tirarVtn = new DialogBonico();
 					tirarVtn.setTitle("Tirar");
 					tirarVtn.setHeaderText("¿Cuántos quieres tirar?");
 					ButtonType confirmarButton = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
@@ -1636,7 +1384,7 @@ public class CharacterController implements Initializable {
 					tirarVtn.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
 					TextField cantidadInput = new TextField();
 					cantidadInput.setText("1"); // para que si solo es uno se borre sin poner nada
-					tirarVtn.getDialogPane().setContent(cantidadInput);
+					tirarVtn.content.getChildren().add(cantidadInput);
 
 					tirarVtn.setResultConverter(button -> {
 						if (button == confirmarButton) {
@@ -1647,7 +1395,7 @@ public class CharacterController implements Initializable {
 
 					tirarVtn.showAndWait().ifPresent(input -> {
 						try {
-							int cantidad = Integer.parseInt(input);
+							int cantidad = Integer.parseInt((String) input);
 							inv.setQuantity(inv.getQuantity() - cantidad);
 							if (inv.getQuantity() < 1) {
 								selected.getInventario().remove(inv);
@@ -1682,23 +1430,8 @@ public class CharacterController implements Initializable {
 					});
 					break;
 				case "Informacion":
-					Alert infoVtn = new Alert(AlertType.INFORMATION);
-					Label texto = new Label(tipo.showInfo());
-					texto.setWrapText(true);
+					informarDeItem(tipo);
 
-					if (tipo.getImagenUrl() != null) {
-						Image image = new Image(tipo.getImagenUrl(), true);
-						ImageView imageView = new ImageView(image);
-						imageView.setFitWidth(image.getWidth() + 300);
-						imageView.setFitHeight(image.getHeight() + 200);
-						imageView.setPreserveRatio(true);
-						VBox contenido = new VBox(10, imageView, texto);
-						contenido.setSpacing(10);
-						infoVtn.getDialogPane().setContent(contenido);
-					} else {
-						infoVtn.setContentText(tipo.showInfo());
-					}
-					infoVtn.show();
 					break;
 				case "Consumir":
 					try {
@@ -1709,7 +1442,7 @@ public class CharacterController implements Initializable {
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
-						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+						AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
 						alert.setHeaderText("Nanai de la china");
 						alert.setContentText(e1.getMessage());
 					}
@@ -1795,13 +1528,23 @@ public class CharacterController implements Initializable {
 					}
 					break;
 				case "FOtito Nueva":
-					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
+					DialogBonico dialog = new DialogBonico();
 					dialog.setTitle("Meter imagen nueva");
-					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
-					dialog.setContentText("URL:");
-
+					dialog.setHeaderText("Introduce la nueva URL (pinterest)");
+					TextField input = new TextField();
+					input.setPromptText("https://...");
+					dialog.content.getChildren().add(input);
+					ButtonType ok = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+					ButtonType cancel = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+					dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
+					dialog.setResultConverter(button -> {
+						if (button == ok) {
+							return input.getText();
+						}
+						return null;
+					});
 					dialog.showAndWait().ifPresent(url -> {
-						tipo.setImagenUrl(url);
+						tipo.setImagenUrl(url.toString());
 						try {
 							ItemService.update(tipo);
 						} catch (Exception e) {
@@ -1821,7 +1564,7 @@ public class CharacterController implements Initializable {
 
 	private void administrarItemEsc(Item tipo) {
 		try {
-			Alert ventanita = new Alert(AlertType.CONFIRMATION);
+			AlertBonico ventanita = new AlertBonico(AlertType.CONFIRMATION);
 			ventanita.setTitle("Administrar");
 			ventanita.setHeaderText("ADMINISTRAR");
 			ventanita.setContentText("Selecciona una opción:");
@@ -1837,23 +1580,7 @@ public class CharacterController implements Initializable {
 			ventanita.showAndWait().ifPresent(presionado -> {
 				switch (presionado.getText()) {
 				case "Informacion":
-					Alert infoVtn = new Alert(AlertType.INFORMATION);
-					Label texto = new Label(tipo.showInfo());
-					texto.setWrapText(true); // Por si es largo
-
-					if (tipo.getImagenUrl() != null) {
-						Image image = new Image(tipo.getImagenUrl(), true);
-						ImageView imageView = new ImageView(image);
-						imageView.setFitWidth(image.getWidth() + 300);
-						imageView.setFitHeight(image.getHeight() + 200);
-						imageView.setPreserveRatio(true);
-						VBox contenido = new VBox(10, imageView, texto);
-						contenido.setSpacing(10);
-						infoVtn.getDialogPane().setContent(contenido);
-					} else {
-						infoVtn.setContentText(tipo.showInfo());
-					}
-					infoVtn.show();
+					informarDeItem(tipo);
 					break;
 				case "Coger":
 					try {
@@ -1868,7 +1595,7 @@ public class CharacterController implements Initializable {
 										tipo.getWeight(), tipo.getName()));
 							}
 						} else {
-							infoVtn = new Alert(AlertType.INFORMATION);
+							AlertBonico infoVtn = new AlertBonico(AlertType.INFORMATION);
 							infoVtn.setContentText("No cabe, pesa " + tipo.getWeight() + ".");
 							infoVtn.show();
 						}
@@ -1887,13 +1614,12 @@ public class CharacterController implements Initializable {
 					}
 					break;
 				case "FOtito Nueva":
-					TextInputDialog dialog = new TextInputDialog(tipo.getImagenUrl());
+					DialogBonico dialog = new DialogBonico();
 					dialog.setTitle("Meter imagen nueva");
 					dialog.setHeaderText("Introduce la nueva URL (pinterest regular)");
 					dialog.setContentText("URL:");
-
 					dialog.showAndWait().ifPresent(url -> {
-						tipo.setImagenUrl(url);
+						tipo.setImagenUrl(url.toString());
 						try {
 							ItemService.update(tipo);
 						} catch (Exception e) {
@@ -1910,70 +1636,18 @@ public class CharacterController implements Initializable {
 	}
 
 	private void administrarAmmo(ItemShape tipoDeMunicion) {
-		Dialog<String> ammo = new Dialog<>();
-		ammo.setTitle("Munición");
-		ammo.setHeaderText("Tirar (-) Coger (+)");
-		ButtonType confirmarButton = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
-		ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-		ammo.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
-		TextField cantidadInput = new TextField();
-		ammo.getDialogPane().setContent(cantidadInput);
-		ammo.setResultConverter(button -> {
-			if (button == confirmarButton) {
-				return cantidadInput.getText();
-			}
-			return null;
-		});
-		ammo.showAndWait().ifPresent(input -> {
+		mostrarDialogoNumerico("Tirar (-) / Coger (+)", n -> {
 			try {
-				int cantidad = Integer.parseInt(input);
-				usarMuniciones(cantidad, tipoDeMunicion);
+				usarMuniciones(n, tipoDeMunicion);
 				loadInventory();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				Alert infoVtn = new Alert(AlertType.INFORMATION);
-				infoVtn.setContentText(e1.getMessage());
-				infoVtn.show();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
 
-	private void usarMuniciones(int cantidad, ItemShape tipoDeMunicion) throws Exception {
-
-		String nombreMunicion = tipoDeMunicion.name() + "AMMO";
-		Item nuevo = new Item(nombreMunicion, Rarity.H, ItemFamily.AMMO, ItemShape.AMMO, 0.2, 0.0,
-				"Munición de " + nombreMunicion);
-
-		Inventory inv = selected.getInventario().stream()
-				.filter(i -> i.getItem() != null && i.getItem().getName().equals(nombreMunicion)).findFirst()
-				.orElse(null);
-
-		if (inv != null) {
-			if (inv.getQuantity() + cantidad < 0) {
-				cheEscuchateEsto("NO", "NO HAY Municion Bobo");
-			} else {
-				inv.setQuantity(inv.getQuantity() + cantidad);
-			}
-		} else {
-			ItemService.create(nuevo);
-			Item persistido = ItemService.getByName(nombreMunicion)
-					.orElseThrow(() -> new Exception("No se pudo recuperar la munición recién creada"));
-			selected.getInventario()
-					.add(new Inventory(persistido, new PJStub(selected.getName()), cantidad, 0.0, nombreMunicion));
-		}
-	}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////// COMUNICACION
-
-	private void cheEscuchateEsto(String uno, String dos) {
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setHeaderText(uno);
-		alert.setContentText(dos);
-	}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////// OBLIGATORIOS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// UTILES
 
 	@FXML
 	private void subirNivel() throws Exception {
@@ -2022,6 +1696,369 @@ public class CharacterController implements Initializable {
 	}
 
 	@FXML
+	public void hideAction() {
+		try {
+			procesarMensaje(Habilidad.getHabilidadMethod(posible, selected, ventaja.isSelected(), 0));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void rellenarTienda(List<Skill> skills, String tipo) {
+		Tab tab = new Tab();
+		TilePane tienda = new TilePane();
+		switch (tipo) {
+		case "T":
+			tab.setText(selected.getPower());
+			break;
+		case "G":
+			tab = tabGeneral;
+			tienda = tiendaGeneral;
+			tienda.getChildren().clear();
+			break;
+		case "DENNARIS":
+			tab.setText(tipo);
+			break;
+		case "VASTE":
+			tab.setText(tipo);
+			break;
+		}
+		tab.setContent(tienda);
+		tiendasTabPanel.getTabs().add(tab);
+
+		for (Skill h : skills) {
+			Button boton = new Button();
+			boton.setStyle("botonStandar");
+			boton.setText(h.getName());
+			if (!selected.getSkills().contains(h)) {
+				boton.setOnAction(o -> {
+					AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
+					alert.setHeaderText("¿SEGURO?");
+					alert.setContentText("¿SEGURO?\nCuesta " + h.getCost() + "ip");
+
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.isPresent() && result.get() == ButtonType.OK) {
+						int puntosActuales;
+						try {
+							puntosActuales = selected.getInspirationPoints();
+							int costo = h.getCost();
+							if (puntosActuales >= costo) {
+								selected.getSkills().add(h);
+								gastarInspiracion(-costo);
+							} else {
+								AlertBonico errorAlert = new AlertBonico(Alert.AlertType.ERROR);
+								errorAlert.setHeaderText("Puntos insuficientes");
+								errorAlert.setContentText("No tienes suficientes puntos de inspiración.");
+								errorAlert.showAndWait();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				tienda.getChildren().add(boton);
+			} else {
+				boton.setDisable(true);
+			}
+		}
+
+	}
+
+	private Button crearBotonCopia(Button original) {
+		Button copy = new Button(original.getText());
+		copy.setPrefWidth(100); // ancho preferido
+		copy.setPrefHeight(25); // alto preferido
+		copy.setId(original.getId()); // el de css
+		copy.setOnAction(original.getOnAction());
+		StyleAndEffectService.pointElement(copy, tama, brillo, colorR, colorTexto);
+		return copy;
+	}
+
+	private int getIp() {
+		return Integer.parseInt(puntosInspiracionLbl.getText().split(" ")[1]);
+	}
+
+	public void gastarInspiracion(int numero) throws Exception {
+		if (numero < 0 && selected.getInspirationPoints() <= 0) { // asi no pueden entrar negativos)
+			throw new Exception();
+		}
+		selected.setInspirationPoints(selected.getInspirationPoints() + numero);
+		selected = PjService.update(selected);
+		loadShop();
+
+	}
+
+	private ComboBox<Rarity> crearSelectorRareza() {
+		ComboBox<Rarity> selectorRareza = new ComboBox<>();
+		selectorRareza.getItems().addAll(Rarity.values());
+		selectorRareza.setValue(Rarity.C);
+		return selectorRareza;
+	}
+
+	private void usarMuniciones(int cantidad, ItemShape tipoDeMunicion) throws Exception {
+
+		String nombreMunicion = tipoDeMunicion.name() + "AMMO";
+		Item nuevo = new Item(nombreMunicion, Rarity.H, ItemFamily.AMMO, ItemShape.AMMO, 0.2, 0.0,
+				"Munición de " + nombreMunicion);
+
+		Inventory inv = selected.getInventario().stream()
+				.filter(i -> i.getItem() != null && i.getItem().getName().equals(nombreMunicion)).findFirst()
+				.orElse(null);
+
+		if (inv != null) {
+			if (inv.getQuantity() + cantidad < 0) {
+				cheEscuchateEsto("NO", "NO HAY Municion Bobo");
+			} else {
+				inv.setQuantity(inv.getQuantity() + cantidad);
+			}
+		} else {
+			System.out.println("MUNICION: " + cantidad);
+			ItemService.create(nuevo);
+			Item persistido = ItemService.getByName(nombreMunicion)
+					.orElseThrow(() -> new Exception("No se pudo recuperar la munición recién creada"));
+			selected.getInventario()
+					.add(new Inventory(persistido, new PJStub(selected.getName()), cantidad, 0.0, nombreMunicion));
+		}
+	}
+
+	@FXML
+	private void sprintMenu() {
+		DialogBonico dialog = new DialogBonico();
+
+		TextField inputField = new TextField();
+		inputField.setPromptText("Distancia...");
+
+		dialog.setHeaderText("Introduce un número:");
+		dialog.content.getChildren().add(inputField);
+
+		ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == okButton) {
+				return inputField.getText();
+			}
+			return null;
+		});
+		dialog.showAndWait().ifPresent(input -> {
+			try {
+				int numero = Integer.parseInt((String) input);
+				String nuevaPregunta = pU.checkDitance(selected, numero);
+				AlertBonico confirmDialog = new AlertBonico(Alert.AlertType.CONFIRMATION);
+				confirmDialog.setHeaderText(nuevaPregunta);
+				confirmDialog.setContentText("¿Te renta?");
+				ButtonType buttonSi = new ButtonType("Sí", ButtonBar.ButtonData.YES);
+				ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+				confirmDialog.getButtonTypes().setAll(buttonSi, buttonNo);
+				confirmDialog.showAndWait().ifPresent(response -> {
+					if (response == buttonSi) {
+						try {
+							String[] b = nuevaPregunta.split(" ");
+							pU.useActions(Integer.parseInt(b[1]), selected);
+							refresh();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			} catch (Exception e) {
+			}
+		});
+	}
+
+	@FXML
+	private void save() throws Exception {
+
+		selected = PjService.update(selected);
+
+	}
+
+	@FXML
+	private void rest() throws Exception {
+		pU.sleep(selected, 1);
+		procesarMensaje(" Ha descansado un poco");
+	}
+
+	@FXML
+	private void longRest() throws Exception {
+		pU.sleep(selected, 2);
+		procesarMensaje(" Ha descansado bien");
+	}
+
+	@FXML
+	private void refresh() { // SONIDO EFECTOS
+		ser.efectoClick(volumenEfectos);
+		try {
+			loadResume();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void saveFotito() throws Exception {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+		try {
+			File e = fileChooser.showOpenDialog(null);
+			selected.setProfile(ImagenesUtil.fileToByte(e));
+			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));
+			selected = PjService.update(selected);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void guardarAjustes() {
+		animaciones = animChek.isSelected();
+		volumenFondo = muSlider.getValue();
+		volumenEfectos = efSlider.getValue();
+		GestorFicheroConfiguracion.actualizarValor("animaciones", animaciones + "");
+		GestorFicheroConfiguracion.actualizarValor("volEfectos", volumenEfectos + "");
+		GestorFicheroConfiguracion.actualizarValor("volMusica", volumenFondo + "");
+		ComunAlmacen.mediaPlayer.setVolume(volumenFondo);
+		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, false);
+		refresh();
+	}
+
+	@FXML
+	private void envainar() throws Exception {
+		selected.setWeapon(null);
+		equippedNameLbl.setText(selected.getBasicHitter().toString());
+	}
+
+	@FXML
+	private void fistAttack() throws Exception { // Este hacer en el usable.
+		procesarMensaje(pU.fistAttack(selected));
+	}
+
+	@FXML
+	private void vanillaAttack() throws Exception {
+		if (selected.getWeapon() != null) {
+			if (selected.getWeapon().getDistance().equals(Distance.RANGED)) {
+				DialogBonico dialog = new DialogBonico();
+				dialog.setTitle("Ataque a distancia");
+				dialog.setHeaderText("¿Dificultad del ataque?");
+				TextField diffInput = new TextField();
+				diffInput.setPromptText("8");
+				dialog.content.getChildren().add(diffInput);
+				ButtonType confirmar = new ButtonType("Atacar", ButtonBar.ButtonData.OK_DONE);
+				dialog.getDialogPane().getButtonTypes().addAll(confirmar, ButtonType.CANCEL);
+
+				dialog.setResultConverter(button -> {
+					if (button == confirmar) {
+						return diffInput.getText();
+					}
+					return null;
+				});
+				dialog.showAndWait().ifPresent(input -> {
+					try {
+						int diff = Integer.parseInt((String) input);
+						Item actual = selected.getWeapon();
+
+						try {
+							int a = (!actual.getItemShape().equals(ItemShape.TELESCOPE))
+									? Integer.parseInt(InventoryService.cantidadAmmo(selected, actual.getItemShape()))
+									: 100000;
+
+							if (a < 1) {
+								procesarMensaje("No hay munición");
+							} else {
+								String ataque = pU.atacar(selected, diff, ventaja.isSelected());
+								if (!actual.getItemShape().equals(ItemShape.TELESCOPE)) {
+									usarMuniciones(-1, actual.getItemShape());
+								}
+								procesarMensaje(ataque);
+							}
+						} catch (Exception e) {
+							procesarMensaje("Error: " + e.getMessage());
+						}
+					} catch (NumberFormatException e) {
+						procesarMensaje("Debes introducir un número válido");
+					}
+				});
+			} else {
+				try {
+					String ataque = pU.atacar(selected, 3, ventaja.isSelected());
+					procesarMensaje(ataque);
+				} catch (Exception e) {
+					procesarMensaje("Error: " + e.getMessage());
+				}
+			}
+		} else {
+			fistAttack();
+		}
+	}
+
+	@FXML
+	public void adminGlimmers() {
+		mostrarDialogoNumerico("¿Cuánto pierdes (-) o ganas (+) en Glimmers?", n -> {
+			pU.useGlimmers(n, selected);
+			refresh();
+		});
+	}
+
+	@FXML
+	private void modifyHp() {
+		mostrarDialogoNumerico("¿Cuánto pierdes (-) o ganas (+) de HP?", n -> {
+			try {
+				pU.useHp(n, selected);
+				refresh();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	@FXML
+	private void modifyAcc() {
+		mostrarDialogoNumerico("¿Cuántas acciones pierdes (-) o ganas (+)?", n -> {
+			try {
+				pU.useActions(n, selected);
+				refresh();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	@FXML
+	private void modifyKcal() {
+		mostrarDialogoNumerico("¿Cuántas acciones pierdes (-) o ganas (+)?", n -> {
+			try {
+				pU.useKcal(n, selected);
+				refresh();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	@FXML
+	public void returnToMain() throws Exception {
+		selected.setAble(true);
+		selected = PjService.update(selected);
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/LoobyVista.fxml"));
+			Parent root = loader.load();
+			Scene ventana = new Scene(root);
+			ventana.getStylesheets()
+					.add(getClass().getResource(GestorFicheroConfiguracion.devolverCredencial("css")).toExternalForm());
+			sesion.setTitle("LOBBY");
+			sesion.setScene(ventana);
+			sesion.sizeToScene();
+			sesion.setResizable(false);
+			sesion.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////// DADOS NUM
+
+	@FXML
 	private void tirarD20() {
 		procesarMensaje(" Resultado D20: " + dado.nextInt(1, 21));
 	}
@@ -2056,7 +2093,8 @@ public class CharacterController implements Initializable {
 		procesarMensaje(" Resultado D4: " + dado.nextInt(1, 5));
 	}
 
-	// DADOS DE STATS
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////// DADOS
 
 	@FXML
 	private void dadoAcro() {
@@ -2130,235 +2168,14 @@ public class CharacterController implements Initializable {
 				+ dado.nextInt(1, pU.diceLooby(selected, "dex") + 1));
 	}
 
-	@FXML
-	private void sprintMenu() { // ChatGPT de manual, cambiar y hacerlo a mano
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setHeaderText("Introduce un número:");
-		dialog.setContentText("Distancia:");
-		dialog.showAndWait().ifPresent(input -> {
-			try {
-				int numero = Integer.parseInt(input);
-				String nuevaPregunta = pU.checkDitance(selected, numero);
-				Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-				confirmDialog.setHeaderText(nuevaPregunta);
-				confirmDialog.setContentText("¿Te renta?");
-				ButtonType buttonSi = new ButtonType("Sí", ButtonBar.ButtonData.YES);
-				ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
-				confirmDialog.getButtonTypes().setAll(buttonSi, buttonNo);
-				confirmDialog.showAndWait().ifPresent(response -> {
-					if (response == buttonSi) {
-						try {
-							String[] b = nuevaPregunta.split(" ");
-							pU.useActions(Integer.parseInt(b[1]), selected);
-							refresh();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			} catch (Exception e) {
-			}
-		});
-	}
-
-	@FXML
-	private void save() throws Exception {
-
-		selected = PjService.update(selected);
-
-	}
-
-	@FXML
-	private void escribirMensaje() throws Exception {
-		selected = PjService.update(selected);
-	}
-
-	@FXML
-	private void rest() throws Exception {
-		pU.sleep(selected, 1);
-		procesarMensaje(" Ha descansado un poco");
-	}
-
-	@FXML
-	private void longRest() throws Exception {
-		pU.sleep(selected, 2);
-		procesarMensaje(" Ha descansado bien");
-	}
-
-	@FXML
-	private void refresh() { // SONIDO EFECTOS
-		ser.efectoClick(volumenEfectos);
-		try {
-			loadResume();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	private void saveFotito() throws Exception {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
-		try {
-			File e = fileChooser.showOpenDialog(null);
-			selected.setProfile(ImagenesUtil.fileToByte(e));
-			fotito.setImage(ImagenesUtil.byteArrayToImage(selected.getProfile()));
-			selected = PjService.update(selected);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	private void guardarAjustes() {
-		animaciones = animChek.isSelected();
-		volumenFondo = muSlider.getValue();
-		volumenEfectos = efSlider.getValue();
-		GestorFicheroConfiguracion.actualizarValor("animaciones", animaciones + "");
-		GestorFicheroConfiguracion.actualizarValor("volEfectos", volumenEfectos + "");
-		GestorFicheroConfiguracion.actualizarValor("volMusica", volumenFondo + "");
-		ComunAlmacen.mediaPlayer.setVolume(volumenFondo);
-		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, false);
-		refresh();
-	}
-
-	@FXML
-	private void envainar() throws Exception {
-		selected.setWeapon(null);
-		equippedNameLbl.setText(selected.getBasicHitter().toString());
-	}
-
-	@FXML
-	private void fistAttack() throws Exception { // Este hacer en el usable.
-		procesarMensaje(pU.fistAttack(selected));
-	}
-
-	@FXML
-	private void vanillaAttack() throws Exception {
-		if (selected.getWeapon() != null) {
-			if (selected.getWeapon().getDistance().equals(Distance.RANGED)) {
-				TextInputDialog dialog = new TextInputDialog("10");
-				dialog.setHeaderText("Dificultad");
-				dialog.setContentText("Dificultad?:");
-				dialog.showAndWait().ifPresent(input -> {
-					try {
-						int diff = Integer.parseInt(input);
-						Item actual = selected.getWeapon();
-						try {
-							int a = (!actual.getItemShape().equals(ItemShape.TELESCOPE))
-									? Integer.parseInt(InventoryService.cantidadAmmo(selected, actual.getItemShape()))
-									: 100000;
-							if (a < 1) {
-								procesarMensaje("No hay municion");
-							} else {
-								String ataque = "" + pU.atacar(selected, diff, ventaja.isSelected());
-								if (!actual.getItemShape().equals(ItemShape.TELESCOPE)) {
-									usarMuniciones(-1, actual.getItemShape());
-								}
-								procesarMensaje(ataque);
-							}
-						} catch (Exception e) {
-							procesarMensaje(e.getMessage());
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				});
-			} else {
-				try {
-					String ataque = "" + pU.atacar(selected, 3, ventaja.isSelected());
-					procesarMensaje(ataque);
-				} catch (Exception e) {
-					procesarMensaje(e.getMessage());
-				}
-			}
-		} else {
-			fistAttack();
-		}
-	}
-
-	@FXML
-	public void adminGlimmers() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setHeaderText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.setContentText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.showAndWait().ifPresent(input -> {
-			int numero = Integer.parseInt(input);
-			pU.useGlimmers(numero, selected);
-			refresh();
-		});
-	}
-
-	@FXML
-	private void modifyHp() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setHeaderText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.setContentText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.showAndWait().ifPresent(input -> {
-			try {
-				int numero = Integer.parseInt(input);
-				pU.useHp(numero, selected);
-				refresh();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	@FXML
-	private void modifyAcc() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setHeaderText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.setContentText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.showAndWait().ifPresent(input -> {
-			try {
-				int numero = Integer.parseInt(input);
-				pU.useActions(numero, selected);
-				refresh();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	@FXML
-	private void modifyKcal() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setHeaderText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.setContentText("Cuanto pierdes(-) / ganas(+)?:");
-		dialog.showAndWait().ifPresent(input -> {
-			try {
-				int numero = Integer.parseInt(input);
-				pU.useKcal(numero, selected);
-				refresh();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	@FXML
-	public void returnToMain() throws Exception {
-		selected.setAble(true);
-		selected = PjService.update(selected);
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/LoobyVista.fxml"));
-			Parent root = loader.load();
-			Scene ventana = new Scene(root);
-			ventana.getStylesheets()
-					.add(getClass().getResource(GestorFicheroConfiguracion.devolverCredencial("css")).toExternalForm());
-			sesion.setTitle("LOBBY");
-			sesion.setScene(ventana);
-			sesion.sizeToScene();
-			sesion.setResizable(false);
-			sesion.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////// SYNCHRO
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// COMUNICACION
+
+	private void cheEscuchateEsto(String uno, String dos) {
+		AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
+		alert.setHeaderText(uno);
+		alert.setContentText(dos);
+	}
 
 	public void procesarMensaje(String mensaje) {
 		try {
@@ -2376,6 +2193,108 @@ public class CharacterController implements Initializable {
 		String f = momento.format(formato);
 		messageText.setText(messageText.getText() + "\n(" + f + ") " + mensaje);
 		messageText.positionCaret(messageText.getText().length());
+	}
+
+	@FXML
+	private void escribirMensaje() throws Exception {
+		selected = PjService.update(selected);
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////// REFACTORIZACION
+
+	private void mostrarDialogoNumerico(String titulo, Consumer<Integer> accion) {
+		DialogBonico dialog = new DialogBonico();
+		dialog.setHeaderText(titulo);
+
+		TextField input = new TextField();
+		input.setPromptText("Ej: 3 o -2");
+		dialog.content.getChildren().add(input);
+
+		ButtonType ok = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(ok, ButtonType.CANCEL);
+
+		dialog.setResultConverter(btn -> btn == ok ? input.getText() : null);
+
+		dialog.showAndWait().ifPresent(valor -> {
+			try {
+				int num = Integer.parseInt((String) valor);
+				accion.accept(num);
+			} catch (NumberFormatException e) {
+				AlertBonico error = new AlertBonico(AlertType.ERROR);
+				error.setHeaderText("Valor inválido");
+				error.setContentText("MEte num valido bro");
+				error.show();
+			} catch (Exception e) {
+				AlertBonico error = new AlertBonico(AlertType.ERROR);
+				error.setHeaderText("Error");
+				error.setContentText(e.getMessage());
+				error.show();
+			}
+		});
+	}
+
+	private List<Skill> filtrarLista(String string, List<Skill> skills) {
+		return skills.stream().filter(e -> e.getPower().equals(string)).collect(Collectors.toList());
+	}
+
+	private void rellenarListaPaneles() {
+		paneles.add(panelAjustes);
+		paneles.add(resumePanel);
+		paneles.add(shopPanel);
+		paneles.add(inventaryPanel);
+		paneles.add(lootBoxPanel);
+		paneles.add(petPanel);
+		paneles.add(crearItemPane);
+	}
+
+	private void informarDeItem(Item tipo) {
+		AlertBonico infoVtn = new AlertBonico(AlertType.INFORMATION);
+		Label texto = new Label(tipo.showInfo());
+		texto.setWrapText(true);
+		texto.setMaxWidth(300);
+		texto.setStyle("-fx-font-size: 14px; -fx-text-alignment: center;");
+		infoVtn.content.getChildren().add(texto);
+		if (tipo.getImagenUrl() != null) {
+			Image image = new Image(tipo.getImagenUrl(), true);
+			ImageView imageView = new ImageView(image);
+			imageView.setFitWidth(200);
+			imageView.setPreserveRatio(true);
+			imageView.setSmooth(true);
+			imageView.setCache(true);
+			imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.2, 0, 2); "
+					+ "-fx-background-radius: 10;");
+			infoVtn.content.getChildren().add(imageView);
+			infoVtn.scroll.setPrefViewportHeight(400);
+		}
+		infoVtn.show();
+	}
+
+	private void rellenarMods() {
+		modsPane.getChildren().clear();
+
+		double spacing = 10;
+		double labelWidth = 50;
+		double labelHeight = 25;
+		double startX = 2;
+		double y = 10;
+
+		List<Double> mods = selected.getMods();
+		for (int i = 0; i < 5; i++) {
+			Double d = mods.get(i);
+
+			Label modLbl = new Label(df.format(d));
+			modLbl.setPrefSize(labelWidth, labelHeight);
+			modLbl.setAlignment(Pos.CENTER);
+			modLbl.setStyle("-fx-background-color: #eee; -fx-border-radius: 4;"
+					+ "-fx-background-radius: 4; -fx-font-size: 11px;");
+
+			double x = startX + i * (labelWidth + spacing);
+			modLbl.setLayoutX(x);
+			modLbl.setLayoutY(y);
+
+			modsPane.getChildren().add(modLbl);
+		}
 	}
 
 }

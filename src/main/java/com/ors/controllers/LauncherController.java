@@ -5,25 +5,31 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.stage.Stage;
+import com.ors.controllers.elementos.DialogBonico;
 import com.ors.services.AdventureService;
 import com.ors.services.ComunAlmacen;
 import com.ors.services.StartService;
 import com.ors.services.StyleAndEffectService;
 import com.ors.utiles.GestorFicheroConfiguracion;
 import com.ors.vo.Adventure;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class LauncherController implements Initializable {
 
@@ -163,20 +169,20 @@ public class LauncherController implements Initializable {
 
 			Label infoLabel = new Label("Mete nombre y contraseña:");
 
-			Pane formPane = new Pane();
-			nombreField.setLayoutY(30);
-			passField.setLayoutY(60);
-			formPane.getChildren().addAll(infoLabel, nombreField, passField);
-
-			javafx.scene.control.Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+			DialogBonico dialog = new DialogBonico();
 			dialog.setTitle("Nueva Aventura");
-			dialog.getDialogPane().setContent(formPane);
+			dialog.content.getChildren().addAll(infoLabel, nombreField, passField);
 			dialog.getDialogPane().getButtonTypes().addAll(
-					new javafx.scene.control.ButtonType("Crear", javafx.scene.control.ButtonBar.ButtonData.OK_DONE),
-					javafx.scene.control.ButtonType.CANCEL);
+					new ButtonType("Crear", ButtonBar.ButtonData.OK_DONE), ButtonType.CANCEL);
+			StyleAndEffectService.pointElement(infoLabel, ComunAlmacen.tama, ComunAlmacen.brillo, ComunAlmacen.colorR,
+					ComunAlmacen.colorTexto);
+			StyleAndEffectService.pointElement(nombreField, ComunAlmacen.tama, ComunAlmacen.brillo, ComunAlmacen.colorR,
+					ComunAlmacen.colorTexto);
+			StyleAndEffectService.pointElement(passField, ComunAlmacen.tama, ComunAlmacen.brillo, ComunAlmacen.colorR,
+					ComunAlmacen.colorTexto);
 
 			dialog.setResultConverter(button -> {
-				if (button.getButtonData() == javafx.scene.control.ButtonBar.ButtonData.OK_DONE) {
+				if (button.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
 					String nombre = nombreField.getText().trim();
 					String pass = passField.getText().trim();
 
@@ -270,6 +276,7 @@ public class LauncherController implements Initializable {
 			Scene ventana = new Scene(root);
 			ventana.getStylesheets()
 					.add(getClass().getResource(GestorFicheroConfiguracion.devolverCredencial("css")).toExternalForm());
+			ventana.setFill(Color.TRANSPARENT);
 			primaryStage.setTitle("LOBBY");
 			primaryStage.setScene(ventana);
 			primaryStage.setResizable(false);

@@ -8,6 +8,22 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import com.ors.controllers.elementos.DialogBonico;
+import com.ors.services.AdventureService;
+import com.ors.services.BodyTypeService;
+import com.ors.services.ComunAlmacen;
+import com.ors.services.PjService;
+import com.ors.services.RaceService;
+import com.ors.services.StyleAndEffectService;
+import com.ors.utiles.EnumsDeItems.CharacterTypes;
+import com.ors.utiles.GeneradorAleatorios;
+import com.ors.utiles.GestorFicheroConfiguracion;
+import com.ors.utiles.ImagenesUtil;
+import com.ors.vo.Adventure;
+import com.ors.vo.BodyType;
+import com.ors.vo.PJ;
+import com.ors.vo.Race;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -23,7 +39,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -36,20 +51,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import com.ors.services.AdventureService;
-import com.ors.services.BodyTypeService;
-import com.ors.services.ComunAlmacen;
-import com.ors.services.PjService;
-import com.ors.services.RaceService;
-import com.ors.services.StyleAndEffectService;
-import com.ors.utiles.EnumsDeItems.CharacterTypes;
-import com.ors.utiles.GeneradorAleatorios;
-import com.ors.utiles.GestorFicheroConfiguracion;
-import com.ors.utiles.ImagenesUtil;
-import com.ors.vo.Adventure;
-import com.ors.vo.BodyType;
-import com.ors.vo.PJ;
-import com.ors.vo.Race;
 
 public class LobbyController implements Initializable {
 
@@ -295,13 +296,6 @@ public class LobbyController implements Initializable {
 
 		StyleAndEffectService.fadeIn(totalPanel, 1f);
 
-		///////////////////////// VIAJE RÁPIDO LISTA
-
-//		personajesSel.getItems().clear();
-//		for (PJ pj : pjs) {
-//			personajesSel.getItems().add(pj.getName());
-//		}
-
 		///////////////////////// IMAGENES CARROUSEL
 
 		int leftIndex = (posicion - 1 + pjs.size()) % pjs.size();
@@ -310,6 +304,7 @@ public class LobbyController implements Initializable {
 		setImagenesDePosicionesYFotito(rightImage, rightIndex, false);
 		setImagenesDePosicionesYFotito(centralImage, posicion, true);
 		setImagenesDePosicionesYFotito(leftImage, leftIndex, false);
+
 		///////////////////////// ACCIONES SLIDE
 
 		rightImage.setOnMouseClicked(event -> {
@@ -417,7 +412,7 @@ public class LobbyController implements Initializable {
 			personajesSel.getItems().add(pj.getName());
 		}
 		personajesSel.setVisible(false);
-
+		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
 		updateCharacterView();
 	}
 
@@ -671,8 +666,6 @@ public class LobbyController implements Initializable {
 
 	private void defaultViewLobby(boolean estado) throws Exception { // Esto es una gilipollez pero bueno, asi se queda
 
-		StyleAndEffectService.setAllStyles(absolutePane, tama, brillo, colorR, colorTexto, animaciones, true);
-
 		goToPosition.setVisible(false);
 		fastSearchImg.setVisible(true);
 		dropLabel.setText("NUEVA IMAGEN");
@@ -879,22 +872,22 @@ public class LobbyController implements Initializable {
 		comboAventuras.setValue(aventurasDisponibles.get(aventurasDisponibles.indexOf(adventure)));
 		ComboBox<CharacterTypes> comboTipo = new ComboBox<>();
 		comboTipo.getItems().addAll(CharacterTypes.values());
-		comboTipo.setValue(pjs.get(posicion).getCharacterType()); // CharacterTypes.NPC o PARTY
+		comboTipo.setValue(pjs.get(posicion).getCharacterType());
 
-		Pane content = new Pane();
 		Label aventuraLabel = new Label("Aventura:");
 		Label tipoLabel = new Label("Tipo:");
-		aventuraLabel.setLayoutY(10);
-		comboAventuras.setLayoutY(30);
-		tipoLabel.setLayoutY(70);
-		comboTipo.setLayoutY(90);
-		content.getChildren().addAll(aventuraLabel, comboAventuras, tipoLabel, comboTipo);
+		comboAventuras.setPrefWidth(200);
+		comboTipo.setPrefWidth(200);
+		ButtonType lsito = new ButtonType("Actualizar", ButtonBar.ButtonData.OK_DONE);
 
-		Dialog<Void> dialog = new Dialog<>();
-		dialog.setTitle("Mover personaje");
-		dialog.getDialogPane().setContent(content);
-		dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Mover", ButtonBar.ButtonData.OK_DONE),
-				ButtonType.CANCEL);
+		DialogBonico dialog = new DialogBonico();
+		dialog.setTitle("Gestionar personaje");
+		dialog.content.getChildren().addAll(aventuraLabel, comboAventuras, tipoLabel, comboTipo);
+		dialog.getDialogPane().getButtonTypes().addAll(lsito, ButtonType.CANCEL);
+		StyleAndEffectService.pointElement(aventuraLabel, posicion, brillo, colorR, colorTexto);
+		StyleAndEffectService.pointElement(comboAventuras, posicion, brillo, colorR, colorTexto);
+		StyleAndEffectService.pointElement(tipoLabel, posicion, brillo, colorR, colorTexto);
+		StyleAndEffectService.pointElement(comboTipo, posicion, brillo, colorR, colorTexto);
 
 		dialog.setResultConverter(button -> {
 			if (button.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
@@ -922,8 +915,8 @@ public class LobbyController implements Initializable {
 			pjs.get(posicion).setAble(false);
 		} else {
 			pjs.get(posicion).setAble(true);
-
 		}
+		PjService.update(pjs.get(posicion));
 		updateCharacterView();
 	}
 
@@ -939,11 +932,6 @@ public class LobbyController implements Initializable {
 
 		panelAjustes.setDisable(false);
 		panelAjustes.toFront();
-
-//		TranslateTransition agrandar = new TranslateTransition(Duration.millis(300), panelAjustes);
-//		agrandar.setFromX(0);
-//		agrandar.setToX(-122); // 798 - 920
-//		agrandar.playFromStart();
 
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.millis(300), new KeyValue(panelAjustes.layoutXProperty(), 798)));

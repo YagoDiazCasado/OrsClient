@@ -2,6 +2,7 @@ G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + J
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\vo\Adventure.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\controllers\LobbyController.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\application\Prueba.java
+G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\controllers\elementos\AlertBonico.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\vo\Skill.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\utiles\JacksonJson.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\utiles\GestionLog.java
@@ -25,6 +26,7 @@ G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + J
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\application\MainLobby.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\services\ComunAlmacen.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\vo\Equipment.java
+G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\controllers\elementos\DialogBonico.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\utiles\Habilidad.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\controllers\CharacterController.java
 G:\Mi unidad\PC COMPARTIDOS\Proyectos\YagoDiaz-TFG\V_4 (API + Hibernate + FX + Jackson)\ORS_TALES\src\main\java\com\ors\vo\PJ.java
