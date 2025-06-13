@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 import com.ors.services.ComunAlmacen;
 import com.ors.utiles.GestorFicheroConfiguracion;
 
@@ -34,6 +35,7 @@ public class MainLobby extends Application {
 			}
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ors/views/LauncherVista.fxml"));
 			Parent root = loader.load();
+			root.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-background-radius: 15;");
 			Scene ventana = new Scene(root);
 			ventana.getStylesheets()
 					.add(getClass().getResource(GestorFicheroConfiguracion.devolverCredencial("css")).toExternalForm());

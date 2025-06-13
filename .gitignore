@@ -1,0 +1,19 @@
+# Ignorar compilados de Maven
+/target/
+
+# Ignorar archivos temporales de IDEs
+*.class
+*.log
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.settings/
+.project
+.classpath
+
+# Librerías descargadas
+*.jar
+*.war
+*.ear
