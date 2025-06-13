@@ -51,7 +51,9 @@ import com.ors.vo.PJ;
 import com.ors.vo.Race;
 import com.ors.vo.Skill;
 
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -76,11 +78,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class CharacterController implements Initializable {
 
@@ -517,6 +521,15 @@ public class CharacterController implements Initializable {
 	private VBox itemFormBox;
 	@FXML
 	private Button guardarItemBtn;
+	private String colorAtl = "#f7b267"; // melón pastel suave (antes: orange)
+	private String colorStr = "#f76c5e"; // rojo coral pastel (antes: red)
+	private String colorEnd = "#a28c6a"; // marrón claro suave (antes: brown)
+	private String colorDex = "#c084f5"; // lavanda pastel brillante (antes: purple)
+	private String colorMin = "#7db9e8"; // azul cielo pastel (antes: darkblue)
+
+	private String colorVida = "#cbeaa6"; // verde manzana pastel (mejorado)
+	private String colorAcciones = "#f48ca5"; // rosa chicle pastel (más suave)
+	private String colorKcal = "#b3e5fc"; // celeste muy claro (más pastel que #8fd7eb)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// START
@@ -990,15 +1003,23 @@ public class CharacterController implements Initializable {
 		barraHp.setProgress((double) selected.getHp() / selected.getMaxHp());
 		barraAcc.setProgress((double) selected.getActions() / selected.getMaxActions());
 		barraKcal.setProgress((double) selected.getKcal() / selected.getMaxKcal());
+		conservarColor(colorVida, barraHp);
+		conservarColor(colorAcciones, barraAcc);
+		conservarColor(colorKcal, barraKcal);
 		hpInfo.setText(selected.getHp() + "/" + selected.getMaxHp());
 		accInfo.setText(selected.getActions() + "/" + selected.getMaxActions());
 		kcalInfo.setText(selected.getKcal() + "/" + selected.getMaxKcal());
 
 		xpAtlBar.setProgress((double) selected.getXpA() / ((selected.getModA() * 2) * selected.getAtl()));
+		conservarColor(colorAtl, xpAtlBar);
 		xpStrBar.setProgress((double) selected.getXpS() / ((selected.getModS() * 2) * selected.getStr()));
+		conservarColor(colorStr, xpStrBar);
 		xpEndBar.setProgress((double) selected.getXpE() / ((selected.getModE() * 2) * selected.getEnd()));
-		xpDexBar.setProgress((double) selected.getXpD() / ((selected.getModD() * 2) * selected.getDex()));
+		conservarColor(colorEnd, xpEndBar);
 		xpMinBar.setProgress((double) selected.getXpM() / ((selected.getModM() * 2) * selected.getMin()));
+		conservarColor(colorMin, xpMinBar);
+		xpDexBar.setProgress((double) selected.getXpD() / ((selected.getModD() * 2) * selected.getDex()));
+		conservarColor(colorDex, xpDexBar);
 
 		atlLbl.setText("ATL     " + selected.getAtl());
 		strLbl.setText("STR     " + selected.getStr());
@@ -1017,6 +1038,17 @@ public class CharacterController implements Initializable {
 
 		cargarResumenEquipamiento();
 
+	}
+
+	private void conservarColor(String color, ProgressBar bar) {
+		bar.setStyle("-fx-accent: " + color + ";");
+
+		EventHandler<? super MouseEvent> anterior = bar.getOnMouseExited();
+		bar.setOnMouseExited(e -> {
+			if (anterior != null)
+				anterior.handle(e);
+			bar.setStyle("-fx-accent: " + color + ";");
+		});
 	}
 
 	private void cargarInvent() throws Exception {
@@ -1044,6 +1076,9 @@ public class CharacterController implements Initializable {
 		barraHpI.setProgress((double) selected.getHp() / selected.getMaxHp());
 		barraAccI.setProgress((double) selected.getActions() / selected.getMaxActions());
 		barraKcalI.setProgress((double) selected.getKcal() / selected.getMaxKcal());
+		conservarColor(colorVida, barraHpI);
+		conservarColor(colorAcciones, barraAccI);
+		conservarColor(colorKcal, barraKcalI);
 
 		List<Inventory> actual = selected.getInventario();
 
@@ -1086,11 +1121,23 @@ public class CharacterController implements Initializable {
 
 	private void cargarEscaparate() throws Exception {
 		try {
-
 			buscarLbl.setOnMouseClicked(o -> {
 				DialogBonico busqueda = new DialogBonico();
 				busqueda.setHeaderText("BUSCAR");
 				busqueda.setContentText("Introduce el nombre del ítem:");
+				TextField pista = new TextField();
+				busqueda.content.getChildren().add(pista);
+				ButtonType confirmarButton = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+				ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+				busqueda.getDialogPane().getButtonTypes().addAll(confirmarButton, cancelarButton);
+
+				busqueda.setResultConverter(button -> {
+					if (button == confirmarButton) {
+						return pista.getText();
+					}
+					return null;
+				});
+
 				busqueda.showAndWait().ifPresent(input -> {
 					try {
 						List<Item> items = ItemService.buscarItemsQueEmpiecenPor((String) input);
@@ -1300,7 +1347,7 @@ public class CharacterController implements Initializable {
 
 		commonSkills = skills.stream().filter(e -> e.getPower().equals("REGULAR")).collect(Collectors.toList());
 
-		tiendasTabPanel.getTabs().clear(); // Solo limpiar si no es "G"
+		tiendasTabPanel.getTabs().clear();
 		rellenarTienda(commonSkills, "G");
 
 		if (!selected.getPower().equals("REGULAR")) {
@@ -1651,8 +1698,8 @@ public class CharacterController implements Initializable {
 
 	@FXML
 	private void subirNivel() throws Exception {
-		if (getIp() >= 2) {
-			gastarInspiracion(getIp() - 2);
+		if (selected.getInspirationPoints() >= 2) {
+			gastarInspiracion(-2);
 			selected.setAtl(selected.getAtl() + 1);
 			selected.setStr(selected.getStr() + 1);
 			selected.setEnd(selected.getEnd() + 1);
@@ -1661,7 +1708,6 @@ public class CharacterController implements Initializable {
 			procesarMensaje("SUBE DE NIVEL ++1");
 		} else {
 			cheEscuchateEsto("NO", "NO HAY PUNTOS");
-
 		}
 	}
 
@@ -1724,6 +1770,7 @@ public class CharacterController implements Initializable {
 			break;
 		}
 		tab.setContent(tienda);
+		tab.setId("botonStandar");
 		tiendasTabPanel.getTabs().add(tab);
 
 		for (Skill h : skills) {
@@ -1734,7 +1781,7 @@ public class CharacterController implements Initializable {
 				boton.setOnAction(o -> {
 					AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
 					alert.setHeaderText("¿SEGURO?");
-					alert.setContentText("¿SEGURO?\nCuesta " + h.getCost() + "ip");
+					alert.content.getChildren().add(new Label("¿SEGURO?\nCuesta " + h.getCost() + "ip"));
 
 					Optional<ButtonType> result = alert.showAndWait();
 					if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -1748,7 +1795,8 @@ public class CharacterController implements Initializable {
 							} else {
 								AlertBonico errorAlert = new AlertBonico(Alert.AlertType.ERROR);
 								errorAlert.setHeaderText("Puntos insuficientes");
-								errorAlert.setContentText("No tienes suficientes puntos de inspiración.");
+								alert.content.getChildren()
+										.add(new Label("No tienes suficientes puntos de inspiración."));
 								errorAlert.showAndWait();
 							}
 						} catch (Exception e) {
@@ -1766,9 +1814,9 @@ public class CharacterController implements Initializable {
 
 	private Button crearBotonCopia(Button original) {
 		Button copy = new Button(original.getText());
-		copy.setPrefWidth(100); // ancho preferido
-		copy.setPrefHeight(25); // alto preferido
-		copy.setId(original.getId()); // el de css
+		copy.setPrefWidth(100);
+		copy.setPrefHeight(25);
+		copy.setId(original.getId());
 		copy.setOnAction(original.getOnAction());
 		StyleAndEffectService.pointElement(copy, tama, brillo, colorR, colorTexto);
 		return copy;
@@ -2280,14 +2328,52 @@ public class CharacterController implements Initializable {
 		double y = 10;
 
 		List<Double> mods = selected.getMods();
+		String[] colores = { colorAtl, colorStr, colorEnd, colorDex, colorMin };
+		Label[] stats = { atlLbl, strLbl, endLBL, dexLbl, minLbl };
 		for (int i = 0; i < 5; i++) {
 			Double d = mods.get(i);
-
 			Label modLbl = new Label(df.format(d));
 			modLbl.setPrefSize(labelWidth, labelHeight);
 			modLbl.setAlignment(Pos.CENTER);
-			modLbl.setStyle("-fx-background-color: #eee; -fx-border-radius: 4;"
-					+ "-fx-background-radius: 4; -fx-font-size: 11px;");
+			modLbl.setStyle("-fx-background-color: white; -fx-border-radius: 9;"
+					+ "-fx-background-radius: 15.0px; -fx-font-size: 11px;");
+			final int num = i;
+			modLbl.setOnMouseEntered(e -> {
+				modLbl.setStyle("-fx-background-color: " + colores[num] + "; -fx-border-radius: 9;"
+						+ "-fx-background-radius: 15.0px; -fx-font-size: 11px;");
+				stats[num].setStyle("-fx-text-fill: " + colores[num] + ";");
+				ser.efectoAumentar(volumenEfectos);
+				ScaleTransition st = new ScaleTransition(Duration.millis(180), stats[num]);
+				st.setToX(1.15);
+				st.setToY(1.15);
+				st.setCycleCount(1);
+				st.setAutoReverse(false);
+				st.play();
+				st = new ScaleTransition(Duration.millis(180), modLbl);
+				st.setToX(1.15);
+				st.setToY(1.15);
+				st.setCycleCount(1);
+				st.setAutoReverse(false);
+				st.play();
+			});
+
+			modLbl.setOnMouseExited(e -> {
+				modLbl.setStyle("-fx-background-color: white; -fx-border-radius: 9;"
+						+ "-fx-background-radius: 15.0px; -fx-font-size: 11px;");
+				stats[num].setStyle("-fx-text-fill: " + colorTexto + ";");
+				ScaleTransition st = new ScaleTransition(Duration.millis(180), stats[num]);
+				st.setToX(1.0);
+				st.setToY(1.0);
+				st.setCycleCount(1);
+				st.setAutoReverse(false);
+				st.play();
+				st = new ScaleTransition(Duration.millis(180), modLbl);
+				st.setToX(1.0);
+				st.setToY(1.0);
+				st.setCycleCount(1);
+				st.setAutoReverse(false);
+				st.play();
+			});
 
 			double x = startX + i * (labelWidth + spacing);
 			modLbl.setLayoutX(x);

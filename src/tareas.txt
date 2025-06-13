@@ -1,5 +1,17 @@
 
 
+-
+
+-Clases de Maps y positions
+-Opcion de creación de tablero. Check dm.
+-Hacer tablero base, con grid ajustable e imagen de fondo pillado de URL y ajuste de metros.
+El grid debe ser ajustable, tener zoom, estar por encima de la foto y ser distinguible igualmente.
+-Deploy y movimiento del pj. Checks de dm. Cálculo de distancias según speed y metros de tablero.
+El deploy añade el pj a la tabla positions que se relaciona con el mapa pertinente de la tabla Maps. Apunta el pj como ref y la posición.
+-websockets actualización de todo el tablero por cada movimiento u acción. Vuelve a pillar los pj de la bbdd sin updatearse antes, así pilla la versión que modificó el compañero.
+-Añadir interacciones entre personajes y de celdas con booleanos para criterio.
+-Probar cambio de mapa .
+
 -Poner random los combobox al inicio
 
 -El color texto de raza se aplcia al siguiente 

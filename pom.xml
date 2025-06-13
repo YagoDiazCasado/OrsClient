@@ -51,6 +51,13 @@
             <version>${javafx.version}</version>
             <classifier>win</classifier>
         </dependency>
+        
+        <dependency>
+    <groupId>org.java-websocket</groupId>
+    <artifactId>Java-WebSocket</artifactId>
+    <version>1.5.3</version>
+</dependency>
+
 
         <!-- Jackson -->
         <dependency>
