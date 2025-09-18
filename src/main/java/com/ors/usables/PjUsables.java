@@ -26,7 +26,7 @@ public class PjUsables {
 		String extra = "";
 		double mods = 1.0;
 
-		if (pj.getWeapon().equals(null)) {
+		if (pj.getWeapon() ==null) {
 			return fistAttack(pj);
 		} else {
 			if (pj.getWeapon().getDistance().equals(Distance.MELEE)) { // Arma mele

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Race implements Serializable {
 	private static final long serialVersionUID = -4429746538869145017L;
-	
+	//
 	@JsonProperty("nombre")
 	private String name;
 

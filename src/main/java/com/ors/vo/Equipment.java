@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) 
 public class Equipment {
-	
+	//
 	@JsonProperty("ownerId")
 	private String ownerId;
 

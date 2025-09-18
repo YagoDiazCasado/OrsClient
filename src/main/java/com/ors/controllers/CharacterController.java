@@ -37,6 +37,7 @@ import com.ors.utiles.EnumsDeItems.DamageType;
 import com.ors.utiles.EnumsDeItems.Distance;
 import com.ors.utiles.EnumsDeItems.ItemFamily;
 import com.ors.utiles.EnumsDeItems.ItemShape;
+import com.ors.utiles.EnumsDeItems.Nature;
 import com.ors.utiles.EnumsDeItems.Rarity;
 import com.ors.utiles.GestionLog;
 import com.ors.utiles.GestorFicheroConfiguracion;
@@ -213,7 +214,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	private Button btnInventory;
 	@FXML
-	private Button btnLootBox;
+	private Button btnMap;
 	@FXML
 	private Button btnUtiles;
 
@@ -225,7 +226,7 @@ public class CharacterController implements Initializable {
 	@FXML
 	private Pane inventaryPanel;
 	@FXML
-	private Pane lootBoxPanel;
+	private Pane mapPanel;
 	@FXML
 	private Pane petPanel;
 
@@ -654,16 +655,15 @@ public class CharacterController implements Initializable {
 	}
 
 	@FXML
-	public void loadLootBoxes() {
-		setVisibilities(lootBoxPanel);
-		messagePanel.setVisible(true);
-	}
-
-	@FXML
 	public void loadTaller() {
 		setVisibilities(crearItemPane);
 		cargarCreador();
 		ser.efectoPaginas(volumenEfectos);
+	}
+
+	@FXML
+	public void loadMap() {
+		setVisibilities(mapPanel);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -731,7 +731,7 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		TextField danoBase = new TextField();
 		danoBase.setPromptText("Daño base");
 		ComboBox<ItemShape> forma = new ComboBox<>();
@@ -768,7 +768,7 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		ComboBox<ItemShape> forma = new ComboBox<>();
 		forma.getItems().addAll(ItemShape.values());
 		ComboBox<Rarity> rareza = crearSelectorRareza();
@@ -796,7 +796,7 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		TextField mod = new TextField();
 		mod.setPromptText("Mod (A S E M D)");
 		ComboBox<ItemShape> forma = new ComboBox<>();
@@ -827,7 +827,7 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		ComboBox<ItemShape> forma = new ComboBox<>();
 		forma.getItems().addAll(ItemShape.values());
 		ComboBox<Rarity> rareza = crearSelectorRareza();
@@ -857,7 +857,7 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso (ej: 0.5)");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		ComboBox<Rarity> rareza = crearSelectorRareza();
 
 		itemFormBox.getChildren().addAll(new Label("Item EDIBLE"), nombre, descripcion, efectos, peso, coste,
@@ -888,9 +888,9 @@ public class CharacterController implements Initializable {
 		TextField peso = new TextField();
 		peso.setPromptText("Peso (ej: 2.0)");
 		TextField coste = new TextField();
-		coste.setPromptText("Precio en glimmers");
+		coste.setPromptText("Precio en glimmers (ej: 2)");
 		TextField modStats = new TextField();
-		modStats.setPromptText("Mod Stats (A S E M D)");
+		modStats.setText("0 0 0 0 0");
 		ComboBox<ItemShape> forma = new ComboBox<>();
 		forma.getItems().addAll(ItemShape.SWORD, ItemShape.DAGGER, ItemShape.AXE);
 		ComboBox<DamageType> tipoDano = new ComboBox<>();
@@ -916,6 +916,38 @@ public class CharacterController implements Initializable {
 				mostrarConfirmacion("Arma creada con éxito");
 			} catch (Exception ex) {
 				mostrarError("Datos inválidos: " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		});
+	}
+
+	private void mostrarFormularioSkill() {
+		TextField nombre = new TextField();
+		nombre.setPromptText("Nombre de la habilidad");
+		TextField descripcion = new TextField();
+		descripcion.setPromptText("Descripción");
+		TextField coste = new TextField();
+		coste.setPromptText("Precio en inspiracion");
+		ComboBox<Nature> naturaleza = new ComboBox<>();
+		naturaleza.getItems().addAll(Nature.ACTIVA, Nature.PASIVA);
+		ComboBox<String> power = new ComboBox<>();
+		power.getItems().addAll("REGULAR", "JANO", "VASTE", "BUNRAKU", "LEIRZA");
+		ComboBox<String> race = new ComboBox<>();
+		race.getItems().addAll("HUMANO", "SOLEO", "TECHITA", "CONSCIENTE", "DENNARIS","TODAS");
+
+		itemFormBox.getChildren().addAll(new Label("Habilidad"), nombre, descripcion, new Label("PASIVA O ACTIVA"),
+				naturaleza, new Label("Afinidad"), power, new Label("Raza"), race, coste, guardarItemBtn);
+
+		guardarItemBtn.setOnAction(e -> {
+			try {
+				Skill nueva = new Skill(nombre.getText(), Integer.parseInt(coste.getText()),
+						naturaleza.getValue().toString(), 1, race.getValue().toString(), power.getValue().toString(),
+						descripcion.getText());
+				SkillService.create(nueva);
+				mostrarConfirmacion("Habilidad creada con éxito");
+			} catch (Exception ex) {
+				mostrarError("Datos inválidos: " + ex.getMessage());
+				ex.printStackTrace();
 			}
 		});
 	}
@@ -955,6 +987,7 @@ public class CharacterController implements Initializable {
 			case AMMO -> mostrarFormularioAmmo();
 			case RACE -> mostrarFormularioRace();
 			case BODYTYPE -> mostrarFormularioBodyType();
+			case SKILL -> mostrarFormularioSkill();
 
 			default -> itemFormBox.getChildren().add(new Label("Sin hacer"));
 			}
@@ -970,6 +1003,7 @@ public class CharacterController implements Initializable {
 		alert.setHeaderText("Selecciona una habilidad para usar:");
 		for (Skill h : skills) {
 			Button b = new Button(h.getName());
+			Tooltip.install(b, new Tooltip(h.getDescription()));
 			b.setId("botonMasOpaco");
 			StyleAndEffectService.pointElement(b, tama, brillo, colorR, colorTexto);
 			b.setOnAction(event -> {
@@ -1776,13 +1810,14 @@ public class CharacterController implements Initializable {
 		for (Skill h : skills) {
 			Button boton = new Button();
 			boton.setStyle("botonStandar");
+			Tooltip.install(boton, new Tooltip(h.getDescription()));
 			boton.setText(h.getName());
 			if (!selected.getSkills().contains(h)) {
 				boton.setOnAction(o -> {
 					AlertBonico alert = new AlertBonico(Alert.AlertType.CONFIRMATION);
 					alert.setHeaderText("¿SEGURO?");
-					alert.content.getChildren().add(new Label("¿SEGURO?\nCuesta " + h.getCost() + "ip"));
-
+					alert.content.getChildren().addAll(new Label("¿SEGURO?\nCuesta " + h.getCost() + "ip"),
+							new Label(h.getDescription()));
 					Optional<ButtonType> result = alert.showAndWait();
 					if (result.isPresent() && result.get() == ButtonType.OK) {
 						int puntosActuales;
@@ -1795,8 +1830,6 @@ public class CharacterController implements Initializable {
 							} else {
 								AlertBonico errorAlert = new AlertBonico(Alert.AlertType.ERROR);
 								errorAlert.setHeaderText("Puntos insuficientes");
-								alert.content.getChildren()
-										.add(new Label("No tienes suficientes puntos de inspiración."));
 								errorAlert.showAndWait();
 							}
 						} catch (Exception e) {
@@ -2291,7 +2324,7 @@ public class CharacterController implements Initializable {
 		paneles.add(resumePanel);
 		paneles.add(shopPanel);
 		paneles.add(inventaryPanel);
-		paneles.add(lootBoxPanel);
+		paneles.add(mapPanel);
 		paneles.add(petPanel);
 		paneles.add(crearItemPane);
 	}

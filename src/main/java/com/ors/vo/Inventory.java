@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Inventory implements Serializable {
-
+//
 	private static final long serialVersionUID = 1L;
 
 	private long id;

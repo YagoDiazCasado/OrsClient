@@ -1,6 +1,11 @@
 
 
--
+-Bajar velocidad
+
+-Meter habilidades
+
+-Meter ver habilidades tooltip
+
 
 -Clases de Maps y positions
 -Opcion de creación de tablero. Check dm.

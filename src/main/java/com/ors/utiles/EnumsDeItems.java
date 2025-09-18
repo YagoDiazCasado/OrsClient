@@ -6,7 +6,7 @@ public class EnumsDeItems {
 	}
 
 	public enum ItemFamily {
-		ITEM, EDIBLE, RANGEWEAPON, MELEWEAPON, AMMO, EQUIPMENT, RACE, BODYTYPE
+		ITEM, EDIBLE, RANGEWEAPON, MELEWEAPON, AMMO, EQUIPMENT, RACE, BODYTYPE,SKILL
 	}
 
 	public enum DamageType {
@@ -15,6 +15,10 @@ public class EnumsDeItems {
 
 	public enum Distance {
 		MELEE, RANGED, MIXED
+	}
+	
+	public enum Nature {
+		ACTIVA,PASIVA
 	}
 
 	public enum ItemShape {

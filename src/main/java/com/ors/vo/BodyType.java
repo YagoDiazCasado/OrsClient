@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // Omitir campos nulos en el JSON
 public class BodyType {
-
+//
 
     @JsonProperty("nombre")
     private String name;

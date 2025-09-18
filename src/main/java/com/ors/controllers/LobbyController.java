@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import com.ors.controllers.elementos.AlertBonico;
 import com.ors.controllers.elementos.DialogBonico;
 import com.ors.services.AdventureService;
 import com.ors.services.BodyTypeService;
@@ -443,6 +444,13 @@ public class LobbyController implements Initializable {
 				List<PJ> todos = PjService.getAll();
 				if (todos.contains(tempo)) {
 					puede = false;
+				} else if (raceOptions.getValue().equals("SOLEO") && !powerOptions.getValue().equals("REGULAR")) {
+					puede = false;
+					powerOptions.setValue("REGULAR");
+					powerOptions.setStyle(" -fx-color: red");
+					AlertBonico errorAlert = new AlertBonico(Alert.AlertType.ERROR);
+					errorAlert.setHeaderText("Sólo los Humanos pueden ser sensibles al éter");
+					errorAlert.showAndWait();
 				}
 				if (puede) {
 					tempo.setCharacterType((!dm) ? CharacterTypes.PARTY : CharacterTypes.NPC);
@@ -651,6 +659,10 @@ public class LobbyController implements Initializable {
 	private void setOptions() throws Exception {
 		newNameText.setStyle("-fx-text-fill: black;");
 		btOptions.getItems().clear();
+		powerOptions.setOnMouseClicked( e -> {
+			powerOptions.setStyle("-fx-text-fill: black;");
+			powerOptions.setStyle("-fx-color: white;");
+		});
 		List<BodyType> bts = BodyTypeService.getAll();
 		for (BodyType b : bts) {
 			b.fillMods();

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Skill implements Serializable {
 	private static final long serialVersionUID = 9153930450717525496L;
-
+//
 	@JsonProperty("nombre") // Alias más claro para el frontend
 	private String name;
 
@@ -28,16 +28,28 @@ public class Skill implements Serializable {
 	@JsonProperty("poder")
 	private String power;
 
+	@JsonProperty("descripcion")
+	private String description = "";
+
 	public Skill() {
 	}
 
-	public Skill(String name, int cost, String type, int mainAction, String race, String power) {
+	public Skill(String name, int cost, String type, int mainAction, String race, String power, String description) {
 		this.name = name;
 		this.cost = cost;
 		this.type = type;
 		this.mainAction = mainAction;
 		this.race = race;
 		this.power = power;
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getName() {

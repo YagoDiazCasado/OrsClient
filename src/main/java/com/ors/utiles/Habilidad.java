@@ -104,6 +104,14 @@ public interface Habilidad {
 			return Habilidad.drenarVida(pj, adv, ataque).aplicar();
 		case "regenerar":
 			return Habilidad.regenerar(pj).aplicar();
+		case "golpeDesarme":
+			return Habilidad.golpeDesarme(pj).aplicar();
+		case "impulsoFinal":
+			return Habilidad.impulsoFinal(pj).aplicar();
+		case "rugidoIntimidante":
+			return Habilidad.rugidoIntimidante(pj).aplicar();
+		case "golpeResonante":
+			return Habilidad.golpeResonante(pj).aplicar();
 
 		default:
 			throw new IllegalArgumentException("Habilidad no encontrada: " + skillName);
@@ -113,6 +121,51 @@ public interface Habilidad {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////// GENERALES
 
+	static Habilidad golpeDesarme(PJ pj) {
+		if (pj.getActions() >= 2) {
+			try {
+				usable.useActions(-2, pj);
+				int num = dado.nextInt(0, 21);
+				if (num > 10) {
+					return () -> "Golpeas el arma del rival. Su siguiente turno tendrá que recogerla.";
+				} else {
+					return () -> "Golpeas el arma del rival. Su siguiente ataque tendrá -" + num + " de daño.";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return () -> "No tienes acciones suficientes";
+	}
+
+	static Habilidad impulsoFinal(PJ pj) {
+		int acciones = pj.getActions();
+		if (acciones > 0) {
+			try {
+				usable.useActions(-acciones, pj);
+				return () -> "Gastaste todas tus acciones restantes para un ataque con +" + (acciones * 2)
+						+ " de daño.";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return () -> "No tienes acciones para el impulso final";
+	}
+
+	static Habilidad ojosAbiertos(PJ pj) {
+		int acciones = pj.getActions();
+		if (acciones >= 2) {
+			try {
+				usable.useActions(-acciones, pj);
+				return () -> "Eliges a un enemigo para fijar. Si se mueve antes de tu próximo turno, podrás atacarle fuera de turno";
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return () -> "No tienes acciones para el impulso final";
+	}
+
 	static Habilidad bloqueo(PJ pj) {
 		if (pj.getActions() >= 2) {
 			try {
@@ -121,10 +174,12 @@ public interface Habilidad {
 				e.printStackTrace();
 			}
 			if (dado.nextInt(1, pj.getPreception()) > 10) {
-				return () -> "Puede sbloquear el ataque si es inferior a " + (dado.nextInt(1, (int) (pj.getStr())));
+				return () -> "Puede bloquear el ataque si es inferior a " + (dado.nextInt(1, (int) (pj.getStr())));
+			} else {
+				return () -> "No lo has conseguido";
 			}
 		}
-		return null;
+		return () -> "No tienes acciones";
 	}
 
 	static Habilidad esquivar(PJ pj) {
@@ -137,9 +192,11 @@ public interface Habilidad {
 			if (dado.nextInt(1, pj.getPreception()) > 12) {
 				return () -> "Puede esquivar el ataque si es inferior a "
 						+ (dado.nextInt(1, (int) (pj.getAcrobatics())));
+			} else {
+				return () -> "No lo has conseguido";
 			}
 		}
-		return null;
+		return () -> "No tienes acciones";
 	}
 
 	static Habilidad parry(PJ pj) {
@@ -152,9 +209,11 @@ public interface Habilidad {
 			if (dado.nextInt(1, pj.getPreception()) > 15) {
 				return () -> "Puede ignorar el ataque si es inferior a " + (dado.nextInt(1, (int) (pj.getDex())))
 						+ " Y actuar un turno extra ahora mismo";
+			} else {
+				return () -> "No lo has conseguido";
 			}
 		}
-		return null;
+		return () -> "No tienes acciones";
 	}
 
 	static Habilidad escabullirte(PJ pj) {
@@ -184,7 +243,7 @@ public interface Habilidad {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return () -> "Puedes usar esta Habilidad sin consumir turno, poero dentro del tuyo. LA siguiente tirada que hagas tendrá ventaja";
+			return () -> "Puedes usar esta Habilidad sin consumir turno, poero dentro del tuyo. La siguiente tirada que hagas tendrá ventaja";
 		}
 		return () -> "Faltan acciones ";
 	}
@@ -417,6 +476,31 @@ public interface Habilidad {
 				+ "Gastas 1 tercio de tu vida actual a cambio de acciones.");
 	}
 
+	static Habilidad golpeResonante(PJ pj) {
+		if (pj.getActions() >= 4) {
+			try {
+				usable.useActions(-4, pj);
+				return () -> "Golpeas al objetivo y la onda de impacto hace " + (pj.getStr() / 2)
+						+ " de daño a todos en un radio de 2m.";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return () -> "No tienes acciones suficientes";
+	}
+
+	static Habilidad rugidoIntimidante(PJ pj) {
+		if (pj.getActions() >= 2) {
+			try {
+				usable.useActions(-2, pj);
+				return () -> "Los enemigos a 5m deben superar una tirada de voluntad o actúan con desventaja el próximo turno.";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return () -> "No tienes acciones suficientes";
+	}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////// VASTE
 
@@ -426,7 +510,7 @@ public interface Habilidad {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return () -> ("Azota " + b.getVaste_Distance() + "m con un poder de " + (b.getVaste()/2));
+		return () -> ("Azota " + b.getVaste_Distance() + "m con un poder de " + (b.getVaste() / 2));
 	}
 
 	static Habilidad gritoDeVaste(PJ b) {
@@ -474,10 +558,12 @@ public interface Habilidad {
 		}
 	}
 
-	static Habilidad golpeVaste(PJ b, boolean adv) {
+	static Habilidad golpeVaste(PJ b, boolean adv) { // falla casi siempre por algun motivo. Sospecho que atacar
+														// devuelve una coma
 		try {
 			int vaste = (b.getVaste());
 			int ataque = Integer.parseInt(usable.atacar(b, 1, adv).split(" ")[1]);
+			System.out.println("PAsa Bien");
 			usable.useActions(-b.getActions() / 4, b);
 			return () -> (" El ataque se imbuye de vaste y ejerce " + vaste + "(v) + " + ataque + "(a): "
 					+ (vaste + ataque) + " puntos de daño.");
